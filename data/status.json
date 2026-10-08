@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-10-08T19:25:55.379972-03:00",
+  "generated_at": "2026-10-08T19:26:56.883999-03:00",
   "location": {
     "city": "Três Rios",
     "state": "RJ",
@@ -72,7 +72,7 @@
       "last_known_updated_at": "2026-10-08T09:12:09-03:00",
       "freshness_limit_hours": 24,
       "message": "Informação oficial dentro da janela de 24 h.",
-      "collected_at": "2026-10-08T19:25:21.412178-03:00",
+      "collected_at": "2026-10-08T19:26:15.576822-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=1",
       "error": null
     },
@@ -89,7 +89,7 @@
       "last_known_updated_at": "2026-10-08T05:48:13-03:00",
       "freshness_limit_hours": 24,
       "message": "Informação oficial dentro da janela de 24 h.",
-      "collected_at": "2026-10-08T19:25:22.802217-03:00",
+      "collected_at": "2026-10-08T19:26:16.813854-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=2",
       "error": null
     },
@@ -103,7 +103,7 @@
       "active_count": 0,
       "starts_at": null,
       "ends_at": null,
-      "collected_at": "2026-10-08T19:25:36.661552-03:00",
+      "collected_at": "2026-10-08T19:26:35.139532-03:00",
       "url": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
       "error": null
     },
@@ -149,7 +149,7 @@
         "stage_hours": 24,
         "operational_signal_hours": 24
       },
-      "collected_at": "2026-10-08T19:25:38.947675-03:00",
+      "collected_at": "2026-10-08T19:26:37.307957-03:00",
       "url": "https://tresrios.rj.gov.br/secretaria-de-protecao-e-defesa-civil/",
       "latest_news": {
         "title": "defesa civil - Prefeitura Municipal - Três Rios",
@@ -186,7 +186,7 @@
       "type": "estação automática local"
     },
     "status": "unavailable",
-    "collected_at": "2026-10-08T19:25:23.444634-03:00",
+    "collected_at": "2026-10-08T19:26:18.025123-03:00",
     "url": "https://apitempo.inmet.gov.br/estacao/2026-10-07/2026-10-08/A625",
     "error": "https://apitempo.inmet.gov.br/estacao/2026-10-07/2026-10-08/A625 -> HTTP 204 sem conteúdo | https://apitempo.inmet.gov.br/estacao/dados/2026-10-08 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-08 | https://apitempo.inmet.gov.br/estacao/dados/2026-10-07 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-07"
   },
@@ -211,7 +211,7 @@
     "wind_gust_kmh": 11.5,
     "weather_code": 0,
     "condition": "Céu limpo",
-    "collected_at": "2026-10-08T19:25:25.998897-03:00",
+    "collected_at": "2026-10-08T19:26:23.713108-03:00",
     "url": "https://api.open-meteo.com/v1/forecast?latitude=-22.1123187&longitude=-43.2131388&current=temperature_2m%2Crelative_humidity_2m%2Capparent_temperature%2Cprecipitation%2Crain%2Cweather_code%2Cwind_speed_10m%2Cwind_gusts_10m&timezone=America%2FSao_Paulo",
     "message": "Referência complementar próxima ao HCNSC. Não substitui INMET, CEMADEN ou Defesa Civil para alertas oficiais.",
     "error": null
@@ -227,7 +227,7 @@
       "longitude": -43.2131388
     },
     "operational_radius_km": 5,
-    "grid_updated_at": "2026-10-08T19:25:26.591133-03:00",
+    "grid_updated_at": "2026-10-08T19:26:24.405361-03:00",
     "grid": [
       {
         "latitude": -22.179262,
@@ -875,19 +875,19 @@
       "host": "https://tilecache.rainviewer.com",
       "path": "/v2/radar/d6f9841a55f9",
       "frame_time": "2026-10-08T19:20:00-03:00",
-      "generated_unix": 1791498033,
+      "generated_unix": 1791498347,
       "tile_color_scheme": 2,
       "url": "https://api.rainviewer.com/public/weather-maps.json",
       "error": null
     },
-    "collected_at": "2026-10-08T19:25:26.591133-03:00",
+    "collected_at": "2026-10-08T19:26:24.405361-03:00",
     "message": "Mapa complementar. Alertas e níveis HCNSC permanecem baseados nas fontes oficiais integradas."
   },
   "pluviometers": {
     "provider": "CEMADEN",
     "status": "ok",
     "source_note": "Chuvas do Mapa Interativo do CEMADEN; horários em UTC convertidos para Brasília. Coordenadas vêm do próprio endpoint quando disponíveis, de cadastro GIS público ou do cadastro hidrometeorológico regional da Região Hidrográfica do Médio Paraíba (base Dez/2020), exclusivamente para distância ao HCNSC.",
-    "collected_at": "2026-10-08T19:25:27.710402-03:00",
+    "collected_at": "2026-10-08T19:26:25.606854-03:00",
     "url": "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ",
     "total_stations": 7,
     "recent_stations": 3,
@@ -1095,7 +1095,7 @@
     "status": "ok",
     "municipality_code": "3306008",
     "municipality": "Três Rios/RJ",
-    "collected_at": "2026-10-08T19:25:34.766930-03:00",
+    "collected_at": "2026-10-08T19:26:33.518351-03:00",
     "url": "https://apiprevmet3.inmet.gov.br/previsao/3306008",
     "days": [
       {
@@ -1477,7 +1477,7 @@
       "message": "Canal oficial da Rodovia do Aço consultado. Ausência de publicação identificada não equivale a garantia de tráfego livre.",
       "error": null
     },
-    "collected_at": "2026-10-08T19:25:39.989055-03:00",
+    "collected_at": "2026-10-08T19:26:37.916057-03:00",
     "message": "BR-040 e BR-393 consultadas em canais oficiais independentes. Fonte indisponível ou ausência de aviso não equivale a tráfego livre.",
     "error": null,
     "tresrios_weather": {
@@ -1500,7 +1500,7 @@
       "has_operational_notice": false,
       "phone": "(24) 2251-6950",
       "whatsapp": "(24) 9993-2649",
-      "collected_at": "2026-10-08T19:25:43.558368-03:00",
+      "collected_at": "2026-10-08T19:26:41.269962-03:00",
       "message": "Canal oficial do SAAETRI acessível. Acessibilidade do portal não prova continuidade do abastecimento no hospital.",
       "error": null
     },
@@ -1510,11 +1510,11 @@
       "url": "https://www.enel.com.br/pt/Canais.html",
       "phone": "0800 28 00 120",
       "whatsapp": "(21) 99601-9608",
-      "collected_at": "2026-10-08T19:25:43.558368-03:00",
+      "collected_at": "2026-10-08T19:26:41.269962-03:00",
       "message": "Canal oficial acessível. A situação específica da unidade consumidora deve ser confirmada pelos canais da Enel quando necessário.",
       "error": null
     },
-    "collected_at": "2026-10-08T19:25:43.558368-03:00"
+    "collected_at": "2026-10-08T19:26:41.269962-03:00"
   },
   "notifications": {
     "group_operational_email": {
