@@ -1,0 +1,115 @@
+name: Deploy HCNSC Alerta to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+    paths-ignore:
+      - "data/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install collector dependencies
+        run: pip install --disable-pip-version-check requests beautifulsoup4
+
+      - name: Collect HCNSC sources
+        env:
+          HCNSC_EMAIL_GRUPO_OPERACIONAL: ${{ secrets.HCNSC_EMAIL_GRUPO_OPERACIONAL }}
+          HCNSC_EMAIL_GRUPO_GERENTES: ${{ secrets.HCNSC_EMAIL_GRUPO_GERENTES }}
+          HCNSC_SMTP_USER: ${{ secrets.HCNSC_SMTP_USER }}
+          HCNSC_SMTP_APP_PASSWORD: ${{ secrets.HCNSC_SMTP_APP_PASSWORD }}
+          HCNSC_EMAIL_ENABLED: ${{ secrets.HCNSC_EMAIL_ENABLED }}
+        run: python scripts/collect_hcnsc.py
+
+      - name: Validate generated data
+        run: |
+          python scripts/validate_build.py
+          node scripts/validate_frontend.mjs
+
+      - name: Evaluate and send email notification
+        continue-on-error: true
+        env:
+          HCNSC_EMAIL_GRUPO_OPERACIONAL: ${{ secrets.HCNSC_EMAIL_GRUPO_OPERACIONAL }}
+          HCNSC_EMAIL_GRUPO_GERENTES: ${{ secrets.HCNSC_EMAIL_GRUPO_GERENTES }}
+          HCNSC_EMAIL_FROM: ${{ secrets.HCNSC_EMAIL_FROM }}
+          HCNSC_EMAIL_REPLY_TO: ${{ secrets.HCNSC_EMAIL_REPLY_TO }}
+          HCNSC_SMTP_USER: ${{ secrets.HCNSC_SMTP_USER }}
+          HCNSC_SMTP_APP_PASSWORD: ${{ secrets.HCNSC_SMTP_APP_PASSWORD }}
+          HCNSC_SMTP_HOST: ${{ secrets.HCNSC_SMTP_HOST }}
+          HCNSC_SMTP_PORT: ${{ secrets.HCNSC_SMTP_PORT }}
+          HCNSC_EMAIL_ENABLED: ${{ secrets.HCNSC_EMAIL_ENABLED }}
+        run: python scripts/send_email.py
+
+      - name: Persist monitoring history
+        run: |
+          git config user.name "hcnsc-alerta-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/status.json data/history.json data/history_index.json data/climate_history.json data/email_notification_state.json data/archive/
+
+          if git diff --cached --quiet; then
+            echo "Nenhuma alteração de dados para persistir."
+            exit 0
+          fi
+
+          git commit -m "chore(data): registra snapshot HCNSC [skip ci]"
+
+          # O branch pode receber um commit enquanto esta execução está em andamento.
+          # Rebaseamos o snapshot sobre o main mais recente e tentamos o push novamente.
+          for attempt in 1 2 3; do
+            echo "Tentativa de persistência $attempt/3"
+            git fetch origin main
+
+            if ! git rebase -X theirs origin/main; then
+              echo "Falha ao reaplicar o snapshot sobre o main remoto."
+              git rebase --abort || true
+              exit 1
+            fi
+
+            if git push origin HEAD:main; then
+              echo "Snapshot persistido com sucesso."
+              exit 0
+            fi
+
+            echo "O main mudou durante o push; tentando novamente."
+            sleep 2
+          done
+
+          echo "Não foi possível persistir o snapshot após 3 tentativas."
+          exit 1
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
