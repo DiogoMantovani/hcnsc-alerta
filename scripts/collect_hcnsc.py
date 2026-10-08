@@ -49,7 +49,7 @@ ELOVIAS_MAP = "https://elovias.com.br/mapa"
 KINFRA_HOME = "https://www.rodoviadoaco.com.br/"
 KINFRA_CONTACT = "https://www.rodoviadoaco.com.br/contato"
 KINFRA_NEWS = "https://www.rodoviadoaco.com.br/noticia"
-SAAETRI_HOME = "https://tresrios.rj.gov.br/saaetri-servico-autonomo-de-agua-e-esgoto-de-tres-rios/"
+SAAETRI_HOME = "https://saaetri.com.br/"
 ENEL_RIO_CHANNELS = "https://www.enel.com.br/pt/Canais.html"
 
 RISK_TO_LEVEL = {"MUITO BAIXO":1,"BAIXO":2,"MODERADO":3,"ALTO":4,"MUITO ALTO":5}
@@ -655,7 +655,18 @@ def fetch_cemaden_pluviometers(previous):
         anomalies=[s for s in stations if s["status"]=="time_anomaly"]
         georeferenced=[s for s in stations if isinstance(s.get("distance_to_hcnsc_km"),(int,float))]
         georeferenced_recent=[s for s in recent if isinstance(s.get("distance_to_hcnsc_km"),(int,float))]
-        nearest=min(georeferenced_recent or georeferenced,key=lambda s:s["distance_to_hcnsc_km"]) if georeferenced else (recent[0] if recent else (stations[0] if stations else None))
+        if georeferenced_recent:
+            nearest=min(georeferenced_recent,key=lambda s:s["distance_to_hcnsc_km"])
+        elif recent:
+            def reference_score(station):
+                rain_keys=("acc1h_mm","acc3h_mm","acc6h_mm","acc12h_mm","acc24h_mm","acc48h_mm","acc72h_mm","acc96h_mm")
+                completeness=sum(1 for key in rain_keys if isinstance(station.get(key),(int,float)))
+                return (-completeness, station.get("age_hours") if isinstance(station.get("age_hours"),(int,float)) else 9999, station.get("name") or "")
+            nearest=sorted(recent,key=reference_score)[0]
+        elif georeferenced:
+            nearest=min(georeferenced,key=lambda s:s["distance_to_hcnsc_km"])
+        else:
+            nearest=stations[0] if stations else None
         def highest(key):
             # Only fresh, internally time-consistent stations contribute to
             # dashboard maxima. Stale/anomalous values remain visible in the table.
@@ -692,7 +703,7 @@ def fetch_cemaden_pluviometers(previous):
             "highest_1h":highest("acc1h_mm"),
             "highest_24h":highest("acc24h_mm"),
             "nearest_to_hcnsc":nearest,
-            "nearest_note":"Estação de referência selecionada entre leituras recentes e georreferenciadas, pela menor distância em linha reta até o HCNSC. A coordenada é cadastral e não altera o valor de chuva informado pelo CEMADEN.",
+            "nearest_note":"A referência prioriza estação recente e georreferenciada. Se nenhuma estação recente tiver coordenada consolidada, o HCNSC Alerta usa temporariamente a estação recente com melhor conjunto de acumulados, sem inventar distância.",
             "stations":stations,
             "error":None,
         }
@@ -847,7 +858,14 @@ def fetch_defesa_civil(previous):
                 title=(item.findtext("title") or "").strip()
                 link=(item.findtext("link") or "").strip()
                 pub_raw=(item.findtext("pubDate") or "").strip()
-                if "DEFESA CIVIL" not in norm(title):
+                title_norm=norm(title)
+                if "DEFESA CIVIL" not in title_norm:
+                    continue
+                if title_norm in (
+                    "SECRETARIA DE SAUDE E DEFESA CIVIL - PREFEITURA MUNICIPAL - TRES RIOS",
+                    "SECRETARIA DE PROTECAO E DEFESA CIVIL - TRES RIOS",
+                    "DEFESA CIVIL - TRES RIOS",
+                ):
                     continue
                 published=None
                 try:
