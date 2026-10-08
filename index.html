@@ -592,7 +592,7 @@ footer{
   <div class="source-health-row"><div class="source-health-name">INMET</div><span id="inmetConnection" class="connection-pill connection-na">Verificando</span></div>
   <div class="source-health-row"><div class="source-health-name">Defesa Civil de Três Rios</div><span id="defesaConnection" class="connection-pill connection-na">Verificando</span></div>
   <div class="source-health-row"><div class="source-health-name">Clima atual complementar</div><span id="weatherRefConnection" class="connection-pill connection-na">Verificando</span></div>
-  <div class="source-health-row"><div class="source-health-name">ELOvias + K-Infra Rodovia do Aço · BR-040/RJ + BR-393/RJ</div><span id="roadsConnection" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">ELOvias · BR-040 + K-Infra · BR-393</div><span id="roadsConnection" class="connection-pill connection-na">Verificando</span></div>
   <div class="source-health-row"><div class="source-health-name">SAAETRI</div><span id="waterConnection" class="connection-pill connection-na">Verificando</span></div>
   <div id="waterNotice" class="small" style="padding:0 4px 8px">Aguardando consulta ao canal oficial de abastecimento.</div>
   <div class="source-health-row"><div class="source-health-name">Enel Distribuição Rio</div><span id="energyConnection" class="connection-pill connection-na">Verificando</span></div>
@@ -780,8 +780,8 @@ footer{
     <div class="dc-contact-grid">
       <div class="dc-contact-box"><span>Emergência</span><strong id="dcEmergency">199</strong></div>
       <div class="dc-contact-box"><span>Alertas por SMS</span><strong id="dcSms">40199</strong></div>
-      <div class="dc-contact-box"><span>Atendimento</span><strong id="dcPhone">(21) 2742-3352</strong></div>
-      <div class="dc-contact-box"><span>Ligação gratuita</span><strong id="dcTollFree">0800 202 1066</strong></div>
+      <div class="dc-contact-box"><span>Atendimento</span><strong id="dcPhone">(24) 2220-2408</strong></div>
+      <div class="dc-contact-box"><span>Emergência municipal</span><strong id="dcTollFree">199</strong></div>
     </div>
     <div class="road-actions">
       <a id="dcHomeLink" class="btn" target="_blank" rel="noopener">Portal Defesa Civil</a>
@@ -793,8 +793,8 @@ footer{
   <article class="card">
     <div class="eyebrow">Critério usado pelo HCNSC Alerta</div>
     <div class="actions">
-      <div class="action">• Estágio operacional explícito: considerado por até <strong>48 h</strong>.</div>
-      <div class="action">• Sirene, mobilização de risco ou abertura de ponto de apoio: considerado por até <strong>12 h</strong>.</div>
+      <div class="action">• Alerta operacional municipal explícito: considerado somente quando publicado nas últimas <strong>24 h</strong>.</div>
+      <div class="action">• Notícias e orientações gerais permanecem apenas informativas e não elevam o nível.</div>
       <div class="action">• Informação antiga ou fonte indisponível não provoca nova escalada.</div>
       <div class="action">• Notícia comum permanece informativa e não funciona como gatilho automático.</div>
     </div>
@@ -803,12 +803,11 @@ footer{
 
 <article class="card" style="margin-bottom:16px">
   <div class="section">
-    <div><h3>Rotas oficiais de coleta</h3><div class="small">As rotas são consultadas em paralelo. A falha de uma página não interrompe as demais.</div></div>
+    <div><h3>Rotas oficiais de coleta</h3><div class="small">O portal oficial municipal é consultado diretamente; índice secundário é usado apenas para contexto quando necessário.</div></div>
     <span id="dcRouteSummary" class="badge">Verificando</span>
   </div>
   <div id="dcRouteStatus" class="source-health-list">
-    <div class="source-health-row"><div class="source-health-name">Portal Defesa Civil</div><span class="connection-pill connection-na">Verificando</span></div>
-    <div class="source-health-row"><div class="source-health-name">Notícias · Defesa Civil</div><span class="connection-pill connection-na">Verificando</span></div>
+    <div class="source-health-row"><div class="source-health-name">Portal Defesa Civil de Três Rios</div><span class="connection-pill connection-na">Verificando</span></div>
   </div>
   <div class="source-health-row" style="margin-top:8px"><div class="source-health-name">Cache secundário</div><span id="dcCacheStatus" class="connection-pill connection-na">Verificando</span></div>
   <div id="dcCacheMeta" class="source-health-footer">O cache é apenas informativo e nunca eleva o Nível HCNSC.</div>
@@ -825,34 +824,34 @@ footer{
   </table></div>
 </article>
 
-<div class="callout" style="margin-top:16px"><strong>Importante:</strong> o portal municipal pode bloquear acessos automatizados do GitHub Actions. Quando isso ocorre, o HCNSC Alerta identifica a indisponibilidade e usa cache somente para contexto. Cache secundário nunca eleva o Nível HCNSC. Fonte indisponível ≠ ausência de risco.</div>
+<div class="callout" style="margin-top:16px"><strong>Importante:</strong> publicações municipais são tratadas de forma conservadora. Somente um alerta operacional recente e explícito pode contribuir para o Nível HCNSC; notícias gerais permanecem informativas. Fonte indisponível ≠ ausência de risco.</div>
 </section>
 
 <section id="servicos" class="panel">
 <div class="section">
-  <div><h2>Rodovias</h2><div class="small">BR‑116/RJ · Acessos a Três Rios · dados consultados nos canais oficiais da ELOvias + K-Infra Rodovia do Aço.</div></div>
-  <span class="badge">CANAL OFICIAL ECOVIAS RIO MINAS</span>
+  <div><h2>Rodovias</h2><div class="small">Dois corredores federais relevantes para o acesso ao HCNSC: BR-040/RJ e BR-393/RJ.</div></div>
+  <span class="badge">ELOVIAS + K-INFRA</span>
 </div>
 
 <div class="roads-overview">
   <article class="card road-panel-card">
-    <div class="eyebrow">Situação operacional da Serra</div>
+    <div class="eyebrow">Situação operacional dos acessos</div>
     <div id="roadsAlertState" class="road-alert-state">Carregando…</div>
     <div id="roadsAlertList" class="road-alert-list"></div>
     <div id="roadsAlertNote" class="road-alert-note">Aguardando consulta aos canais oficiais.</div>
-    <div style="margin-top:12px"><span id="roadsSourceMode" class="connection-pill connection-na">Verificando fonte</span></div>
+    <div style="margin-top:12px"><span id="roadsSourceMode" class="connection-pill connection-na">Verificando fontes</span></div>
   </article>
 
   <article class="card road-panel-card">
     <div class="eyebrow">Condição meteorológica de apoio · Três Rios</div>
-    <h3>Três Rios · BR‑116/RJ</h3>
+    <h3>Entorno do HCNSC</h3>
     <div class="road-weather-main">
       <div id="roadsWeatherIcon" class="road-weather-icon"></div>
       <div>
         <div id="roadsWeatherTemp" class="road-weather-temp">—</div>
         <div id="roadsWeatherCondition" class="road-weather-cond">Carregando…</div>
         <div id="roadsWeatherMeta" class="road-weather-meta">—</div>
-        <div id="roadsWeatherSource" class="small">Referência meteorológica próxima ao HCNSC; não é sensor viário da concessionária.</div>
+        <div id="roadsWeatherSource" class="small">Referência meteorológica próxima ao hospital; não substitui informação operacional das concessionárias.</div>
       </div>
     </div>
   </article>
@@ -860,48 +859,47 @@ footer{
 
 <div class="road-updates">
   <article class="card">
-    <div class="eyebrow">Atualização mais recente da Serra</div>
-    <div id="roadsSerraTitle" class="road-update-title">Carregando…</div>
-    <div id="roadsSerraText" class="road-update-text">—</div>
+    <div class="eyebrow">BR-040/RJ · ELOvias</div>
+    <div id="roadsSerraTitle" class="road-update-title">Verificando…</div>
+    <div id="roadsSerraText" class="road-update-text">Acesso Rio · Três Rios · Juiz de Fora</div>
     <div id="roadsSerraDate" class="road-update-meta">—</div>
-    <div class="road-actions"><a id="roadsSerraLink" class="btn" target="_blank" rel="noopener">Abrir publicação oficial</a></div>
+    <div class="road-actions"><a id="roadsSerraLink" class="btn" target="_blank" rel="noopener">Abrir ELOvias</a></div>
   </article>
 
   <article class="card">
-    <div class="eyebrow">Obras e manutenção na Serra</div>
-    <div id="roadsScheduleTitle" class="road-update-title">Carregando…</div>
-    <div id="roadsScheduleText" class="road-update-text">—</div>
+    <div class="eyebrow">BR-393/RJ · K-Infra Rodovia do Aço</div>
+    <div id="roadsScheduleTitle" class="road-update-title">Verificando…</div>
+    <div id="roadsScheduleText" class="road-update-text">Trecho com base operacional em Três Rios · km 159</div>
     <div id="roadsScheduleDate" class="road-update-meta">—</div>
-    <div class="road-actions"><a id="roadsScheduleLink" class="btn" target="_blank" rel="noopener">Ver cronograma</a></div>
+    <div class="road-actions"><a id="roadsScheduleLink" class="btn" href="https://www.rodoviadoaco.com.br/" target="_blank" rel="noopener">Abrir Rodovia do Aço</a></div>
   </article>
 </div>
 
 <div class="road-footer-grid">
   <article class="card">
-    <div class="eyebrow">Boletim de tráfego relacionado à Serra</div>
+    <div class="eyebrow">Resumo dos dois corredores</div>
     <div id="roadsBulletinTitle" class="road-update-title">Carregando…</div>
     <div id="roadsBulletinDate" class="road-update-meta">—</div>
-    <div class="road-actions"><a id="roadsBulletinLink" class="btn" target="_blank" rel="noopener">Abrir publicação oficial</a></div>
+    <div class="road-actions"><a id="roadsBulletinLink" class="btn" target="_blank" rel="noopener" style="display:none">Abrir publicação</a></div>
   </article>
 
   <article class="card">
     <div class="eyebrow">Canais operacionais</div>
-    <h3 style="margin:5px 0 0">ELOvias + K-Infra Rodovia do Aço</h3>
     <div class="road-contact-grid">
-      <div class="road-contact-box"><span>Emergências</span><strong id="roadsEmergency">0800 116 0493</strong></div>
-      <div class="road-contact-box"><span>WhatsApp</span><strong id="roadsWhatsapp">0800 116 0493</strong></div>
-      <div class="road-contact-box"><span>Acessibilidade</span><strong id="roadsAccessibility">0800 116 0465</strong></div>
+      <div class="road-contact-box"><span>ELOvias · emergência</span><strong id="roadsEmergency">0800-040-0495</strong></div>
+      <div class="road-contact-box"><span>ELOvias · WhatsApp</span><strong id="roadsWhatsapp">(21) 98040-0113</strong></div>
+      <div class="road-contact-box"><span>K-Infra · emergência</span><strong>0800 2853 393</strong></div>
+      <div class="road-contact-box"><span>K-Infra · acessibilidade</span><strong id="roadsAccessibility">0800 0959 393</strong></div>
     </div>
     <div class="road-actions">
-      <a class="btn" href="https://www.ecoviasriominas.com.br/" target="_blank" rel="noopener">Portal ELOvias + K-Infra Rodovia do Aço</a>
-      <a class="btn" href="https://www.ecoviasriominas.com.br/condicoes-da-via" target="_blank" rel="noopener">Condições da via</a>
-      <a class="btn" href="https://www.ecoviasriominas.com.br/noticias/boletim-de-trafego" target="_blank" rel="noopener">Boletins de tráfego</a>
-      <a class="btn" href="https://www.ecoviasriominas.com.br/noticias/boletim-de-obras" target="_blank" rel="noopener">Boletins de obras</a>
+      <a class="btn" href="https://elovias.com.br/home" target="_blank" rel="noopener">Portal ELOvias</a>
+      <a class="btn" href="https://elovias.com.br/mapa" target="_blank" rel="noopener">Mapa BR-040</a>
+      <a class="btn" href="https://www.rodoviadoaco.com.br/" target="_blank" rel="noopener">Portal Rodovia do Aço</a>
     </div>
   </article>
 </div>
 
-<div class="callout" style="margin-top:16px"><strong>Importante:</strong> ausência de alerta recente identificado não significa garantia de trânsito livre. A Ecovias pode bloquear ou atrasar consultas automatizadas; por isso o painel diferencia fonte direta, conectividade parcial e cache contextual.</div>
+<div class="callout" style="margin-top:16px"><strong>Importante:</strong> o HCNSC Alerta acompanha BR-040 e BR-393 separadamente. Ausência de aviso publicado ou conectividade ativa não equivale a garantia de tráfego livre.</div>
 </section>
 
 <section id="avisos" class="panel">
@@ -1624,8 +1622,7 @@ function renderDefenseCivilPanel(data){
 
   const routes=dc.routes||{};
   const routeLabels={
-    portal:'Portal Defesa Civil',
-    noticias_defesa_civil:'Notícias · Defesa Civil'
+    portal:'Portal Defesa Civil de Três Rios'
   };
   const routeRows=Object.entries(routeLabels).map(([key,label])=>{
     const route=routes[key]||{};
@@ -1656,8 +1653,8 @@ function renderDefenseCivilPanel(data){
   const channels=dc.channels||{};
   document.getElementById('dcEmergency').textContent=channels.emergency||'199';
   document.getElementById('dcSms').textContent=channels.sms||'40199';
-  document.getElementById('dcPhone').textContent=channels.phone||'(21) 2742-3352';
-  document.getElementById('dcTollFree').textContent=channels.toll_free||'0800 202 1066';
+  document.getElementById('dcPhone').textContent=channels.phone||'(24) 2220-2408';
+  document.getElementById('dcTollFree').textContent=channels.emergency||'199';
   const links=[
     ['dcHomeLink',channels.home],
     ['dcBulletinLink',channels.bulletin],
@@ -1962,60 +1959,68 @@ async function loadOfficialData(){
     const managersLast=document.getElementById('notificationManagersLastSent');
     if(managersLast) managersLast.textContent=managersEmail.last_sent_at?fmtDate(managersEmail.last_sent_at):'Nenhum envio';
     const ep=roads?.endpoint_status||{};
+    const br040=roads?.br040||{};
+    const br393=roads?.br393||{};
     const alerts=Array.isArray(roads?.active_alerts)?roads.active_alerts:[];
+
     document.getElementById('roadsAlertState').textContent=alerts.length
-      ?alerts.length+' alerta'+(alerts.length>1?'s':'')+' operacional'+(alerts.length>1?'is':'')+' recente'+(alerts.length>1?'s':'')+' confirmado'+(alerts.length>1?'s':'')
+      ?alerts.length+' aviso'+(alerts.length>1?'s':'')+' operacional'+(alerts.length>1?'is':'')+' identificado'+(alerts.length>1?'s':'')
       :(roads?.status==='ok'||roads?.status==='degraded'
-        ?'Nenhum alerta recente específico da Serra confirmado'
-        :'Canal operacional sem confirmação');
+        ?'Sem aviso operacional específico identificado nesta consulta'
+        :'Canais rodoviários sem confirmação');
     document.getElementById('roadsAlertList').innerHTML=alerts.slice(0,4).map(a=>
-      '<div class="road-alert-item"><strong>'+esc(a.title||'Aviso ELOvias + K-Infra Rodovia do Aço')+'</strong>'+(a.summary?'<br>'+esc(a.summary):'')+'</div>'
+      '<div class="road-alert-item"><strong>'+esc(a.title||'Aviso rodoviário')+'</strong>'+(a.summary?'<br>'+esc(a.summary):'')+'<br><span class="small">'+esc((a.road||'')+(a.provider?' · '+a.provider:''))+'</span></div>'
     ).join('');
-    const roadCache=roads?.cache_context||{};
     document.getElementById('roadsAlertNote').textContent=
-      'Última consulta: '+fmtDate(roads?.collected_at)+'. '+
-      (roadCache.used
-        ?'Parte do conteúdo foi recuperada por cache contextual; isso não confirma tráfego em tempo real.'
-        :'Consulta baseada nos canais oficiais disponíveis.')+
-      ' Ausência de alerta identificado não equivale a garantia de tráfego livre.';
-    const sourceMode=roads?.source_mode||'unavailable';
+      'Última consulta: '+fmtDate(roads?.collected_at)+'. BR-040 e BR-393 são verificadas por canais independentes. Ausência de aviso não equivale a tráfego livre.';
+
+    const b40ok=br040?.status==='ok', b393ok=br393?.status==='ok';
+    const b40partial=br040?.status==='degraded', b393partial=br393?.status==='degraded';
+    const allOk=b40ok&&b393ok;
+    const anyReach=b40ok||b393ok||b40partial||b393partial;
     setConnection(
       'roadsSourceMode',
-      sourceMode==='direct'?'ok':sourceMode==='mixed'||sourceMode==='direct_partial'?'warn':sourceMode==='cache_context'?'warn':'off',
-      sourceMode==='direct'?'Fonte direta':sourceMode==='mixed'?'Direta + cache contextual':sourceMode==='direct_partial'?'Fonte direta parcial':sourceMode==='cache_context'?'Cache contextual':'Sem confirmação'
+      allOk?'ok':anyReach?'warn':'off',
+      allOk?'BR-040 e BR-393 ativas':anyReach?'Conectividade parcial':'Sem confirmação'
     );
 
-    const rw=roads?.tresrios_weather||{};
+    const rw=roads?.tres_rios_weather||roads?.tresrios_weather||{};
     const roadVisual=weatherIconSvg(null,rw.condition||'');
     document.getElementById('roadsWeatherIcon').innerHTML=roadVisual.svg;
     document.getElementById('roadsWeatherTemp').textContent=rw.temperature_c!=null?numBR(rw.temperature_c,1)+' °C':'—';
     document.getElementById('roadsWeatherCondition').textContent=rw.condition||'Sem condição confirmada';
     document.getElementById('roadsWeatherMeta').textContent=(rw.wind_speed_kmh!=null?'Vento '+numBR(rw.wind_speed_kmh,1)+' km/h'+(rw.wind_direction?' · '+rw.wind_direction:'')+' · ':'')+(rw.updated_at?'Atualizado '+fmtDate(rw.updated_at):'');
-    document.getElementById('roadsWeatherSource').textContent=(rw.source||'Referência meteorológica próxima ao HCNSC')+' · apoio meteorológico, não sensor viário da concessionária.';
+    document.getElementById('roadsWeatherSource').textContent=(rw.source||'Referência meteorológica próxima ao HCNSC')+' · apoio meteorológico.';
 
-    const serra=roads?.latest_serra_update||{};
-    document.getElementById('roadsSerraTitle').textContent=serra.title||'Sem atualização recente identificada';
-    document.getElementById('roadsSerraText').textContent=serra.serra_summary||serra.summary||'—';
-    document.getElementById('roadsSerraDate').textContent=serra.published_at?'Publicado em '+fmtDate(serra.published_at):'—';
+    const b40update=br040?.latest_update||{};
+    document.getElementById('roadsSerraTitle').textContent=
+      (br040?.status==='ok'?'Conectividade ativa':br040?.status==='degraded'?'Conectividade parcial':'Sem confirmação')+
+      (b40update.title?' · '+b40update.title:'');
+    document.getElementById('roadsSerraText').textContent=b40update.summary||br040?.scope||'BR-040/RJ · acesso a Três Rios';
+    document.getElementById('roadsSerraDate').textContent=b40update.published_at?'Publicado em '+fmtDate(b40update.published_at):'Última consulta: '+fmtDate(roads?.collected_at);
     const serraLink=document.getElementById('roadsSerraLink');
-    if(serra.url){serraLink.href=serra.url;serraLink.style.display='inline-block';}else{serraLink.style.display='none';}
+    serraLink.href=b40update.url||br040?.home_url||'https://elovias.com.br/home';
+    serraLink.style.display='inline-block';
 
-    const sched=roads?.latest_schedule||{};
-    document.getElementById('roadsScheduleTitle').textContent=sched.title||'Sem cronograma recente identificado';
-    document.getElementById('roadsScheduleText').textContent=sched.summary||'—';
-    document.getElementById('roadsScheduleDate').textContent=sched.published_at?'Publicado em '+fmtDate(sched.published_at):'—';
+    document.getElementById('roadsScheduleTitle').textContent=
+      br393?.status==='ok'?'Conectividade ativa':br393?.status==='degraded'?'Conectividade parcial':'Sem confirmação';
+    document.getElementById('roadsScheduleText').textContent=(br393?.scope||'BR-393/RJ · Três Rios')+
+      (br393?.três_rios_sau?' · SAU '+br393['três_rios_sau']:'');
+    document.getElementById('roadsScheduleDate').textContent='Última consulta: '+fmtDate(roads?.collected_at);
     const schedLink=document.getElementById('roadsScheduleLink');
-    if(sched.url){schedLink.href=sched.url;schedLink.style.display='inline-block';}else{schedLink.style.display='none';}
+    schedLink.href=br393?.home_url||'https://www.rodoviadoaco.com.br/';
+    schedLink.style.display='inline-block';
 
-    const rb=roads?.latest_bulletin||{};
-    document.getElementById('roadsBulletinTitle').textContent=rb.title||'Sem boletim recente específico da Serra';
-    document.getElementById('roadsBulletinDate').textContent=rb.published_at?'Publicado em '+fmtDate(rb.published_at):'—';
+    document.getElementById('roadsBulletinTitle').textContent=
+      'BR-040: '+(br040?.status==='ok'?'ativa':br040?.status==='degraded'?'parcial':'sem confirmação')+
+      ' · BR-393: '+(br393?.status==='ok'?'ativa':br393?.status==='degraded'?'parcial':'sem confirmação');
+    document.getElementById('roadsBulletinDate').textContent='Consulta '+fmtDate(roads?.collected_at);
     const rbLink=document.getElementById('roadsBulletinLink');
-    const rbUrl=rb.url||rb.pdf_url;
-    if(rbUrl){rbLink.href=rbUrl;rbLink.style.display='inline-block';}else{rbLink.style.display='none';}
-    document.getElementById('roadsEmergency').textContent=roads?.emergency_phone||'0800 116 0493';
-    document.getElementById('roadsWhatsapp').textContent=roads?.whatsapp||'0800 116 0493';
-    document.getElementById('roadsAccessibility').textContent=roads?.accessibility_phone||'0800 116 0465';
+    rbLink.style.display='none';
+
+    document.getElementById('roadsEmergency').textContent=br040?.emergency_phone||'0800-040-0495';
+    document.getElementById('roadsWhatsapp').textContent=br040?.whatsapp||'(21) 98040-0113';
+    document.getElementById('roadsAccessibility').textContent=br393?.accessibility_phone||'0800 0959 393';
 
     const level=Math.max(1,Math.min(5,Number(data.overall?.level)||1));
     applyLevel(level,data.overall?.reason||'Monitoramento CEMADEN-RJ ativo.',data.generated_at,data);
