@@ -35,6 +35,31 @@ jobs:
       - name: Install collector dependencies
         run: pip install --disable-pip-version-check requests beautifulsoup4
 
+      - name: Download official HCNSC logo
+        run: |
+          mkdir -p assets
+          python - <<'PY'
+          import requests
+          url = "https://redesantacatarina.org.br/Style%20Library/ResponsiveServer/Bootstrap3/assets/images/LogoNossaSenhoraConceicaoTresRios.png"
+          r = requests.get(
+              url,
+              timeout=25,
+              allow_redirects=True,
+              headers={
+                  "User-Agent": "Mozilla/5.0 HCNSC-Alerta/1.0",
+                  "Referer": "https://redesantacatarina.org.br/",
+                  "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+              },
+          )
+          r.raise_for_status()
+          content_type=(r.headers.get("content-type") or "").lower()
+          if not content_type.startswith("image/") or len(r.content) < 500:
+              raise RuntimeError(f"Logo inválida: HTTP {r.status_code}, content-type={content_type}, bytes={len(r.content)}")
+          with open("assets/logo-hcnsc.png","wb") as f:
+              f.write(r.content)
+          print(f"HCNSC_LOGO_OK content-type={content_type} bytes={len(r.content)}")
+          PY
+
       - name: Collect HCNSC sources
         env:
           HCNSC_EMAIL_GRUPO_OPERACIONAL: ${{ secrets.HCNSC_EMAIL_GRUPO_OPERACIONAL }}
@@ -67,7 +92,7 @@ jobs:
         run: |
           git config user.name "hcnsc-alerta-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/status.json data/history.json data/history_index.json data/climate_history.json data/email_notification_state.json data/archive/
+          git add data/status.json data/history.json data/history_index.json data/climate_history.json data/email_notification_state.json data/archive/ assets/logo-hcnsc.png
 
           if git diff --cached --quiet; then
             echo "Nenhuma alteração de dados para persistir."
