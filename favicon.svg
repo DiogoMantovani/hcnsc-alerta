@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="HCNSC Alerta">
+  <defs>
+    <linearGradient id="r1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d92f43"/>
+      <stop offset="1" stop-color="#b61f32"/>
+    </linearGradient>
+    <linearGradient id="r2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff7078"/>
+      <stop offset="1" stop-color="#e84f5d"/>
+    </linearGradient>
+    <path id="petal" fill-rule="evenodd" d="M64 61C52 56 46 47 47 36c1-12 9-23 17-31 8 9 15 20 16 31 1 11-5 20-16 25Zm0-12c4-6 6-13 4-21-6 5-9 13-4 21Z"/>
+  </defs>
+  <g>
+    <use href="#petal" fill="url(#r1)"/>
+    <use href="#petal" fill="url(#r2)" transform="rotate(45 64 64)"/>
+    <use href="#petal" fill="url(#r1)" transform="rotate(90 64 64)"/>
+    <use href="#petal" fill="url(#r2)" transform="rotate(135 64 64)"/>
+    <use href="#petal" fill="url(#r1)" transform="rotate(180 64 64)"/>
+    <use href="#petal" fill="url(#r2)" transform="rotate(225 64 64)"/>
+    <use href="#petal" fill="url(#r1)" transform="rotate(270 64 64)"/>
+    <use href="#petal" fill="url(#r2)" transform="rotate(315 64 64)"/>
+  </g>
+</svg>
