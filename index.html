@@ -1,0 +1,2410 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="hcnsc-ui-revision" content="20261008-hcnsc-001">
+<meta name="theme-color" content="#006f76">
+<script>
+window.HCNSC_UI_REVISION='20261008-hcnsc-001';
+window.checkHcnscUiRevision=async function(){
+  try{
+    const r=await fetch('index.html?ui-check='+Date.now(),{cache:'no-store'});
+    if(!r.ok) return;
+    const html=await r.text();
+    const m=html.match(/<meta name="hcnsc-ui-revision" content="([^"]+)"/i);
+    if(m && m[1] && m[1]!==window.HCNSC_UI_REVISION){
+      const u=new URL(window.location.href);
+      u.searchParams.set('ui',m[1]);
+      window.location.replace(u.toString());
+    }
+  }catch(_){}
+};
+setTimeout(window.checkHcnscUiRevision,2000);
+setInterval(window.checkHcnscUiRevision,60000);
+</script>
+<title>HCNSC Alerta | Hospital de Clínicas Nossa Senhora da Conceição</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="shortcut icon" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon.svg">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<style>
+:root{--bg:#f4f8f8;--ink:#173038;--muted:#64777e;--line:#dce7e7;--brand:#006d6f;--brand2:#00a39a;--card:#fff;--l1:#2d8a56;--l2:#c89a05;--l3:#df7419;--l4:#c63b35;--l5:#70233d}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif}.top{background:linear-gradient(135deg,#004e53,#007b78 60%,#155d68);color:#fff;padding:24px clamp(18px,4vw,56px);display:flex;justify-content:space-between;gap:20px;align-items:center}.brand{display:flex;gap:20px;align-items:center}.brand img{width:230px;max-width:32vw;object-fit:contain}.divider{width:1px;height:72px;background:#ffffff55}.hospital{font-weight:800;letter-spacing:.04em}.top h1{margin:3px 0;font-size:34px}.top p{margin:0;opacity:.9}.badge{display:inline-flex;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:800;background:#edf2f4;color:#42565f}.badge.demo{background:#fff0bd;color:#765900}.tabs{position:sticky;top:0;z-index:9;background:white;border-bottom:1px solid var(--line);padding:0 clamp(10px,4vw,56px);display:flex;overflow:auto}.tab{border:0;background:transparent;padding:14px 12px;font-weight:750;color:#586b72;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}.tab.active{color:var(--brand);border-color:var(--brand)}main{max-width:1450px;margin:auto;padding:24px clamp(14px,3vw,42px) 48px}.panel{display:none}.panel.active{display:block}.grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;margin-bottom:18px}.card,.hero{background:white;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 4px 18px rgba(20,40,60,.04)}.hero{color:white;min-height:220px;display:flex;flex-direction:column;justify-content:space-between}.l1{background:linear-gradient(135deg,#267749,#2d8a56)}.l2{background:linear-gradient(135deg,#a77f00,#d3a10a)}.l3{background:linear-gradient(135deg,#c55e0d,#e47a20)}.l4{background:linear-gradient(135deg,#9f3029,#c73e36)}.l5{background:linear-gradient(135deg,#531529,#7a233c)}.eyebrow{text-transform:uppercase;letter-spacing:.08em;font-size:11px;font-weight:800;opacity:.72}.levelrow{display:flex;gap:20px;align-items:center}.num{font-size:82px;font-weight:900;line-height:1}.levelrow h2{margin:0 0 6px;font-size:30px}.levelrow p{margin:0;line-height:1.45}.timestamps{display:flex;gap:24px;flex-wrap:wrap;font-size:13px;opacity:.9}.weather{display:flex;gap:18px;align-items:center;margin:22px 0}.temp{font-size:58px;font-weight:900;color:var(--brand)}
+.weather-card{position:relative;overflow:hidden;padding:0;background:linear-gradient(145deg,#f7fbfb,#eef7f7);border-color:#cfe2e1}
+.weather-card:before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-95px;top:-105px;background:rgba(0,109,111,.06)}
+.weather-card-inner{position:relative;z-index:1;padding:20px}
+.weather-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.weather-card-title{margin:4px 0 0;font-size:19px;line-height:1.2}
+.weather-source-badge{display:inline-flex;align-items:center;padding:7px 10px;border-radius:999px;background:#e6f3f2;color:#006d6f;border:1px solid #c2dfdc;font-size:11px;font-weight:900;white-space:nowrap}
+.weather-current{display:grid;grid-template-columns:92px 1fr;gap:16px;align-items:center;margin:12px 0 16px}
+.weather-iconbox{width:92px;height:92px;border-radius:24px;display:grid;place-items:center;background:#e3f2f1;border:1px solid #c5dddd;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+.weather-iconbox svg{width:62px;height:62px}
+.weather-temp-main{font-size:52px;line-height:.95;font-weight:900;color:#114d52;letter-spacing:-.04em}
+.weather-condition-main{font-size:18px;font-weight:850;margin-top:7px;color:#1c3e44}
+.weather-time{font-size:12px;color:var(--muted);margin-top:5px}
+.weather-chips{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 14px}
+.weather-chip{display:flex;align-items:center;gap:7px;padding:9px 10px;border:1px solid #d8e5e5;border-radius:12px;background:rgba(255,255,255,.72);font-size:12px;color:#3e565e}
+.weather-chip-icon{font-size:15px;line-height:1}
+.weather-chip strong{color:#223f46}
+.weather-note-box{display:flex;gap:9px;align-items:flex-start;border-top:1px solid #dbe8e8;padding-top:12px;color:var(--muted);font-size:12px;line-height:1.45}
+.weather-note-symbol{font-size:15px;line-height:1.25}
+.weather-theme-clear{background:linear-gradient(145deg,#fffaf0,#f7fbfb)}
+.weather-theme-clear .weather-iconbox{background:#fff2c7;border-color:#f0df9b}
+.weather-theme-cloud{background:linear-gradient(145deg,#f7f9fb,#edf3f5)}
+.weather-theme-cloud .weather-iconbox{background:#e6ecef;border-color:#d3dde2}
+.weather-theme-rain{background:linear-gradient(145deg,#f0f8fb,#e7f2f6)}
+.weather-theme-rain .weather-iconbox{background:#dceef5;border-color:#c7e1eb}
+.weather-theme-storm{background:linear-gradient(145deg,#f4f2f9,#eceaf4)}
+.weather-theme-storm .weather-iconbox{background:#e4e0f0;border-color:#d4cdea}
+.weather-theme-fog{background:linear-gradient(145deg,#f7f8f8,#eef1f1)}
+.weather-theme-fog .weather-iconbox{background:#e9eeee;border-color:#d9e0e0}.riskgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.risk{background:white;border:1px solid var(--line);border-radius:16px;padding:18px;min-height:215px;display:flex;flex-direction:column}
+.risk-title{font-size:16px;font-weight:900;color:#173038;letter-spacing:.01em;margin-bottom:14px}
+.risk-state-label{font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-weight:850;color:#7a8b91;margin-bottom:3px}
+.risk .value{font-size:23px;line-height:1.2;font-weight:900;margin:0 0 15px;color:#082d38}
+.risk-source-label{font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-weight:850;color:#7a8b91;margin-bottom:5px}
+.risk-source{margin-bottom:13px}
+.risk-observation{border-top:1px solid #edf2f2;padding-top:11px;margin-top:auto}
+.risk-observation-label{font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-weight:850;color:#7a8b91;margin-bottom:5px}
+.risk-observation-text{font-size:12px;line-height:1.45;color:var(--muted)}
+.source-health-list{display:grid;gap:0}
+.source-health-row{display:grid;grid-template-columns:minmax(180px,1fr) auto;gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid #edf2f2}
+.source-health-row:last-child{border-bottom:0}
+.source-health-name{font-weight:850}
+.connection-pill{display:inline-flex;align-items:center;gap:7px;width:max-content;padding:6px 9px;border-radius:999px;font-size:11px;font-weight:900;border:1px solid}
+.connection-pill:before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.connection-ok{color:#27794b;background:#eef8f2;border-color:#cce7d5}
+.connection-warn{color:#986f00;background:#fff8e3;border-color:#ead9a1}
+.connection-off{color:#a33832;background:#fff0ef;border-color:#e8c4c1}
+.connection-na{color:#66777d;background:#f2f5f5;border-color:#d9e1e1}
+.source-health-footer{margin-top:12px;padding-top:11px;border-top:1px solid #edf2f2;font-size:11px;line-height:1.5;color:var(--muted)}
+.dc-overview{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:16px}
+.dc-stage-main{font-size:30px;font-weight:900;color:#123d45;margin:8px 0}
+.dc-impact-main{font-size:21px;font-weight:900;color:#123d45;margin:8px 0}
+.dc-meta{font-size:12px;line-height:1.55;color:var(--muted);margin-top:8px}
+.dc-signal-box{padding:14px;border:1px solid #dce7e7;border-radius:12px;background:#f9fcfc;margin-top:10px}
+.dc-signal-title{font-size:17px;font-weight:900;color:#173b43}
+.dc-contact-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:12px}
+.dc-contact-box{border:1px solid #e0eaea;border-radius:12px;padding:12px;background:#fbfdfd}
+.dc-contact-box span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:800}
+.dc-contact-box strong{display:block;margin-top:5px;color:#153d44;font-size:17px}
+.dc-history-status{font-weight:800}
+@media(max-width:900px){.dc-overview{grid-template-columns:1fr}.dc-contact-grid{grid-template-columns:1fr}}
+.roads-overview{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-bottom:16px}
+.road-panel-card{position:relative;overflow:hidden}
+.road-panel-card h3{margin:5px 0 8px}
+.road-alert-state{font-size:25px;font-weight:900;line-height:1.2;color:#123d45;margin:8px 0}
+.road-alert-note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:8px}
+.road-api-ok{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:#edf8f2;color:#27794b;border:1px solid #cae5d3;font-size:11px;font-weight:900}
+.road-api-ok:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.road-weather-main{display:grid;grid-template-columns:72px 1fr;gap:14px;align-items:center}
+.road-weather-icon{width:72px;height:72px;border-radius:18px;display:grid;place-items:center;background:#e8f2f2;border:1px solid #d2e2e1}
+.road-weather-icon svg{width:52px;height:52px}
+.road-weather-temp{font-size:34px;font-weight:900;color:#104d52}
+.road-weather-cond{font-weight:800;margin-top:3px}
+.road-weather-meta{font-size:12px;color:var(--muted);margin-top:4px}
+.road-updates{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:16px}
+.road-update-title{font-size:18px;font-weight:900;line-height:1.3;margin:6px 0;color:#173b43}
+.road-update-text{font-size:13px;line-height:1.55;color:#425b62;margin-top:8px}
+.road-update-meta{font-size:11px;color:var(--muted);margin-top:10px}
+.road-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.road-footer-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.road-contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
+.road-contact-box{border:1px solid #e0eaea;border-radius:12px;padding:11px;background:#fbfdfd}
+.road-contact-box span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:800}
+.road-contact-box strong{display:block;margin-top:5px;color:#153d44}
+.road-alert-list{display:grid;gap:8px;margin-top:12px}
+.road-alert-item{padding:10px 11px;border-radius:11px;border:1px solid #edd5aa;background:#fff8e8;font-size:12px;line-height:1.45}
+@media(max-width:900px){.roads-overview,.road-updates,.road-footer-grid{grid-template-columns:1fr}.road-contact-grid{grid-template-columns:1fr}}
+.pluvio-table-note{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:10px 0 12px;font-size:12px;color:var(--muted)}
+.pluvio-filter-pill{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:999px;background:#eef8f2;border:1px solid #cce7d5;color:#27794b;font-size:11px;font-weight:900}
+.pluvio-filter-pill:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.bingen-history{margin-top:22px}
+.bingen-history-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.bingen-history-head h3{margin:0 0 4px}
+.bingen-current-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.bingen-current-strip .card{padding:13px}
+.bingen-current-strip strong{display:block;margin-top:4px;color:#0c6264;font-size:18px}
+@media(max-width:900px){.bingen-current-strip{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.bingen-current-strip{grid-template-columns:1fr}}
+.history-view-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.history-view-btn{border:1px solid #cbdada;background:#fff;color:#526a70;border-radius:999px;padding:9px 13px;font-size:12px;font-weight:900;cursor:pointer}
+.history-view-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.history-subpanel{display:none}.history-subpanel.active{display:block}
+.history-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:14px 0 10px}
+.history-section-head h3{margin:0}
+.history-table-note{font-size:11px;color:var(--muted);line-height:1.45;margin:8px 0 12px}
+.history-controls{display:flex;gap:8px;flex-wrap:wrap}
+.btn.active-filter{background:var(--brand);color:#fff;border-color:var(--brand)}
+.history-period{font-weight:750}
+.history-samples{display:block;font-size:11px;color:var(--muted);margin-top:3px}
+.nearest-pluvio{display:grid;grid-template-columns:1.15fr 2fr;gap:18px;align-items:center;margin-bottom:18px;background:linear-gradient(135deg,#f8fbfb,#eef7f6)}
+.nearest-pluvio-head{display:flex;align-items:flex-start;gap:12px}
+.nearest-pluvio-icon{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;background:#dff1ef;color:var(--brand);font-size:26px;flex:0 0 auto}
+.nearest-pluvio-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:850;color:var(--muted)}
+.nearest-pluvio-name{font-size:22px;font-weight:900;margin:4px 0;color:#12363e}
+.nearest-pluvio-sub{font-size:12px;color:var(--muted);line-height:1.45}
+.nearest-pluvio-values{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.rain-metric{background:#fff;border:1px solid #d9e7e6;border-radius:12px;padding:11px}
+.rain-metric span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:800}
+.rain-metric strong{display:block;margin-top:5px;font-size:18px;color:#0d6264}
+@media(max-width:900px){.nearest-pluvio{grid-template-columns:1fr}.nearest-pluvio-values{grid-template-columns:repeat(2,1fr)}}.small{font-size:12px;color:var(--muted)}.section{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:4px 0 16px}.section h2,.section h3{margin:0}.btn{border:1px solid #afc5c6;background:white;color:var(--brand);border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.btn.primary{background:var(--brand);color:white;border-color:var(--brand)}.actions{display:grid;gap:8px}.action{padding:10px 0;border-bottom:1px solid #edf2f2}.forecast{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.forecast .card h4{margin:0 0 10px}.forecast strong{font-size:22px;color:var(--brand)}
+.climate-hero{display:grid;grid-template-columns:1fr;gap:18px;margin-bottom:22px}
+.climate-current{position:relative;overflow:hidden;background:linear-gradient(145deg,#f6fbfb,#eaf5f4);border:1px solid #cfe2e1;border-radius:18px;padding:22px}
+.climate-current:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-125px;top:-125px;background:rgba(0,109,111,.06)}
+.climate-current-main{position:relative;z-index:1;display:grid;grid-template-columns:110px 1fr;gap:20px;align-items:center}
+.climate-big-icon{width:110px;height:110px;border-radius:28px;display:grid;place-items:center;background:rgba(255,255,255,.7);border:1px solid #d4e5e4}
+.climate-big-icon svg{width:78px;height:78px}
+.climate-big-temp{font-size:64px;font-weight:900;line-height:.9;letter-spacing:-.05em;color:#104d52}
+.climate-big-condition{font-size:21px;font-weight:850;margin-top:9px}
+.climate-big-meta{font-size:12px;color:var(--muted);margin-top:6px}
+.climate-current .weather-chips{position:relative;z-index:1;margin-top:18px}
+.climate-source-card{display:flex;flex-direction:column;justify-content:space-between}
+.climate-source-card h3{margin:4px 0 10px}
+.climate-source-row{padding:11px 0;border-bottom:1px solid #edf2f2}
+.climate-source-row:last-child{border-bottom:0}
+.forecast-card{position:relative;overflow:hidden}
+.forecast-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.forecast-icon{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;background:#eef6f5;border:1px solid #d9e8e6}
+.forecast-icon svg{width:39px;height:39px}
+.forecast-summary{line-height:1.45;margin-top:10px}
+.climate-history-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin:26px 0 14px}
+.climate-period-legend{display:flex;gap:8px;flex-wrap:wrap}
+.climate-period-legend span{font-size:11px;padding:6px 9px;border-radius:999px;background:#edf4f4;color:#52686e;font-weight:800}
+.climate-history-grid{display:grid;gap:14px}
+.climate-day{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}
+.climate-day-title{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}
+.climate-day-title strong{font-size:16px}
+.climate-periods{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.climate-period-card{border:1px solid #dce8e8;border-radius:13px;padding:13px;background:#fbfdfd;min-height:145px}
+.climate-period-card.empty{display:grid;place-items:center;color:#8a999e;background:#fafcfc;border-style:dashed}
+.climate-period-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.climate-period-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:#edf5f4}
+.climate-period-icon svg{width:32px;height:32px}
+.climate-period-name{font-size:11px;text-transform:uppercase;letter-spacing:.07em;font-weight:900;color:var(--muted)}
+.climate-period-temp{font-size:21px;font-weight:900;color:#164e54;margin:6px 0}
+.climate-period-condition{font-size:12px;font-weight:750;line-height:1.35}
+.climate-period-detail{font-size:11px;color:var(--muted);line-height:1.45;margin-top:7px}
+@media(max-width:1100px){.climate-periods{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.climate-hero{grid-template-columns:1fr}.climate-periods{grid-template-columns:1fr}.climate-current-main{grid-template-columns:86px 1fr}.climate-big-icon{width:86px;height:86px}.climate-big-temp{font-size:52px}}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.summary .card strong{display:block;font-size:24px;color:var(--brand);margin-top:6px}.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:top}th{font-size:11px;text-transform:uppercase;color:var(--muted)}.services{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.service .status{font-size:20px;font-weight:900;margin:8px 0}.service a{color:var(--brand);font-weight:800}
+.checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.checkgrid ul{padding-left:18px;line-height:1.55}.callout{background:#e5f3f2;border:1px solid #b9dcd9;padding:14px 16px;border-radius:12px;line-height:1.5;margin-bottom:16px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}.controls label{display:grid;gap:6px;font-size:12px;font-weight:800;color:var(--muted)}select{padding:10px;border:1px solid #bdcdd0;border-radius:9px;background:white}.plan h3{margin-top:26px}.plan p,.plan li{line-height:1.6}.maplinks{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+.map-shell{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 4px 18px rgba(20,40,60,.04)}
+.map-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);background:#fbfdfd;flex-wrap:wrap}
+.map-layer-group{display:flex;gap:7px;flex-wrap:wrap}
+.map-layer-btn{border:1px solid #c9dada;background:#fff;color:#486066;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:850;cursor:pointer}
+.map-layer-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.map-layer-btn.support.active{background:#e5f3f2;border-color:#b9dcd9;color:#006d6f}
+.map-status{font-size:12px;color:var(--muted);font-weight:750}
+.map-canvas-wrap{position:relative;isolation:isolate}
+#weatherMap{height:620px;width:100%;background:#e8f0ef}
+.leaflet-container{font-family:Inter,Segoe UI,Arial,sans-serif}
+.hcnsc-map-icon{background:transparent;border:0}
+.hcnsc-pin{width:44px;height:44px;border-radius:50% 50% 50% 12px;transform:rotate(-45deg);background:#a52f35;border:3px solid #fff;box-shadow:0 3px 12px rgba(0,0,0,.28);display:grid;place-items:center}
+.hcnsc-pin span{transform:rotate(45deg);font-size:26px;line-height:1;color:#fff;font-weight:900}
+.wind-map-icon{background:transparent;border:0}
+.wind-arrow{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid #bcd0d2;box-shadow:0 2px 7px rgba(0,0,0,.15);font-size:21px;color:#0a6970;font-weight:900}
+.map-legend{position:absolute;z-index:500;left:12px;bottom:12px;max-width:285px;background:rgba(255,255,255,.95);border:1px solid #d7e3e3;border-radius:12px;padding:10px 12px;box-shadow:0 3px 12px rgba(0,0,0,.12);font-size:11px;line-height:1.4;color:#4b6168}
+.map-legend strong{display:block;color:#173038;margin-bottom:4px;font-size:12px}
+.legend-scale{display:flex;height:8px;border-radius:999px;overflow:hidden;margin:7px 0 4px}
+.legend-scale span{flex:1}
+.map-legend-section+.map-legend-section{border-top:1px solid #e1e9e9;margin-top:9px;padding-top:9px}
+.map-legend-title{font-size:10px;text-transform:uppercase;letter-spacing:.07em;font-weight:900;color:#718288;margin-bottom:6px}
+.map-symbol-list{display:grid;gap:5px}
+.map-symbol-item{display:flex;align-items:center;gap:7px}
+.map-symbol{width:14px;height:14px;display:inline-grid;place-items:center;flex:0 0 auto}
+.map-symbol.hospital{border-radius:50%;background:#a52f35;color:#fff;font-size:11px;font-weight:900;line-height:1}
+.map-symbol.station-ok{border-radius:50%;background:#17845b;border:2px solid #fff;box-shadow:0 0 0 1px #bfcfcf}
+.map-symbol.station-stale{border-radius:50%;background:#7c8c91;border:2px solid #fff;box-shadow:0 0 0 1px #bfcfcf}
+.map-symbol.radius{width:17px;height:10px;border:2px dashed #006d6f;border-radius:50%;background:rgba(0,163,154,.08)}
+.map-symbol.wind{font-size:16px;color:#0a6970;font-weight:900}
+.precip-scale{display:flex;height:9px;border-radius:999px;overflow:hidden;margin:7px 0 3px;background:linear-gradient(90deg,#d9edf3,#84c9d8,#4aa5c3,#3478b5,#704ca6)}
+.map-legend-labels{display:flex;justify-content:space-between;font-size:9px;color:#829196}
+.map-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.map-summary .card strong{display:block;font-size:18px;color:#0c6264;margin-top:5px}
+.map-source-note{margin-top:12px;font-size:11px;line-height:1.5;color:var(--muted)}
+@media(max-width:900px){#weatherMap{height:520px}.map-summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){#weatherMap{height:460px}.map-summary{grid-template-columns:1fr}.map-legend{max-width:230px}}footer{text-align:center;background:white;border-top:1px solid var(--line);padding:24px;color:var(--muted);font-size:13px}@media(max-width:1100px){.riskgrid,.services,.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.grid2{grid-template-columns:1fr}.forecast,.checkgrid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.top{flex-direction:column;align-items:flex-start}.divider{display:none}.brand{flex-direction:column;align-items:flex-start;gap:8px}.brand img{max-width:210px}}@media(max-width:560px){.riskgrid,.services,.summary,.controls{grid-template-columns:1fr}.source-health-row{grid-template-columns:1fr;gap:6px}.num{font-size:64px}.top h1{font-size:30px}}
+
+/* Identidade visual institucional inspirada no site oficial do Hospital de Clínicas Nossa Senhora da Conceição */
+:root{
+  --bg:#f5f7f7;
+  --ink:#26383d;
+  --muted:#6c7b80;
+  --line:#dbe4e4;
+  --brand:#006f76;
+  --brand2:#00a69c;
+  --card:#ffffff;
+}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Segoe UI",Arial,Helvetica,sans-serif;
+}
+.top{
+  position:relative;
+  background:#fff;
+  color:var(--ink);
+  padding:20px clamp(18px,4vw,56px);
+  border-top:5px solid var(--brand2);
+  border-bottom:1px solid #dfe7e7;
+  box-shadow:0 1px 5px rgba(26,66,70,.06);
+}
+.brand{
+  gap:26px;
+  min-width:0;
+}
+.brand-logo-link{
+  display:flex;
+  align-items:center;
+  flex:0 1 auto;
+  text-decoration:none;
+}
+.brand img.brand-logo{
+  width:430px;
+  max-width:44vw;
+  height:auto;
+  display:block;
+  object-fit:contain;
+}
+.divider{
+  width:1px;
+  height:68px;
+  background:#d8e3e3;
+  flex:0 0 auto;
+}
+.system-title{
+  min-width:260px;
+}
+.system-kicker{
+  color:var(--brand2);
+  text-transform:uppercase;
+  letter-spacing:.115em;
+  font-size:10px;
+  line-height:1.3;
+  font-weight:800;
+}
+.top h1{
+  margin:4px 0 3px;
+  color:#075f68;
+  font-size:29px;
+  line-height:1.05;
+  font-weight:700;
+  letter-spacing:-.02em;
+}
+.top p{
+  margin:0;
+  color:#687a7f;
+  opacity:1;
+  font-size:13px;
+}
+.top > .badge{
+  background:#eef8f7;
+  color:#08736f;
+  border:1px solid #c4e3df;
+  border-radius:3px;
+  padding:8px 11px;
+  letter-spacing:.035em;
+}
+.tabs{
+  background:#fff;
+  border-bottom:1px solid #d9e3e3;
+  padding:0 clamp(10px,4vw,56px);
+  box-shadow:0 2px 5px rgba(28,63,68,.035);
+}
+.tab{
+  padding:15px 14px 13px;
+  color:#566a70;
+  font-size:13px;
+  font-weight:650;
+  border-bottom-width:3px;
+  transition:background .15s ease,color .15s ease,border-color .15s ease;
+}
+.tab:hover{
+  color:var(--brand);
+  background:#f4f9f8;
+}
+.tab.active{
+  color:var(--brand);
+  border-color:var(--brand2);
+  background:#fbfdfd;
+}
+main{
+  max-width:1400px;
+  padding-top:28px;
+}
+.card,.hero,.risk,.climate-day{
+  border-color:#dce5e5;
+  border-radius:7px;
+  box-shadow:0 2px 8px rgba(20,55,60,.045);
+}
+.card,.risk,.climate-day{
+  background:#fff;
+}
+.hero{
+  border-radius:7px;
+}
+.section{
+  margin-top:2px;
+}
+.section h2,.section h3{
+  color:#075f68;
+  font-weight:700;
+  letter-spacing:-.01em;
+}
+.section h2:after,.section h3:after{
+  content:"";
+  display:block;
+  width:38px;
+  height:3px;
+  margin-top:8px;
+  background:var(--brand2);
+}
+.btn{
+  border-radius:4px;
+  border-color:#b7cece;
+  font-weight:700;
+}
+.btn.primary{
+  background:var(--brand);
+  border-color:var(--brand);
+}
+.badge{
+  border-radius:3px;
+}
+.callout{
+  border-radius:5px;
+  background:#edf8f7;
+  border-color:#c8e4e1;
+}
+.weather-card,
+.climate-current,
+.climate-day,
+.climate-period-card,
+.nearest-pluvio,
+.rain-metric,
+.map-shell,
+.map-toolbar,
+.map-layer-btn,
+.road-contact-box,
+.road-alert-item,
+.history-view-btn,
+.weather-iconbox,
+.climate-big-icon,
+.forecast-icon,
+.road-weather-icon{
+  border-radius:6px;
+}
+.weather-card,
+.climate-current,
+.nearest-pluvio{
+  background:linear-gradient(145deg,#fbfdfd,#f1f8f7);
+}
+.weather-source-badge,
+.connection-pill,
+.pluvio-filter-pill,
+.climate-period-legend span{
+  border-radius:3px;
+}
+.risk-title,
+.road-update-title,
+.weather-card-title{
+  color:#15444a;
+}
+.temp,
+.forecast strong,
+.summary .card strong,
+.map-summary .card strong,
+.rain-metric strong,
+.bingen-current-strip strong{
+  color:#087077;
+}
+table th{
+  color:#64787d;
+  background:#f8fafa;
+}
+footer{
+  background:#fff;
+  border-top:3px solid var(--brand2);
+  color:#6c7b80;
+}
+@media(max-width:1050px){
+  .brand img.brand-logo{width:355px;max-width:42vw}
+  .system-title{min-width:220px}
+  .top h1{font-size:26px}
+}
+@media(max-width:900px){
+  .top{
+    padding-top:18px;
+    padding-bottom:18px;
+  }
+  .brand{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:12px;
+    width:100%;
+  }
+  .brand img.brand-logo{
+    width:360px;
+    max-width:min(88vw,360px);
+  }
+  .divider{display:none}
+  .system-title{min-width:0}
+  .top > .badge{margin-top:3px}
+}
+@media(max-width:560px){
+  .brand img.brand-logo{
+    width:310px;
+    max-width:88vw;
+  }
+  .top h1{font-size:25px}
+  .top p{font-size:12px;line-height:1.4}
+  .tabs{padding-left:6px;padding-right:6px}
+  .tab{padding-left:11px;padding-right:11px}
+}
+
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <a class="brand-logo-link" href="https://redesantacatarina.org.br/hospital/nsconceicao-tresrios/" target="_blank" rel="noopener" aria-label="Abrir site oficial do Hospital de Clínicas Nossa Senhora da Conceição">
+      <img class="brand-logo" src="https://redesantacatarina.org.br/Style%20Library/ResponsiveServer/Bootstrap3/assets/images/Logo_hcnsc_rio.png" alt="Hospital de Clínicas Nossa Senhora da Conceição - Rede Santa Catarina">
+    </a>
+    <div class="divider"></div>
+    <div class="system-title">
+      <div class="system-kicker">Monitoramento preditivo hospitalar</div>
+      <h1>HCNSC Alerta</h1>
+      <p>Riscos externos e continuidade hospitalar · Três Rios/RJ</p>
+    </div>
+  </div>
+  <span id="systemMode" class="badge">CEMADEN-RJ AUTOMÁTICO</span>
+</header>
+
+<nav class="tabs">
+<button class="tab active" data-target="dashboard">Dashboard</button>
+<button class="tab" data-target="clima">Clima & Previsão</button>
+<button class="tab" data-target="mapa">Mapa</button>
+<button class="tab" data-target="pluvio">Pluviômetros</button>
+<button class="tab" data-target="defesa">Defesa Civil</button>
+<button class="tab" data-target="servicos">Rodovias</button>
+<button class="tab" data-target="historico">Histórico</button>
+<button class="tab" data-target="plano">Plano</button>
+<button class="tab" data-target="avisos">Avisos</button>
+</nav>
+
+<main>
+<section id="dashboard" class="panel active">
+<div class="grid2">
+<article id="hero" class="hero l1">
+<div class="eyebrow">Nível HCNSC atual</div>
+<div class="levelrow"><div id="levelNum" class="num">1</div><div><h2 id="levelLabel">Vigilância</h2><p id="levelReason">Carregando monitoramento oficial CEMADEN-RJ…</p></div></div>
+<div class="timestamps"><span>Última atualização: <strong id="updatedAt">—</strong></span><span>Próxima coleta planejada: <strong id="nextAt">—</strong></span></div>
+</article>
+<article id="weatherCard" class="card weather-card weather-theme-cloud">
+<div class="weather-card-inner">
+  <div class="weather-card-top">
+    <div>
+      <div id="weatherEyebrow" class="eyebrow">Condição meteorológica atual</div>
+      <h3 id="weatherTitle" class="weather-card-title">Próximo ao Hospital de Clínicas Nossa Senhora da Conceição</h3>
+    </div>
+    <span id="weatherSourceBadge" class="weather-source-badge">Carregando</span>
+  </div>
+  <div class="weather-current">
+    <div id="weatherIconBox" class="weather-iconbox" aria-hidden="true"></div>
+    <div>
+      <div id="weatherTemp" class="weather-temp-main">—°</div>
+      <div id="weatherCondition" class="weather-condition-main">Carregando condição atual…</div>
+      <div id="weatherTimestamp" class="weather-time">—</div>
+    </div>
+  </div>
+  <div id="weatherMetaChips" class="weather-chips"></div>
+  <div class="weather-note-box">
+    <span class="weather-note-symbol">ⓘ</span>
+    <span id="weatherNote">Referência complementar para situação atual. Os níveis HCNSC continuam baseados nas fontes oficiais integradas.</span>
+  </div>
+  <span id="weatherSummary" style="display:none"></span>
+</div>
+</article>
+</div>
+
+<div class="riskgrid">
+<article class="risk">
+  <div class="risk-title">Deslizamento</div>
+  <div class="risk-state-label">Estado atual</div>
+  <div id="geoCard" class="value">Carregando…</div>
+  <div class="risk-source-label">Fonte</div>
+  <div class="risk-source"><span id="geoBadge" class="badge">CEMADEN-RJ</span></div>
+  <div class="risk-observation"><div class="risk-observation-label">Observação</div><div id="geoMeta" class="risk-observation-text">Carregando informação…</div></div>
+</article>
+<article class="risk">
+  <div class="risk-title">Risco hidrológico</div>
+  <div class="risk-state-label">Estado atual</div>
+  <div id="hidroCard" class="value">Carregando…</div>
+  <div class="risk-source-label">Fonte</div>
+  <div class="risk-source"><span id="hidroBadge" class="badge">CEMADEN-RJ</span></div>
+  <div class="risk-observation"><div class="risk-observation-label">Observação</div><div id="hidroMeta" class="risk-observation-text">Carregando informação…</div></div>
+</article>
+<article class="risk">
+  <div class="risk-title">Avisos meteorológicos</div>
+  <div class="risk-state-label">Estado atual</div>
+  <div id="inmetCard" class="value">Carregando…</div>
+  <div class="risk-source-label">Fonte</div>
+  <div class="risk-source"><span id="inmetBadge" class="badge">INMET</span></div>
+  <div class="risk-observation"><div class="risk-observation-label">Observação</div><div id="inmetMeta" class="risk-observation-text">Carregando informação…</div></div>
+</article>
+<article class="risk">
+  <div class="risk-title">Defesa Civil de Três Rios</div>
+  <div class="risk-state-label">Estado atual</div>
+  <div id="defesaCard" class="value">Carregando…</div>
+  <div class="risk-source-label">Fonte</div>
+  <div class="risk-source"><span id="defesaBadge" class="badge">DEFESA CIVIL</span></div>
+  <div class="risk-observation"><div class="risk-observation-label">Observação</div><div id="defesaMeta" class="risk-observation-text">Carregando informação…</div></div>
+</article>
+</div>
+<article class="card nearest-pluvio">
+  <div class="nearest-pluvio-head">
+    <div class="nearest-pluvio-icon">◉</div>
+    <div>
+      <div class="nearest-pluvio-title">Pluviômetro CEMADEN de referência do HCNSC</div>
+      <div id="nearestPluvioName" class="nearest-pluvio-name">Carregando…</div>
+      <div class="nearest-pluvio-sub"><span id="nearestPluvioDistance">—</span> · <span id="nearestPluvioStatus">Verificando leitura</span><br><span id="nearestPluvioUpdated">—</span></div>
+    </div>
+  </div>
+  <div class="nearest-pluvio-values">
+    <div class="rain-metric"><span>Chuva 1 h</span><strong id="nearestPluvio1h">—</strong></div>
+    <div class="rain-metric"><span>Chuva 6 h</span><strong id="nearestPluvio6h">—</strong></div>
+    <div class="rain-metric"><span>Chuva 12 h</span><strong id="nearestPluvio12h">—</strong></div>
+    <div class="rain-metric"><span>Chuva 24 h</span><strong id="nearestPluvio24h">—</strong></div>
+  </div>
+</article>
+<div class="callout"><strong>Padrão HCNSC de atualidade:</strong> informações de risco com mais de 24 horas saem do estado atual e permanecem no histórico. Quando não houver atualização recente, o painel informa isso sem interpretar como ausência de risco.</div>
+
+<div class="grid2">
+<article class="card"><div class="section"><div><h3>Ações prioritárias</h3><div id="actionContextNote" class="small">Prioridades definidas pelo nível HCNSC e pelo tipo de ameaça identificado.</div></div><span id="actionContextBadge" class="badge">Nível atual</span></div><div id="actions" class="actions"></div></article>
+<article class="card">
+<div class="section"><h3>Conectividade das fontes</h3></div>
+<div class="source-health-list">
+  <div class="source-health-row"><div class="source-health-name">CEMADEN-RJ</div><span id="cemadenConnection" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">CEMADEN · Pluviômetros</div><span id="pluvioConnection" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">INMET</div><span id="inmetConnection" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">Defesa Civil de Três Rios</div><span id="defesaConnection" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">Clima atual complementar</div><span id="weatherRefConnection" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">ELOvias + K-Infra Rodovia do Aço · BR-040/RJ + BR-393/RJ</div><span id="roadsConnection" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">SAAETRI</div><span id="waterConnection" class="connection-pill connection-na">Verificando</span></div>
+  <div id="waterNotice" class="small" style="padding:0 4px 8px">Aguardando consulta ao canal oficial de abastecimento.</div>
+  <div class="source-health-row"><div class="source-health-name">Enel Distribuição Rio</div><span id="energyConnection" class="connection-pill connection-na">Verificando</span></div>
+</div>
+<div class="source-health-footer">Mostra se o HCNSC Alerta conseguiu acessar cada canal. Conectividade ativa não significa ausência de risco.</div>
+</article>
+</div>
+</section>
+
+<section id="clima" class="panel">
+<div class="section">
+  <div><h2>Clima & Previsão</h2><div class="small">Condição atual próxima ao HCNSC + previsão oficial INMET.</div></div>
+  <span id="climateMode" class="badge">MONITORAMENTO AUTOMÁTICO</span>
+</div>
+
+<div class="climate-hero">
+  <article id="climateCurrentCard" class="climate-current weather-theme-cloud">
+    <div class="climate-current-main">
+      <div id="climateCurrentIcon" class="climate-big-icon"></div>
+      <div>
+        <div class="eyebrow">Condição atual próxima ao HCNSC</div>
+        <div id="climateCurrentTemp" class="climate-big-temp">—°</div>
+        <div id="climateCurrentCondition" class="climate-big-condition">Carregando…</div>
+        <div id="climateCurrentTime" class="climate-big-meta">—</div>
+      </div>
+    </div>
+    <div id="climateCurrentChips" class="weather-chips"></div>
+  </article>
+
+</div>
+
+<div class="section"><div><h3>Previsão</h3><div class="small">Horizonte de 24, 48 e 72 horas para preparação operacional.</div></div><span class="badge">INMET</span></div>
+<div class="forecast">
+  <article class="card forecast-card">
+    <div class="forecast-head"><div><h4 id="forecastTitle0">Próximas 24 h</h4><strong id="forecastTemp0">Carregando…</strong></div><div id="forecastIcon0" class="forecast-icon"></div></div>
+    <p id="forecastText0" class="small forecast-summary">Previsão oficial INMET.</p>
+  </article>
+  <article class="card forecast-card">
+    <div class="forecast-head"><div><h4 id="forecastTitle1">Próximas 48 h</h4><strong id="forecastTemp1">Carregando…</strong></div><div id="forecastIcon1" class="forecast-icon"></div></div>
+    <p id="forecastText1" class="small forecast-summary">Previsão oficial INMET.</p>
+  </article>
+  <article class="card forecast-card">
+    <div class="forecast-head"><div><h4 id="forecastTitle2">Próximas 72 h</h4><strong id="forecastTemp2">Carregando…</strong></div><div id="forecastIcon2" class="forecast-icon"></div></div>
+    <p id="forecastText2" class="small forecast-summary">Previsão oficial INMET.</p>
+  </article>
+</div>
+
+<div class="climate-history-head">
+  <div><h3 style="margin:0 0 4px">Histórico climático</h3><div class="small">Registro resumido por período do dia. O histórico começa a partir da ativação desta função.</div></div>
+  <div class="climate-period-legend"><span>Madrugada · 00–05:59</span><span>Manhã · 06–11:59</span><span>Tarde · 12–17:59</span><span>Noite · 18–23:59</span></div>
+</div>
+<div id="climateHistoryGrid" class="climate-history-grid">
+  <div class="card">Carregando histórico climático…</div>
+</div>
+</section>
+
+<section id="mapa" class="panel">
+<div class="section">
+  <div><h2>Mapa Meteorológico Operacional</h2><div class="small">Três Rios/RJ · Hospital de Clínicas Nossa Senhora da Conceição como referência central.</div></div>
+  <span id="mapModeBadge" class="badge">RADAR + CEMADEN</span>
+</div>
+
+<div class="map-shell">
+  <div class="map-toolbar">
+    <div class="map-layer-group" aria-label="Camadas meteorológicas">
+      <button class="map-layer-btn active" data-map-mode="precip">Precipitação</button>
+      <button class="map-layer-btn" data-map-mode="temperature">Temperatura</button>
+      <button class="map-layer-btn" data-map-mode="cloud">Nebulosidade</button>
+      <button class="map-layer-btn" data-map-mode="wind">Vento</button>
+    </div>
+    <div class="map-layer-group">
+      <button id="mapStationsToggle" class="map-layer-btn support active">Pluviômetros</button>
+      <button id="mapRadiusToggle" class="map-layer-btn support active">Raio 5 km</button>
+    </div>
+    <div id="mapUpdated" class="map-status">Aguardando dados do mapa…</div>
+  </div>
+  <div class="map-canvas-wrap">
+    <div id="weatherMap"></div>
+    <div id="mapLegend" class="map-legend">
+  <div class="map-legend-section"><strong>Legenda do mapa</strong><span>Carregando camada meteorológica…</span></div>
+</div>
+  </div>
+</div>
+
+<div class="map-summary">
+  <article class="card"><span class="small">Radar de precipitação</span><strong id="mapRadarStatus">—</strong><span id="mapRadarTime" class="small"></span></article>
+  <article class="card"><span class="small">Pluviômetro mais próximo</span><strong id="mapNearestStation">—</strong><span id="mapNearestDistance" class="small"></span></article>
+  <article class="card"><span class="small">Chuva próxima ao HCNSC</span><strong id="mapNearestRain">—</strong><span class="small">acumulados CEMADEN</span></article>
+  <article class="card"><span class="small">Condição no HCNSC</span><strong id="mapCurrentWeather">—</strong><span id="mapCurrentWeatherTime" class="small"></span></article>
+</div>
+
+<div class="map-source-note">
+  <strong>Fontes:</strong> base cartográfica © OpenStreetMap contributors · radar RainViewer · temperatura, nebulosidade e vento Open‑Meteo · pluviômetros CEMADEN.
+  As camadas meteorológicas complementares apoiam a visualização operacional e não alteram sozinhas o nível HCNSC.
+</div>
+</section>
+
+<section id="pluvio" class="panel">
+<div class="section">
+  <div><h2>Pluviômetros de Três Rios</h2><div class="small">Estações CEMADEN com leitura recente. A ordenação por proximidade será refinada com o cadastro geográfico de Três Rios.</div></div>
+  <span class="badge">CEMADEN AUTOMÁTICO</span>
+</div>
+
+<div class="summary">
+  <article class="card"><span class="small">Estações ativas exibidas</span><strong id="pluvioCount">—</strong></article>
+  <article class="card"><span class="small">Ocultas sem leitura válida recente</span><strong id="pluvioHidden">—</strong></article>
+  <article class="card"><span class="small">Maior 1 h</span><strong id="pluvioMax1">— mm</strong><span id="pluvioMax1Station" class="small"></span></article>
+  <article class="card"><span class="small">Maior 24 h</span><strong id="pluvioMax24">— mm</strong><span id="pluvioMax24Station" class="small"></span></article>
+</div>
+
+<div class="pluvio-table-note">
+  <span>Estações sem comunicação recente ou com horário inconsistente ficam ocultas e reaparecem automaticamente quando voltarem a transmitir dados válidos.</span>
+  <span class="pluvio-filter-pill">Filtro automático ativo</span>
+</div>
+
+<div class="card table"><table>
+  <thead><tr><th>Estação</th><th>Distância do HCNSC</th><th>Última leitura</th><th>1 h</th><th>6 h</th><th>12 h</th><th>24 h</th><th>48 h</th><th>72 h</th><th>96 h</th></tr></thead>
+  <tbody id="pluvioBody"><tr><td colspan="10">Carregando pluviômetros CEMADEN…</td></tr></tbody>
+</table></div>
+
+<div class="bingen-history">
+  <div class="bingen-history-head">
+    <div><h3>Histórico · Estação de referência</h3><div class="small">Estação de referência do HCNSC · 1 registro por dia · retenção de 90 dias.</div></div>
+    <span id="bingenHistoryStatus" class="badge">AGUARDANDO DADOS</span>
+  </div>
+
+  <div class="bingen-current-strip">
+    <article class="card"><span class="small">Última leitura</span><strong id="bingenHistoryLast">—</strong></article>
+    <article class="card"><span class="small">1 h</span><strong id="bingenHistory1h">—</strong></article>
+    <article class="card"><span class="small">24 h</span><strong id="bingenHistory24h">—</strong></article>
+    <article class="card"><span class="small">Distância do HCNSC</span><strong id="bingenHistoryDistance">—</strong></article>
+  </div>
+
+  <div class="card table"><table>
+    <thead><tr><th>Data</th><th>Última leitura do dia</th><th>1 h</th><th>3 h</th><th>6 h</th><th>12 h</th><th>24 h</th><th>48 h</th><th>72 h</th><th>96 h</th></tr></thead>
+    <tbody id="bingenHistoryBody"><tr><td colspan="10">O histórico começará a ser preenchido a partir da ativação deste recurso.</td></tr></tbody>
+  </table></div>
+</div>
+</section>
+
+<section id="defesa" class="panel">
+<div class="section">
+  <div><h2>Defesa Civil de Três Rios</h2><div class="small">Fonte oficial municipal · estágio operacional, sinais de mobilização e publicações relevantes para o HCNSC.</div></div>
+  <span class="badge">FONTE OFICIAL MUNICIPAL</span>
+</div>
+
+<div class="dc-overview">
+  <article class="card">
+    <div class="eyebrow">Situação oficial</div>
+    <div id="dcStage" class="dc-stage-main">Carregando…</div>
+    <div><span id="dcSourceStatus" class="connection-pill connection-na">Verificando</span></div>
+    <div id="dcBasis" class="dc-meta">Aguardando informação oficial.</div>
+    <div id="dcOfficialUpdated" class="dc-meta">—</div>
+  </article>
+
+  <article class="card">
+    <div class="eyebrow">Impacto no Nível HCNSC</div>
+    <div id="dcHcnscImpact" class="dc-impact-main">Calculando…</div>
+    <div id="dcHcnscImpactDetail" class="dc-meta">A Defesa Civil somente influencia o nível quando existe estágio ou sinal operacional oficial recente.</div>
+  </article>
+</div>
+
+<div class="grid2">
+  <article class="card">
+    <div class="eyebrow">Sinal operacional recente</div>
+    <div class="dc-signal-box">
+      <div id="dcSignalTitle" class="dc-signal-title">Nenhum sinal confirmado</div>
+      <div id="dcSignalMeta" class="dc-meta">Sirenes, alertas de risco com mobilização e abertura de pontos de apoio são acompanhados.</div>
+      <div class="road-actions"><a id="dcSignalLink" class="btn" target="_blank" rel="noopener" style="display:none">Abrir publicação</a></div>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="eyebrow">Última publicação monitorada</div>
+    <div id="dcLatestTitle" class="road-update-title">Carregando…</div>
+    <div id="dcLatestDate" class="road-update-meta">—</div>
+    <div class="road-actions"><a id="dcLatestLink" class="btn" target="_blank" rel="noopener" style="display:none">Abrir publicação oficial</a></div>
+    <div class="source-health-footer">Publicação comum é exibida para contexto, mas não eleva automaticamente o Nível HCNSC.</div>
+  </article>
+</div>
+
+<div class="grid2">
+  <article class="card">
+    <div class="eyebrow">Canais oficiais</div>
+    <div class="dc-contact-grid">
+      <div class="dc-contact-box"><span>Emergência</span><strong id="dcEmergency">199</strong></div>
+      <div class="dc-contact-box"><span>Alertas por SMS</span><strong id="dcSms">40199</strong></div>
+      <div class="dc-contact-box"><span>Atendimento</span><strong id="dcPhone">(21) 2742-3352</strong></div>
+      <div class="dc-contact-box"><span>Ligação gratuita</span><strong id="dcTollFree">0800 202 1066</strong></div>
+    </div>
+    <div class="road-actions">
+      <a id="dcHomeLink" class="btn" target="_blank" rel="noopener">Portal Defesa Civil</a>
+      <a id="dcBulletinLink" class="btn" target="_blank" rel="noopener">Boletins</a>
+      <a id="dcWhatsappLink" class="btn" target="_blank" rel="noopener">Canal oficial</a>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="eyebrow">Critério usado pelo HCNSC Alerta</div>
+    <div class="actions">
+      <div class="action">• Estágio operacional explícito: considerado por até <strong>48 h</strong>.</div>
+      <div class="action">• Sirene, mobilização de risco ou abertura de ponto de apoio: considerado por até <strong>12 h</strong>.</div>
+      <div class="action">• Informação antiga ou fonte indisponível não provoca nova escalada.</div>
+      <div class="action">• Notícia comum permanece informativa e não funciona como gatilho automático.</div>
+    </div>
+  </article>
+</div>
+
+<article class="card" style="margin-bottom:16px">
+  <div class="section">
+    <div><h3>Rotas oficiais de coleta</h3><div class="small">As rotas são consultadas em paralelo. A falha de uma página não interrompe as demais.</div></div>
+    <span id="dcRouteSummary" class="badge">Verificando</span>
+  </div>
+  <div id="dcRouteStatus" class="source-health-list">
+    <div class="source-health-row"><div class="source-health-name">Portal Defesa Civil</div><span class="connection-pill connection-na">Verificando</span></div>
+    <div class="source-health-row"><div class="source-health-name">Notícias · Defesa Civil</div><span class="connection-pill connection-na">Verificando</span></div>
+  </div>
+  <div class="source-health-row" style="margin-top:8px"><div class="source-health-name">Cache secundário</div><span id="dcCacheStatus" class="connection-pill connection-na">Verificando</span></div>
+  <div id="dcCacheMeta" class="source-health-footer">O cache é apenas informativo e nunca eleva o Nível HCNSC.</div>
+</article>
+
+<article class="card">
+  <div class="section">
+    <div><h3>Histórico da Defesa Civil</h3><div class="small">Registra somente mudanças de estágio, sinal operacional ou estado de comunicação.</div></div>
+    <span id="dcHistoryCount" class="badge">0 mudanças</span>
+  </div>
+  <div class="table"><table>
+    <thead><tr><th>Período</th><th>Comunicação</th><th>Estágio / sinal</th><th>Nível associado</th><th>Atualização oficial</th><th>Impacto</th></tr></thead>
+    <tbody id="dcHistoryBody"><tr><td colspan="6">Carregando histórico da Defesa Civil…</td></tr></tbody>
+  </table></div>
+</article>
+
+<div class="callout" style="margin-top:16px"><strong>Importante:</strong> o portal municipal pode bloquear acessos automatizados do GitHub Actions. Quando isso ocorre, o HCNSC Alerta identifica a indisponibilidade e usa cache somente para contexto. Cache secundário nunca eleva o Nível HCNSC. Fonte indisponível ≠ ausência de risco.</div>
+</section>
+
+<section id="servicos" class="panel">
+<div class="section">
+  <div><h2>Rodovias</h2><div class="small">BR‑116/RJ · Acessos a Três Rios · dados consultados nos canais oficiais da ELOvias + K-Infra Rodovia do Aço.</div></div>
+  <span class="badge">CANAL OFICIAL ECOVIAS RIO MINAS</span>
+</div>
+
+<div class="roads-overview">
+  <article class="card road-panel-card">
+    <div class="eyebrow">Situação operacional da Serra</div>
+    <div id="roadsAlertState" class="road-alert-state">Carregando…</div>
+    <div id="roadsAlertList" class="road-alert-list"></div>
+    <div id="roadsAlertNote" class="road-alert-note">Aguardando consulta aos canais oficiais.</div>
+    <div style="margin-top:12px"><span id="roadsSourceMode" class="connection-pill connection-na">Verificando fonte</span></div>
+  </article>
+
+  <article class="card road-panel-card">
+    <div class="eyebrow">Condição meteorológica de apoio · Três Rios</div>
+    <h3>Três Rios · BR‑116/RJ</h3>
+    <div class="road-weather-main">
+      <div id="roadsWeatherIcon" class="road-weather-icon"></div>
+      <div>
+        <div id="roadsWeatherTemp" class="road-weather-temp">—</div>
+        <div id="roadsWeatherCondition" class="road-weather-cond">Carregando…</div>
+        <div id="roadsWeatherMeta" class="road-weather-meta">—</div>
+        <div id="roadsWeatherSource" class="small">Referência meteorológica próxima ao HCNSC; não é sensor viário da concessionária.</div>
+      </div>
+    </div>
+  </article>
+</div>
+
+<div class="road-updates">
+  <article class="card">
+    <div class="eyebrow">Atualização mais recente da Serra</div>
+    <div id="roadsSerraTitle" class="road-update-title">Carregando…</div>
+    <div id="roadsSerraText" class="road-update-text">—</div>
+    <div id="roadsSerraDate" class="road-update-meta">—</div>
+    <div class="road-actions"><a id="roadsSerraLink" class="btn" target="_blank" rel="noopener">Abrir publicação oficial</a></div>
+  </article>
+
+  <article class="card">
+    <div class="eyebrow">Obras e manutenção na Serra</div>
+    <div id="roadsScheduleTitle" class="road-update-title">Carregando…</div>
+    <div id="roadsScheduleText" class="road-update-text">—</div>
+    <div id="roadsScheduleDate" class="road-update-meta">—</div>
+    <div class="road-actions"><a id="roadsScheduleLink" class="btn" target="_blank" rel="noopener">Ver cronograma</a></div>
+  </article>
+</div>
+
+<div class="road-footer-grid">
+  <article class="card">
+    <div class="eyebrow">Boletim de tráfego relacionado à Serra</div>
+    <div id="roadsBulletinTitle" class="road-update-title">Carregando…</div>
+    <div id="roadsBulletinDate" class="road-update-meta">—</div>
+    <div class="road-actions"><a id="roadsBulletinLink" class="btn" target="_blank" rel="noopener">Abrir publicação oficial</a></div>
+  </article>
+
+  <article class="card">
+    <div class="eyebrow">Canais operacionais</div>
+    <h3 style="margin:5px 0 0">ELOvias + K-Infra Rodovia do Aço</h3>
+    <div class="road-contact-grid">
+      <div class="road-contact-box"><span>Emergências</span><strong id="roadsEmergency">0800 116 0493</strong></div>
+      <div class="road-contact-box"><span>WhatsApp</span><strong id="roadsWhatsapp">0800 116 0493</strong></div>
+      <div class="road-contact-box"><span>Acessibilidade</span><strong id="roadsAccessibility">0800 116 0465</strong></div>
+    </div>
+    <div class="road-actions">
+      <a class="btn" href="https://www.ecoviasriominas.com.br/" target="_blank" rel="noopener">Portal ELOvias + K-Infra Rodovia do Aço</a>
+      <a class="btn" href="https://www.ecoviasriominas.com.br/condicoes-da-via" target="_blank" rel="noopener">Condições da via</a>
+      <a class="btn" href="https://www.ecoviasriominas.com.br/noticias/boletim-de-trafego" target="_blank" rel="noopener">Boletins de tráfego</a>
+      <a class="btn" href="https://www.ecoviasriominas.com.br/noticias/boletim-de-obras" target="_blank" rel="noopener">Boletins de obras</a>
+    </div>
+  </article>
+</div>
+
+<div class="callout" style="margin-top:16px"><strong>Importante:</strong> ausência de alerta recente identificado não significa garantia de trânsito livre. A Ecovias pode bloquear ou atrasar consultas automatizadas; por isso o painel diferencia fonte direta, conectividade parcial e cache contextual.</div>
+</section>
+
+<section id="avisos" class="panel">
+<div class="section">
+  <div><h2>Avisos e Notificações</h2><div class="small">Política de comunicação automática do HCNSC Alerta conforme o nível operacional.</div></div>
+  <span class="badge">NOTIFICAÇÕES ATIVAS</span>
+</div>
+
+<div class="grid2">
+<article class="card">
+<h3>Política por nível</h3>
+<div class="table"><table>
+<thead><tr><th>Nível</th><th>Aviso</th><th>Diretriz</th></tr></thead>
+<tbody>
+<tr><td><strong>1 · Vigilância</strong></td><td>Sem envio</td><td>Monitoramento normal.</td></tr>
+<tr><td><strong>2 · Observação</strong></td><td>Informativo opcional</td><td>Reservado para aviso antecipado, caso seja habilitado para o destinatário.</td></tr>
+<tr><td><strong>3 · Atenção</strong></td><td>Pré-alerta operacional</td><td>Enviar contexto da ameaça e ações prioritárias.</td></tr>
+<tr><td><strong>4 · Alerta</strong></td><td>Alerta de gestão</td><td>Envio imediato com riscos e ações prioritárias.</td></tr>
+<tr><td><strong>5 · Alerta Máximo</strong></td><td>Alta prioridade</td><td>Envio imediato para avaliação da Direção e dos critérios do Comitê de Crise.</td></tr>
+</tbody>
+</table></div>
+</article>
+
+<article class="card">
+<h3>Grupos de destinatários</h3>
+<div class="source-health-list">
+  <div class="source-health-row"><div class="source-health-name">Grupo Operacional</div><strong>Níveis 3, 4 e 5</strong></div>
+  <div class="source-health-row"><div class="source-health-name">Destinatários</div><span id="notificationOperationalRecipients" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">Último envio</div><strong id="notificationOperationalLastSent">—</strong></div>
+  <div class="source-health-row"><div class="source-health-name">Grupo de Gerentes</div><strong>Níveis 4 e 5</strong></div>
+  <div class="source-health-row"><div class="source-health-name">Destinatários</div><span id="notificationManagersRecipients" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">Último envio</div><strong id="notificationManagersLastSent">—</strong></div>
+  <div class="source-health-row"><div class="source-health-name">Serviço</div><span id="notificationProviderStatus" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">Envio automático</div><span id="notificationSendStatus" class="connection-pill connection-na">Verificando</span></div>
+</div>
+<div class="source-health-footer">Os endereços dos destinatários e as credenciais de envio ficam protegidos em GitHub Secrets e não são publicados no site.</div>
+</article>
+</div>
+
+<article class="card">
+<h3>Regra de disparo</h3>
+<p>O Grupo Operacional recebe e-mail nos níveis 3, 4 e 5. O Grupo de Gerentes recebe somente quando o nível vigente estiver em 4 ou 5. Cada grupo possui controle independente: entrada, agravamento e melhora geram atualização; ao sair da faixa do grupo, é enviada uma única mensagem de melhora e o estado é liberado para uma futura reentrada. O sistema não repete o mesmo aviso a cada coleta de 15 minutos.</p>
+<div class="callout"><strong>Conteúdo previsto:</strong> nível HCNSC, causa predominante, contexto operacional — por exemplo, Chuva · Água + Energia + Acessos —, ações prioritárias e horário da atualização.</div>
+</article>
+</section>
+
+<section id="historico" class="panel">
+<div class="section">
+  <div><h2>Histórico e Rastreabilidade</h2><div class="small">Riscos e pluviômetros são apresentados separadamente para evitar duplicações e facilitar a leitura.</div></div>
+</div>
+
+<div class="history-view-tabs">
+  <button id="historyRiskView" class="history-view-btn active">Alterações de Nível</button>
+  <button id="historyRainView" class="history-view-btn">Histórico de Pluviômetros</button>
+</div>
+
+<div class="summary">
+  <article class="card"><span id="historyCountLabel" class="small">Acionamentos de nível</span><strong id="historyCount">—</strong></article>
+  <article class="card"><span class="small">Primeiro registro</span><strong id="historyOldest" style="font-size:15px">—</strong></article>
+  <article class="card"><span class="small">Último registro</span><strong id="historyNewest" style="font-size:15px">—</strong></article>
+  <article class="card"><span class="small">Arquivos mensais</span><strong id="historyMonths">—</strong></article>
+</div>
+
+<div id="historyArchiveLinks" class="maplinks" style="justify-content:flex-start;margin-bottom:14px"></div>
+
+<div id="historyRiskPanel" class="history-subpanel active">
+  <div class="history-section-head">
+    <div><h3>Histórico de Alterações de Nível</h3><div class="small">Registra somente acionamentos para níveis acima de 1. Reduções de nível não entram nesta lista.</div></div>
+    <button id="exportHistory" class="btn">Exportar acionamentos CSV</button>
+  </div>
+  <div class="history-table-note">Cada registro mostra quando um nível superior foi acionado e qual evidência provocou a alteração. Uma permanência no mesmo nível não gera novo registro.</div>
+  <div class="card table"><table>
+    <thead><tr><th>Data/hora</th><th>Nível acionado</th><th>O que gerou a alteração</th></tr></thead>
+    <tbody id="historyBody"><tr><td colspan="3">Carregando acionamentos de nível…</td></tr></tbody>
+  </table></div>
+</div>
+
+<div id="historyRainPanel" class="history-subpanel">
+  <div class="history-section-head">
+    <div><h3>Histórico de Pluviômetros</h3><div class="small">Consolidado por hora para reduzir ruído das coletas de 15 em 15 minutos.</div></div>
+    <div class="history-controls">
+      <button id="pluvioHistoryHourly" class="btn active-filter">Por hora</button>
+      <button id="pluvioHistoryAll" class="btn">Todas as coletas</button>
+      <button id="exportPluvioHistory" class="btn">Exportar pluviômetros CSV</button>
+    </div>
+  </div>
+  <div class="history-table-note">O valor exibido em cada hora é o maior acumulado encontrado nas coletas daquele período; a estação indicada é a correspondente ao maior valor.</div>
+  <div class="card table"><table>
+    <thead><tr><th>Período</th><th>Máx. 1 h</th><th>Estação 1 h</th><th>Máx. 24 h</th><th>Estação 24 h</th><th>Coletas</th></tr></thead>
+    <tbody id="pluvioHistoryBody"><tr><td colspan="6">Carregando histórico pluviométrico…</td></tr></tbody>
+  </table></div>
+</div>
+</section>
+
+<section id="plano" class="panel plan">
+<div class="section"><div><h2>Plano de Monitoramento Preditivo e Alertas Externos</h2><div class="small">Síntese operacional do HCNSC Alerta. Os documentos oficiais e suas versões vigentes permanecem no Docnix.</div></div></div>
+
+<article class="card">
+<h3>1. Finalidade do HCNSC Alerta</h3>
+<p>Antecipar condições externas que possam comprometer o Hospital de Clínicas Nossa Senhora da Conceição e transformar os sinais monitorados em orientações de prontidão. O sistema não substitui os planos institucionais nem declara, sozinho, uma contingência interna de água, energia ou assistência.</p>
+
+<h3>2. Como o nível é calculado</h3>
+<ul>
+  <li>O ponto de partida é o maior nível oficial válido entre os riscos geológico e hidrológico do CEMADEN-RJ, os avisos meteorológicos do INMET e a informação operacional recente da Defesa Civil de Três Rios.</li>
+  <li>A Defesa Civil pode elevar o nível quando houver estágio operacional recente ou sinal oficial recente, como primeiro/segundo toque de sirene, alerta de risco com mobilização ou abertura de pontos de apoio. Sinais antigos não provocam nova escalada.</li>
+  <li>Quando CEMADEN-RJ e INMET, como fontes independentes, estiverem simultaneamente em nível 3 ou superior, o HCNSC Alerta pode elevar o nível geral em uma faixa, limitado ao nível 5.</li>
+  <li>Previsão de chuva forte/intensa ou tempestade e pluviometria elevada são sinais complementares de antecipação e podem elevar somente para <strong>2 · Observação</strong>, caso as fontes oficiais ainda estejam em Vigilância.</li>
+  <li>Quando o contexto predominante for chuva, as ações recomendadas tratam <strong>água, energia e acessos de forma conjunta</strong>, pois chuva intensa também pode provocar quedas de árvores, interrupções na rede elétrica externa e bloqueios viários.</li>
+  <li>Como referência operacional de Observação pluviométrica, o sistema considera acumulado recente igual ou superior a <strong>20 mm em 1 hora</strong> ou <strong>50 mm em 24 horas</strong> em estação CEMADEN com leitura recente.</li>
+</ul>
+
+<h3>3. Subida e descida do nível</h3>
+<p><strong>Subida:</strong> ocorre imediatamente quando surge evidência válida de maior risco. <strong>Descida:</strong> após uma informação oficial relevante, o nível permanece sem possibilidade de redução por <strong>2 horas</strong>. Encerrada essa janela sem nova informação de mesmo peso ou maior, são necessárias <strong>3 verificações válidas consecutivas</strong>, em ciclos separados de monitoramento, antes de reduzir apenas uma faixa. Uma nova publicação oficial relevante reinicia as 2 horas; a simples releitura do mesmo aviso não reinicia o relógio. Após a primeira redução, não há uma nova espera de 2 horas: são exigidas 3 novas verificações válidas para cada faixa seguinte, desde que não ocorra agravamento. Para o risco hidrológico, quando a classificação do CEMADEN ultrapassa sua janela de 24 h sem nova atualização, o <strong>Estação de referência</strong> pode atuar como evidência local de normalização, desde que esteja recente, abaixo dos limites de 20 mm no curto prazo e 50 mm em 24 h, sem outro pluviômetro recente acima desses gatilhos, sem aviso INMET e sem sinal oficial recente de agravamento. Informação geológica antiga não congela indefinidamente o rebaixamento, mas volta a participar imediatamente quando atualizada.</p>
+
+<h3>4. Significado operacional dos níveis</h3>
+<div class="table"><table>
+<thead><tr><th>Nível</th><th>Interpretação</th><th>Postura esperada</th></tr></thead>
+<tbody>
+<tr><td><strong>1 · Vigilância</strong></td><td>Condição normal.</td><td>Monitoramento de rotina e integridade das fontes.</td></tr>
+<tr><td><strong>2 · Observação</strong></td><td>Sinal oficial leve ou evidência complementar acima do normal.</td><td>Acompanhar tendência, previsão e pluviometria com maior atenção.</td></tr>
+<tr><td><strong>3 · Atenção</strong></td><td>Possibilidade concreta de impacto.</td><td>Pré-alertar áreas operacionais e verificar recursos de continuidade.</td></tr>
+<tr><td><strong>4 · Alerta</strong></td><td>Risco elevado e possibilidade relevante de repercussão no HCNSC.</td><td>Formalizar quadro de situação, verificar gatilhos dos planos institucionais e avaliar Comitê de Crise.</td></tr>
+<tr><td><strong>5 · Alerta Máximo</strong></td><td>Condição externa extrema ou múltiplas evidências de agravamento.</td><td>Direção deve avaliar imediatamente impactos reais e critérios institucionais para acionamento do Comitê de Crise.</td></tr>
+</tbody>
+</table></div>
+
+<h3>5. Relação com os planos institucionais</h3>
+<p>O nível HCNSC é <strong>preditivo</strong>. Os níveis internos de contingência de água e energia dependem de medições e condições reais do Hospital, como volume dos reservatórios, autonomia, geração, redundância e impacto assistencial. Quando houver indício de impacto, consultar no Docnix os documentos vigentes, incluindo HCNSC.PLAN.0034, HCNSC.PLAN.0035, HCNSC.PLAN.0036, HCNSC.PLAN.0037 e o Regimento do Comitê de Crise.</p>
+
+<h3>6. Comitê de Crise</h3>
+<p>O HCNSC Alerta não aciona automaticamente o Comitê apenas pela cor do nível. Nos níveis elevados, deve orientar a avaliação dos critérios institucionais. O acionamento ocorre conforme o Regimento vigente quando houver impacto relevante, necessidade de decisões extraordinárias, recursos adicionais, comprometimento de serviço crítico ou demais critérios aplicáveis.</p>
+
+<h3>7. Indisponibilidade e defasagem de fonte</h3>
+<p>Ausência de dados não significa ausência de risco. Uma fonte realmente indisponível ou não confirmada continua bloqueando rebaixamentos indevidos. Já uma fonte acessível, porém sem atualização dentro de sua janela de validade, deixa de congelar o nível indefinidamente quando existem evidências independentes e consecutivas de melhora. No risco hidrológico, a estação de referência funciona apenas como evidência local de normalização e não substitui a classificação oficial do CEMADEN.</p>
+
+<h3>8. Registros, revisão e governança</h3>
+<p>Históricos, alterações de nível, avisos enviados e decisões relevantes devem permanecer rastreáveis. Esta lógica deve ser revisada anualmente ou sempre que houver mudança relevante em fontes, critérios, infraestrutura ou documentos institucionais. O Docnix permanece como repositório oficial dos documentos controlados.</p>
+</article>
+</section>
+
+
+</main>
+
+<footer><strong>Rede Santa Catarina · Hospital de Clínicas Nossa Senhora da Conceição</strong><br>HCNSC Alerta · apoio à decisão. Fontes oficiais permanecem soberanas.</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+const labels={1:'Vigilância',2:'Observação',3:'Atenção',4:'Alerta',5:'Alerta Máximo'};
+const acts={
+1:[
+  'Manter monitoramento de rotina',
+  'Verificar integridade e atualização das fontes oficiais'
+],
+2:[
+  'Acompanhar com maior atenção a tendência de chuva, previsão e pluviômetros',
+  'Verificar acessos e possíveis impactos externos em evolução',
+  'Conferir disponibilidade básica dos recursos de contingência e canais críticos'
+],
+3:[
+  'Colocar Infraestrutura e Operações em pré-alerta',
+  'Verificar níveis de água, geradores, nobreaks e disponibilidade de diesel',
+  'Revisar acessos, suprimentos críticos e disponibilidade de fornecedores de contingência',
+  'Antecipar necessidades das áreas assistenciais caso o cenário evolua'
+],
+4:[
+  'Comunicar a gestão operacional e formalizar um quadro de situação',
+  'Verificar se foram atingidos gatilhos dos planos institucionais de água, energia ou acessos',
+  'Preparar recursos e alternativas de contingência sem antecipar medidas não justificadas',
+  'Avaliar impacto em atividades eletivas e áreas críticas',
+  'Avaliar critérios institucionais para acionamento do Comitê de Crise'
+],
+5:[
+  'Direção deve avaliar imediatamente os impactos reais sobre assistência, água, energia e acessos',
+  'Executar os planos de contingência aplicáveis quando seus gatilhos internos forem atingidos',
+  'Avaliar e, quando houver critério institucional, acionar o Comitê de Crise conforme regimento vigente',
+  'Manter comunicação, registro de decisões e reavaliação contínua do cenário'
+]
+};
+
+function fmtDate(value){
+  if(!value) return '—';
+  const d=new Date(value);
+  return isNaN(d)?String(value):d.toLocaleString('pt-BR');
+}
+function numBR(value,digits=1){
+  if(value==null || Number.isNaN(Number(value))) return '—';
+  return Number(value).toLocaleString('pt-BR',{minimumFractionDigits:digits,maximumFractionDigits:digits});
+}
+function weatherIconSvg(code,condition=''){
+  const c=Number(code),txt=String(condition||'').toLowerCase();
+  const sun='<circle cx="32" cy="32" r="11" fill="#F5B800"/><g stroke="#F5B800" stroke-width="3" stroke-linecap="round"><path d="M32 7v7M32 50v7M7 32h7M50 32h7M14.5 14.5l5 5M44.5 44.5l5 5M49.5 14.5l-5 5M19.5 44.5l-5 5"/></g>';
+  const cloud='<path d="M18 43h29a10 10 0 0 0 1-20 15 15 0 0 0-28-4A12 12 0 0 0 18 43Z" fill="#91A7B2"/>';
+  const darkCloud='<path d="M18 43h29a10 10 0 0 0 1-20 15 15 0 0 0-28-4A12 12 0 0 0 18 43Z" fill="#697E89"/>';
+  const rain='<g stroke="#4B92B6" stroke-width="3" stroke-linecap="round"><path d="M22 49l-3 7M33 49l-3 7M44 49l-3 7"/></g>';
+  const heavy='<g stroke="#397FA6" stroke-width="3.4" stroke-linecap="round"><path d="M18 49l-4 8M30 49l-4 8M42 49l-4 8M52 48l-4 8"/></g>';
+  const fog='<g stroke="#91A7B2" stroke-width="3" stroke-linecap="round"><path d="M13 26h38M10 36h44M16 46h32"/></g>';
+  const bolt='<path d="M36 40h9L34 59l2-13h-9l11-18-2 12Z" fill="#E8A800"/>';
+
+  const has=(...terms)=>terms.some(t=>txt.includes(t));
+  let body='',theme='weather-theme-cloud';
+
+  // Priority matters: a forecast can contain both "chuva" and "trovoadas".
+  if([95,96,99].includes(c) || has('trovo','tempest','raio','granizo')){
+    body=darkCloud+bolt+rain;
+    theme='weather-theme-storm';
+  }else if([65,82].includes(c) || has('chuva forte','pancadas fortes','chuva intensa')){
+    body=darkCloud+heavy;
+    theme='weather-theme-rain';
+  }else if([51,53,55,61,63,80,81].includes(c) || has('chuva','garoa','pancadas')){
+    body=cloud+rain;
+    theme='weather-theme-rain';
+  }else if([45,48].includes(c) || has('nevo','névoa')){
+    body=fog;
+    theme='weather-theme-fog';
+  }else if(c===3 || has('muitas nuvens','nublado','encoberto')){
+    body=cloud;
+    theme='weather-theme-cloud';
+  }else if([1,2].includes(c) || has('poucas nuvens','parcial','entre nuvens')){
+    body=sun+cloud;
+    theme='weather-theme-clear';
+  }else if(c===0 || has('céu claro','tempo claro','ensolar')){
+    body=sun;
+    theme='weather-theme-clear';
+  }else{
+    body=cloud;
+    theme='weather-theme-cloud';
+  }
+
+  return {theme,svg:'<svg viewBox="0 0 64 64" role="img" aria-label="'+String(condition||'Condição meteorológica')+'">'+body+'</svg>'};
+}
+function weatherChip(icon,label,value){
+  if(value==null || value==='') return '';
+  return '<div class="weather-chip"><span class="weather-chip-icon">'+icon+'</span><span><strong>'+label+':</strong> '+value+'</span></div>';
+}
+function relativeWeatherTime(value){
+  if(!value) return 'Horário não informado';
+  const d=new Date(value);
+  if(isNaN(d)) return String(value);
+  const mins=Math.round((Date.now()-d.getTime())/60000);
+  if(mins>=0 && mins<2) return 'Atualizado agora · '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  if(mins>=0 && mins<60) return 'Atualizado há '+mins+' min · '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  return 'Atualizado em '+d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function deriveActionContext(data){
+  if(!data) return {key:'general',label:'Nível atual',note:'Prioridades definidas pelo nível HCNSC e pelo tipo de ameaça identificado.'};
+
+  const g=data.sources?.cemaden_geological||{};
+  const h=data.sources?.cemaden_hydrological||{};
+  const imet=data.sources?.inmet_alerts||{};
+  const fc=data.forecast||{};
+  const roads=data.roads||{};
+  const pv=data.pluviometers||{};
+  const parts=[
+    data.overall?.reason,
+    g.risk,g.message,
+    h.risk,h.message,
+    imet.risk,imet.title,
+    ...(data.overall?.supplemental_signals||[]),
+    ...((fc.days||[]).slice(0,2).map(d=>d?.summary)),
+    roads.alert_state,roads.message
+  ].filter(Boolean);
+  const txt=parts.join(' ').toLowerCase();
+
+  const rainTerms=['chuva','pancada','tempestade','precipita','alag','enchent','inunda','hidrol'];
+  const windTerms=['vento forte','rajada','vendaval','tempestade','árvore','arvore'];
+  const geoTerms=['desliz','movimento de massa','geológ','geolog'];
+  const roadTerms=['interdi','bloque','trânsito','transito','rodovia','br-040','br-495','queda de árvore','queda de arvore'];
+
+  const highRain1=Number(pv.highest_1h?.value)>=20;
+  const highRain24=Number(pv.highest_24h?.value)>=50;
+  const rain=Number(h.level)>1 || highRain1 || highRain24 || rainTerms.some(t=>txt.includes(t));
+  const wind=windTerms.some(t=>txt.includes(t));
+  const geo=Number(g.level)>1 || geoTerms.some(t=>txt.includes(t));
+  const road=roadTerms.some(t=>txt.includes(t));
+
+  if(rain){
+    return {
+      key:'rain',
+      label:'Chuva · Água + Energia + Acessos',
+      note:'Em cenários de chuva, o HCNSC Alerta trata água, energia e acessos de forma conjunta, considerando também quedas de árvores e interferências na rede elétrica.'
+    };
+  }
+  if(wind){
+    return {
+      key:'wind',
+      label:'Vento · Energia + Acessos',
+      note:'Prioridades reforçadas para continuidade elétrica, segurança externa e acessos.'
+    };
+  }
+  if(geo){
+    return {
+      key:'geo',
+      label:'Geológico · Acessos + Infraestrutura',
+      note:'Prioridades reforçadas para encostas, acessos e impactos sobre infraestrutura.'
+    };
+  }
+  if(road){
+    return {
+      key:'road',
+      label:'Acessos · Logística',
+      note:'Prioridades reforçadas para mobilidade, equipes, fornecedores e continuidade logística.'
+    };
+  }
+  return {key:'general',label:'Nível atual',note:'Prioridades definidas pelo nível HCNSC e pelo tipo de ameaça identificado.'};
+}
+
+function contextualActions(l,ctx){
+  if(!ctx || l<=1) return [];
+  if(ctx.key==='rain'){
+    const byLevel={
+      2:[
+        'Acompanhar pluviometria, drenagem e tendência de alagamentos ou enchentes',
+        'Conferir prontidão elétrica: geradores, nobreaks, combustível e possíveis interferências na rede da concessionária',
+        'Acompanhar acessos, condições viárias e risco de queda de árvores'
+      ],
+      3:[
+        'Verificar níveis de água e pontos vulneráveis a alagamento, mantendo recursos de abastecimento em prontidão',
+        'Verificar geradores, QTA, nobreaks, diesel e capacidade de resposta a eventual falta de energia',
+        'Reforçar acompanhamento de acessos, BR-040/RJ + BR-393/RJ e ocorrências de queda de árvores'
+      ],
+      4:[
+        'Manter água, energia e acessos no mesmo quadro de situação operacional',
+        'Confirmar autonomia elétrica e prontidão de fornecedores caso haja instabilidade da rede externa',
+        'Avaliar antecipadamente restrições de acesso, logística de equipes e chegada de recursos críticos'
+      ],
+      5:[
+        'Tratar simultaneamente continuidade de água, energia e acessos na avaliação da Direção',
+        'Confirmar autonomia e redundância elétrica diante de possível interrupção prolongada da rede externa',
+        'Priorizar acesso seguro de equipes, ambulâncias, fornecedores e recursos emergenciais'
+      ]
+    };
+    return byLevel[l]||[];
+  }
+  if(ctx.key==='wind'){
+    return l>=3?[
+      'Verificar geradores, nobreaks, diesel e condição da alimentação elétrica externa',
+      'Acompanhar quedas de árvores, obstruções e segurança dos acessos',
+      'Avaliar áreas externas e elementos sujeitos a danos por vento'
+    ]:[
+      'Acompanhar rajadas e possíveis interferências na rede elétrica',
+      'Verificar acessos e risco de queda de árvores'
+    ];
+  }
+  if(ctx.key==='geo'){
+    return [
+      'Acompanhar risco de deslizamentos e condições das encostas no entorno',
+      'Verificar acessos alternativos e possibilidade de bloqueios',
+      'Avaliar impactos potenciais sobre infraestrutura e logística hospitalar'
+    ];
+  }
+  if(ctx.key==='road'){
+    return [
+      'Acompanhar condições da BR-040/RJ + BR-393/RJ e demais acessos relevantes',
+      'Antecipar alternativas para chegada de equipes, pacientes e fornecedores',
+      'Verificar impacto sobre abastecimento e logística de recursos críticos'
+    ];
+  }
+  return [];
+}
+
+function renderActions(l,data){
+  const ctx=deriveActionContext(data);
+  const base=acts[l]||[];
+  const extra=contextualActions(l,ctx);
+  const unique=[...new Set([...extra,...base])];
+  document.getElementById('actions').innerHTML=unique.map(x=>'<div class="action">• '+x+'</div>').join('');
+  const badge=document.getElementById('actionContextBadge');
+  const note=document.getElementById('actionContextNote');
+  if(badge) badge.textContent=ctx.label;
+  if(note) note.textContent=ctx.note;
+}
+function applyLevel(l,reason,generatedAt,data){
+  const h=document.getElementById('hero');
+  h.className='hero l'+l;
+  document.getElementById('levelNum').textContent=l;
+  document.getElementById('levelLabel').textContent=labels[l];
+  document.getElementById('levelReason').textContent=reason;
+  renderActions(l,data||latestOfficialData);
+  const base=generatedAt?new Date(generatedAt):new Date();
+  const updatedEl=document.getElementById('updatedAt');
+  const nextEl=document.getElementById('nextAt');
+  const scheduleMinutes=[0,15,30,45];
+  const now=new Date();
+
+  function nextQuarterAfter(d){
+    const out=new Date(d);
+    out.setSeconds(0,0);
+    const nextMinute=scheduleMinutes.find(m=>m>d.getMinutes());
+    if(nextMinute!=null){
+      out.setMinutes(nextMinute);
+    }else{
+      out.setHours(out.getHours()+1,0,0,0);
+    }
+    return out;
+  }
+
+  const expectedNext=nextQuarterAfter(base);
+  const nextNominal=nextQuarterAfter(now);
+  const overdueGraceMinutes=5;
+  const overdue=now.getTime()>expectedNext.getTime()+overdueGraceMinutes*60000;
+  const ageMinutes=Math.max(0,(Date.now()-base.getTime())/60000);
+  const stale=ageMinutes>30;
+
+  updatedEl.textContent=fmtDate(base)+(stale?' · DADOS DESATUALIZADOS':'');
+  updatedEl.style.color=(stale||overdue)?'#b42318':'';
+
+  if(overdue){
+    nextEl.textContent='COLETA ATRASADA · esperada '+fmtDate(expectedNext)+' · próxima tentativa nominal '+fmtDate(nextNominal);
+    nextEl.style.color='#b42318';
+  }else{
+    nextEl.textContent=fmtDate(expectedNext);
+    nextEl.style.color='';
+  }
+}
+function setConnection(id,state,label){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.className='connection-pill '+(
+    state==='ok'?'connection-ok':
+    state==='warn'?'connection-warn':
+    state==='off'?'connection-off':'connection-na'
+  );
+  el.textContent=label;
+}
+function sourceBadge(source){
+  return 'CEMADEN-RJ';
+}
+function sourceMeta(source){
+  if(!source) return 'Sem informação recente confirmada.';
+  if(source.status==='ok'){
+    const age=source.age_hours!=null?' · '+numBR(source.age_hours,1)+' h atrás':'';
+    return 'Atualização oficial: '+fmtDate(source.official_updated_at)+age+'.';
+  }
+  if(source.status==='no_recent_update') return 'Sem atualização oficial nas últimas 24 h. O último registro permanece disponível no Histórico.';
+  if(source.status==='source_unconfirmed') return 'Não foi possível confirmar nova informação nesta coleta.';
+  return source.message||'Sem informação recente confirmada.';
+}
+let operationalMap=null;
+let operationalMapLayers={};
+let operationalMapMode='precip';
+let operationalMapStationsVisible=true;
+let operationalMapRadiusVisible=true;
+let latestOfficialData=null;
+
+function temperatureMapColor(v){
+  const n=Number(v);
+  if(n<=10) return '#3978b8';
+  if(n<=15) return '#58a7c7';
+  if(n<=20) return '#67bd91';
+  if(n<=25) return '#e3b94f';
+  if(n<=30) return '#e87c3d';
+  return '#c84b45';
+}
+function precipMapColor(v){
+  const n=Number(v||0);
+  if(n<=0) return '#d9edf3';
+  if(n<0.5) return '#84c9d8';
+  if(n<2) return '#4aa5c3';
+  if(n<5) return '#3478b5';
+  return '#704ca6';
+}
+function stationStatusColor(s){
+  if(s?.status==='ok') return '#17845b';
+  if(s?.status==='time_anomaly') return '#c78d16';
+  return '#7c8c91';
+}
+function mapMm(v){return v==null?'—':numBR(v,1)+' mm';}
+function mapPopupStation(s){
+  return '<strong>'+esc(s.name||'Pluviômetro CEMADEN')+'</strong><br>'+
+    '<span>Última leitura: '+esc(fmtDate(s.observed_at))+'</span><br>'+
+    '<span>1 h: <strong>'+esc(mapMm(s.acc1h_mm))+'</strong> · 6 h: '+esc(mapMm(s.acc6h_mm))+'</span><br>'+
+    '<span>12 h: '+esc(mapMm(s.acc12h_mm))+' · 24 h: <strong>'+esc(mapMm(s.acc24h_mm))+'</strong></span>'+
+    (s.distance_to_hcnsc_km!=null?'<br><span>Distância do HCNSC: '+esc(numBR(s.distance_to_hcnsc_km,1))+' km</span>':'');
+}
+function updateMapLegend(mode,data){
+  const el=document.getElementById('mapLegend');
+  if(!el) return;
+  const radar=data?.weather_map?.radar||{};
+  let active='';
+
+  if(mode==='precip'){
+    active='<div class="map-legend-title">Precipitação</div>'+
+      '<div class="precip-scale"></div>'+
+      '<div class="map-legend-labels"><span>menor intensidade</span><span>maior intensidade</span></div>'+
+      (radar.status==='ok'
+        ?'<div style="margin-top:5px">Radar: '+esc(fmtDate(radar.frame_time))+'</div>'
+        :'<div style="margin-top:5px">Radar sem confirmação; usando grade complementar.</div>');
+  }else if(mode==='temperature'){
+    active='<div class="map-legend-title">Temperatura atual</div>'+
+      '<div class="legend-scale"><span style="background:#3978b8"></span><span style="background:#58a7c7"></span><span style="background:#67bd91"></span><span style="background:#e3b94f"></span><span style="background:#e87c3d"></span><span style="background:#c84b45"></span></div>'+
+      '<div class="map-legend-labels"><span>mais frio</span><span>mais quente</span></div>';
+  }else if(mode==='cloud'){
+    active='<div class="map-legend-title">Nebulosidade</div>'+
+      '<div class="legend-scale"><span style="background:#edf3f4"></span><span style="background:#bac7cc"></span><span style="background:#72848c"></span></div>'+
+      '<div class="map-legend-labels"><span>0%</span><span>100%</span></div>';
+  }else if(mode==='wind'){
+    active='<div class="map-legend-title">Vento a 10 m</div>'+
+      '<div class="map-symbol-item"><span class="map-symbol wind">➤</span><span>Direção do vento</span></div>'+
+      '<div style="margin-top:4px">Clique na seta para ver a velocidade.</div>';
+  }
+
+  const symbols=
+    '<div class="map-legend-title">Símbolos</div>'+
+    '<div class="map-symbol-list">'+
+      '<div class="map-symbol-item"><span class="map-symbol hospital">+</span><span>Hospital de Clínicas Nossa Senhora da Conceição</span></div>'+
+      '<div class="map-symbol-item"><span class="map-symbol station-ok"></span><span>Pluviômetro com leitura recente</span></div>'+
+      '<div class="map-symbol-item"><span class="map-symbol station-stale"></span><span>Pluviômetro sem leitura recente</span></div>'+
+      '<div class="map-symbol-item"><span class="map-symbol radius"></span><span>Raio operacional de 5 km</span></div>'+
+    '</div>';
+
+  el.innerHTML=
+    '<div class="map-legend-section"><strong>Legenda do mapa</strong>'+active+'</div>'+
+    '<div class="map-legend-section">'+symbols+'</div>'+
+    '<div class="map-legend-section" style="opacity:.75">Camadas meteorológicas complementares · Radar RainViewer · grade Open‑Meteo · pluviômetros CEMADEN.</div>';
+}
+function removePrimaryMapLayers(){
+  if(!operationalMap) return;
+  ['precip','temperature','cloud','wind'].forEach(k=>{
+    const layer=operationalMapLayers[k];
+    if(layer && operationalMap.hasLayer(layer)) operationalMap.removeLayer(layer);
+  });
+}
+function activateMapMode(mode){
+  operationalMapMode=mode;
+  document.querySelectorAll('[data-map-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mapMode===mode));
+  if(!operationalMap) return;
+  removePrimaryMapLayers();
+  const layer=operationalMapLayers[mode];
+  if(layer) layer.addTo(operationalMap);
+  updateMapLegend(mode,latestOfficialData);
+}
+function toggleMapSupport(kind){
+  if(!operationalMap) return;
+  if(kind==='stations'){
+    operationalMapStationsVisible=!operationalMapStationsVisible;
+    const layer=operationalMapLayers.stations;
+    if(layer){
+      if(operationalMapStationsVisible) layer.addTo(operationalMap); else operationalMap.removeLayer(layer);
+    }
+    document.getElementById('mapStationsToggle').classList.toggle('active',operationalMapStationsVisible);
+  }else{
+    operationalMapRadiusVisible=!operationalMapRadiusVisible;
+    const layer=operationalMapLayers.radius;
+    if(layer){
+      if(operationalMapRadiusVisible) layer.addTo(operationalMap); else operationalMap.removeLayer(layer);
+    }
+    document.getElementById('mapRadiusToggle').classList.toggle('active',operationalMapRadiusVisible);
+  }
+}
+function buildOperationalMapLayers(data){
+  if(!operationalMap || !window.L) return;
+  const wm=data?.weather_map||{};
+  const grid=Array.isArray(wm.grid)?wm.grid:[];
+  const pv=data?.pluviometers||{};
+  const stations=Array.isArray(pv.stations)?pv.stations.filter(s=>s.latitude!=null&&s.longitude!=null):[];
+
+  Object.values(operationalMapLayers).forEach(layer=>{
+    if(layer && operationalMap.hasLayer(layer)) operationalMap.removeLayer(layer);
+  });
+  operationalMapLayers={};
+
+  const radar=wm.radar||{};
+  if(radar.status==='ok' && radar.host && radar.path){
+    operationalMapLayers.precip=L.tileLayer(
+      radar.host+radar.path+'/256/{z}/{x}/{y}/2/1_0.png',
+      {opacity:.62,maxNativeZoom:7,maxZoom:18,attribution:'Radar © RainViewer'}
+    );
+  }else{
+    operationalMapLayers.precip=L.layerGroup(grid.filter(p=>p.precipitation_mm!=null).map(p=>
+      L.circle([p.requested_latitude??p.latitude,p.requested_longitude??p.longitude],{
+        radius:1250,stroke:false,fillColor:precipMapColor(p.precipitation_mm),fillOpacity:.42
+      }).bindTooltip('Precipitação estimada: '+mapMm(p.precipitation_mm))
+    ));
+  }
+
+  operationalMapLayers.temperature=L.layerGroup(grid.filter(p=>p.temperature_c!=null).map(p=>
+    L.circle([p.requested_latitude??p.latitude,p.requested_longitude??p.longitude],{
+      radius:1450,color:temperatureMapColor(p.temperature_c),weight:0,fillColor:temperatureMapColor(p.temperature_c),fillOpacity:.38
+    }).bindTooltip(numBR(p.temperature_c,1)+' °C')
+  ));
+
+  operationalMapLayers.cloud=L.layerGroup(grid.filter(p=>p.cloud_cover_pct!=null).map(p=>
+    L.circle([p.requested_latitude??p.latitude,p.requested_longitude??p.longitude],{
+      radius:1450,color:'#657982',weight:0,fillColor:'#657982',fillOpacity:.08+Math.min(100,Number(p.cloud_cover_pct))/100*.58
+    }).bindTooltip('Nebulosidade: '+numBR(p.cloud_cover_pct,0)+'%')
+  ));
+
+  operationalMapLayers.wind=L.layerGroup(grid.filter(p=>p.wind_speed_kmh!=null).map(p=>{
+    const dir=Number(p.wind_direction_deg||0);
+    const html='<div class="wind-arrow" style="transform:rotate('+dir+'deg)">➤</div>';
+    return L.marker([p.requested_latitude??p.latitude,p.requested_longitude??p.longitude],{
+      icon:L.divIcon({className:'wind-map-icon',html,iconSize:[38,38],iconAnchor:[19,19]})
+    }).bindTooltip('Vento: '+numBR(p.wind_speed_kmh,0)+' km/h · '+numBR(dir,0)+'°');
+  }));
+
+  operationalMapLayers.stations=L.layerGroup(stations.map(s=>
+    L.circleMarker([s.latitude,s.longitude],{
+      radius:8,color:'#fff',weight:2,fillColor:stationStatusColor(s),fillOpacity:.95
+    }).bindPopup(mapPopupStation(s))
+  ));
+
+  const center=wm.center||{latitude:-22.50825,longitude:-43.19345};
+  operationalMapLayers.radius=L.circle([center.latitude,center.longitude],{
+    radius:5000,color:'#006d6f',weight:2,dashArray:'7 6',fillColor:'#00a39a',fillOpacity:.04
+  }).bindTooltip('Raio operacional de 5 km do HCNSC');
+
+  activateMapMode(operationalMapMode);
+  if(operationalMapStationsVisible) operationalMapLayers.stations.addTo(operationalMap);
+  if(operationalMapRadiusVisible) operationalMapLayers.radius.addTo(operationalMap);
+}
+function ensureOperationalMap(data){
+  latestOfficialData=data||latestOfficialData;
+  const host=document.getElementById('weatherMap');
+  if(!host || !latestOfficialData) return;
+  if(!window.L){
+    host.innerHTML='<div style="padding:30px">Não foi possível carregar a biblioteca do mapa nesta sessão.</div>';
+    return;
+  }
+  const wm=latestOfficialData.weather_map||{};
+  const center=wm.center||{latitude:-22.50825,longitude:-43.19345};
+  if(!operationalMap){
+    operationalMap=L.map('weatherMap',{center:[center.latitude,center.longitude],zoom:11,zoomControl:true});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      maxZoom:19,
+      attribution:'© OpenStreetMap contributors'
+    }).addTo(operationalMap);
+
+    const hcnscIcon=L.divIcon({
+      className:'hcnsc-map-icon',
+      html:'<div class="hcnsc-pin"><span>+</span></div>',
+      iconSize:[44,44],
+      iconAnchor:[22,40],
+      popupAnchor:[0,-38]
+    });
+    L.marker([center.latitude,center.longitude],{icon:hcnscIcon,zIndexOffset:1000})
+      .addTo(operationalMap)
+      .bindPopup('<strong>Hospital de Clínicas Nossa Senhora da Conceição</strong><br>Referência central do HCNSC Alerta.<br>Nível atual: <strong>'+esc(latestOfficialData.overall?.level||'—')+' · '+esc(latestOfficialData.overall?.label||'')+'</strong>');
+  }
+  buildOperationalMapLayers(latestOfficialData);
+  setTimeout(()=>operationalMap.invalidateSize(),80);
+}
+function updateOperationalMapSummary(data){
+  const wm=data?.weather_map||{};
+  const radar=wm.radar||{};
+  const nearest=data?.pluviometers?.nearest_to_hcnsc||{};
+  const current=(data?.weather?.status==='ok'&&data?.weather?.temperature_c!=null)?data.weather:(data?.weather_reference||{});
+
+  document.getElementById('mapUpdated').textContent='Mapa atualizado: '+fmtDate(wm.collected_at||data?.generated_at);
+  document.getElementById('mapRadarStatus').textContent=radar.status==='ok'?'Radar disponível':'Radar sem confirmação';
+  document.getElementById('mapRadarTime').textContent=radar.status==='ok'?fmtDate(radar.frame_time):'camada complementar será usada como fallback';
+  document.getElementById('mapNearestStation').textContent=nearest.name||'—';
+  document.getElementById('mapNearestDistance').textContent=nearest.distance_to_hcnsc_km!=null?'aprox. '+numBR(nearest.distance_to_hcnsc_km,1)+' km do HCNSC':'';
+  document.getElementById('mapNearestRain').textContent=nearest.name?mapMm(nearest.acc1h_mm)+' / '+mapMm(nearest.acc24h_mm):'—';
+  document.getElementById('mapCurrentWeather').textContent=current?.temperature_c!=null?numBR(current.temperature_c,1)+' °C · '+(current.condition||'condição atual'):'—';
+  document.getElementById('mapCurrentWeatherTime').textContent=current?.observed_at?relativeWeatherTime(current.observed_at):'';
+}
+
+function defenseCivilStatusText(status){
+  if(status==='ok') return 'Fonte oficial confirmada';
+  if(status==='no_recent_update') return 'Conectividade oficial ativa · sem atualização recente';
+  if(status==='cache_only') return 'Cache secundário ativo · fonte direta indisponível';
+  return 'Sem confirmação da fonte';
+}
+function defenseCivilStatusClass(status){
+  if(status==='ok') return 'ok';
+  if(status==='no_recent_update' || status==='cache_only') return 'warn';
+  return 'off';
+}
+function renderDefenseCivilPanel(data){
+  const dc=data?.sources?.defesa_civil||{};
+  const overall=data?.overall||{};
+  const status=dc.status||'source_unconfirmed';
+
+  setConnection('dcSourceStatus',defenseCivilStatusClass(status),defenseCivilStatusText(status));
+  document.getElementById('dcStage').textContent=status==='ok'
+    ?(dc.stage||dc.risk||'Informação operacional')
+    :status==='no_recent_update'?'Sem atualização recente'
+    :status==='cache_only'?'Cache secundário ativo':'Sem confirmação';
+  document.getElementById('dcBasis').textContent=dc.basis||dc.message||'Nenhuma informação operacional recente confirmada.';
+  document.getElementById('dcOfficialUpdated').textContent=dc.official_updated_at
+    ?'Atualização oficial: '+fmtDate(dc.official_updated_at)+' · coleta: '+fmtDate(dc.collected_at)
+    :'Última coleta do canal: '+fmtDate(dc.collected_at);
+
+  const dcLevel=Number(dc.level)||0;
+  const hcnscLevel=Number(overall.level)||1;
+  const officialCandidate=Number(overall.official_candidate_level)||1;
+  let impact='Não está elevando o Nível HCNSC';
+  let impactDetail='Sem estágio ou sinal operacional recente aplicável nesta coleta.';
+  if(status==='ok' && dcLevel>1){
+    if(dcLevel===officialCandidate){
+      impact='Contribui para o nível oficial '+dcLevel+' · '+(labels[dcLevel]||'');
+      impactDetail=(dc.basis||'Informação oficial da Defesa Civil')+'. Nível HCNSC atual: '+hcnscLevel+' · '+(labels[hcnscLevel]||'')+'.';
+    }else{
+      impact='Sinaliza nível '+dcLevel+' · '+(labels[dcLevel]||'');
+      impactDetail=(dc.basis||'Informação oficial da Defesa Civil')+'. O Nível HCNSC atual é '+hcnscLevel+' · '+(labels[hcnscLevel]||'')+' por considerar o conjunto das fontes.';
+    }
+  }else if(status!=='ok'){
+    impact='Sem influência confirmada nesta coleta';
+    impactDetail='A fonte não está sendo usada para nova escalada enquanto não houver informação oficial recente confirmada.';
+  }
+  document.getElementById('dcHcnscImpact').textContent=impact;
+  document.getElementById('dcHcnscImpactDetail').textContent=impactDetail;
+
+  const signal=dc.operational_signal||{};
+  document.getElementById('dcSignalTitle').textContent=signal.label||'Nenhum sinal operacional recente identificado';
+  document.getElementById('dcSignalMeta').textContent=signal.published_at
+    ?'Publicado em '+fmtDate(signal.published_at)+(signal.level?' · referência HCNSC nível '+signal.level+' · '+(labels[signal.level]||''):'')
+    :'Sirenes, alertas de risco com mobilização e abertura de pontos de apoio são acompanhados.';
+  const signalLink=document.getElementById('dcSignalLink');
+  if(signal.url){signalLink.href=signal.url;signalLink.style.display='inline-block';}else{signalLink.style.display='none';}
+
+  const latest=dc.latest_news||dc.latest_bulletin||{};
+  document.getElementById('dcLatestTitle').textContent=latest.title||'Nenhuma publicação recente confirmada';
+  const cachedVerification=latest.verification==='cache_indirect' || latest.verification==='cache_index';
+  document.getElementById('dcLatestDate').textContent=latest.published_at
+    ?'Publicado em '+fmtDate(latest.published_at)+(cachedVerification?' · recuperado via cache secundário':'')
+    :(cachedVerification?'Recuperado via cache secundário · data não confirmada':'—');
+  const latestLink=document.getElementById('dcLatestLink');
+  if(latest.url){latestLink.href=latest.url;latestLink.style.display='inline-block';}else{latestLink.style.display='none';}
+
+  const routes=dc.routes||{};
+  const routeLabels={
+    portal:'Portal Defesa Civil',
+    noticias_defesa_civil:'Notícias · Defesa Civil'
+  };
+  const routeRows=Object.entries(routeLabels).map(([key,label])=>{
+    const route=routes[key]||{};
+    const ok=route.status==='ok';
+    return '<div class="source-health-row"><div class="source-health-name">'+esc(label)+'</div>'+
+      '<span class="connection-pill '+(ok?'connection-ok':'connection-off')+'">'+(ok?'Ativa':'Sem resposta')+'</span></div>';
+  }).join('');
+  document.getElementById('dcRouteStatus').innerHTML=routeRows;
+  const routeSummary=dc.route_summary||{};
+  const available=Number(routeSummary.available||0);
+  const total=Number(routeSummary.total||Object.keys(routeLabels).length);
+  document.getElementById('dcRouteSummary').textContent=available+' / '+total+' oficiais ativas';
+
+  const cache=dc.cache||{};
+  setConnection(
+    'dcCacheStatus',
+    cache.status==='ok'?'warn':cache.status==='not_used'?'na':'off',
+    cache.status==='ok'?((cache.provider||'Cache')+' · somente contexto'):cache.status==='not_used'?'Não necessário':'Indisponível'
+  );
+  document.getElementById('dcCacheMeta').textContent=(cache.message||'O cache é apenas informativo e nunca eleva o Nível HCNSC.')+(cache.provider?' · Provedor: '+cache.provider:'');
+  const cacheHint=dc.cache_hint||null;
+  if(cacheHint && status==='cache_only'){
+    document.getElementById('dcSignalTitle').textContent=cacheHint.label||'Sinal localizado no cache';
+    document.getElementById('dcSignalMeta').textContent='Informação indireta aguardando confirmação oficial direta. Não altera o Nível HCNSC.';
+    if(cacheHint.url){signalLink.href=cacheHint.url;signalLink.style.display='inline-block';}
+  }
+
+  const channels=dc.channels||{};
+  document.getElementById('dcEmergency').textContent=channels.emergency||'199';
+  document.getElementById('dcSms').textContent=channels.sms||'40199';
+  document.getElementById('dcPhone').textContent=channels.phone||'(21) 2742-3352';
+  document.getElementById('dcTollFree').textContent=channels.toll_free||'0800 202 1066';
+  const links=[
+    ['dcHomeLink',channels.home],
+    ['dcBulletinLink',channels.bulletin],
+    ['dcWhatsappLink',channels.whatsapp]
+  ];
+  links.forEach(([id,url])=>{
+    const el=document.getElementById(id);
+    if(url){el.href=url;el.style.display='inline-block';}else{el.style.display='none';}
+  });
+}
+
+function defenseCivilHistorySignature(s){
+  const dc=s?.defesa_civil;
+  if(!dc) return null;
+  return [
+    normalizeHistoryText(dc.status),
+    Number(dc.level)||0,
+    normalizeHistoryText(dc.stage),
+    normalizeHistoryText(dc.basis),
+    normalizeHistoryText(dc.signal_type),
+    normalizeHistoryText(dc.signal_label)
+  ].join('|');
+}
+function groupDefenseCivilHistory(snaps){
+  const asc=[...snaps].filter(s=>s?.defesa_civil).sort((a,b)=>String(a.ts||'').localeCompare(String(b.ts||'')));
+  const groups=[];
+  for(const s of asc){
+    const sig=defenseCivilHistorySignature(s);
+    if(sig==null) continue;
+    const last=groups[groups.length-1];
+    if(last && last._sig===sig){
+      last._to=s.ts;
+      last._count+=1;
+      last._last=s;
+    }else{
+      groups.push({_sig:sig,_from:s.ts,_to:s.ts,_count:1,_last:s});
+    }
+  }
+  return groups.map(g=>({...g._last,_from:g._from,_to:g._to,_count:g._count}));
+}
+function renderDefenseCivilHistory(){
+  const body=document.getElementById('dcHistoryBody');
+  const badge=document.getElementById('dcHistoryCount');
+  if(!body || !badge) return;
+  const rows=groupDefenseCivilHistory(currentHistory).sort((a,b)=>String(b._to||b.ts||'').localeCompare(String(a._to||a.ts||'')));
+  badge.textContent=rows.length+' mudança'+(rows.length===1?'':'s');
+  if(!rows.length){
+    body.innerHTML='<tr><td colspan="6">O histórico próprio será preenchido a partir das coletas com a integração da Defesa Civil.</td></tr>';
+    return;
+  }
+  body.innerHTML=rows.map(s=>{
+    const dc=s.defesa_civil||{};
+    const comm=dc.status==='ok'?'Confirmada':dc.status==='no_recent_update'?'Sem atualização recente':'Sem confirmação';
+    const event=dc.basis||dc.signal_label||dc.stage||dc.risk||'—';
+    const lvl=dc.level?dc.level+' · '+(labels[dc.level]||''):'—';
+    const impact=dc.level&&Number(dc.level)>1?'Pode influenciar o Nível HCNSC':'Sem elevação confirmada';
+    return '<tr>'+
+      '<td>'+historyPeriod(s)+'</td>'+
+      '<td><span class="dc-history-status">'+esc(comm)+'</span></td>'+
+      '<td>'+esc(event)+'</td>'+
+      '<td>'+esc(lvl)+'</td>'+
+      '<td>'+esc(dc.official_updated_at?fmtDate(dc.official_updated_at):'—')+'</td>'+
+      '<td class="small">'+esc(impact)+'</td>'+
+    '</tr>';
+  }).join('');
+}
+
+async function loadOfficialData(){
+  try{
+    const r=await fetch('data/status.json?ts='+Date.now(),{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    latestOfficialData=data;
+    updateOperationalMapSummary(data);
+    if(operationalMap) buildOperationalMapLayers(data);
+    const g=data.sources?.cemaden_geological;
+    const h=data.sources?.cemaden_hydrological;
+    const imet=data.sources?.inmet_alerts;
+    const dc=data.sources?.defesa_civil||{};
+    renderDefenseCivilPanel(data);
+    const roads=data.roads||{};
+    const utilities=data.utilities||{};
+    const water=utilities.water||{};
+    const energy=utilities.energy||{};
+    const w=data.weather||{};
+    const wr=data.weather_reference||{};
+    const fc=data.forecast||{};
+    const pv=data.pluviometers||{};
+    const nearest=pv.nearest_to_hcnsc||null;
+    if(nearest){
+      document.getElementById('nearestPluvioName').textContent=nearest.name||'Estação CEMADEN';
+      document.getElementById('nearestPluvioDistance').textContent=nearest.distance_to_hcnsc_km!=null?'aprox. '+numBR(nearest.distance_to_hcnsc_km,1)+' km do HCNSC':'distância não calculada';
+      document.getElementById('nearestPluvioStatus').textContent=nearest.status==='ok'?'leitura recente':nearest.status==='time_anomaly'?'horário inconsistente na fonte':'sem comunicação recente';
+      document.getElementById('nearestPluvioUpdated').textContent='Última leitura: '+fmtDate(nearest.observed_at);
+      const rainVal=v=>v==null?'—':numBR(v,1)+' mm';
+      document.getElementById('nearestPluvio1h').textContent=rainVal(nearest.acc1h_mm);
+      document.getElementById('nearestPluvio6h').textContent=rainVal(nearest.acc6h_mm);
+      document.getElementById('nearestPluvio12h').textContent=rainVal(nearest.acc12h_mm);
+      document.getElementById('nearestPluvio24h').textContent=rainVal(nearest.acc24h_mm);
+    }else{
+      document.getElementById('nearestPluvioName').textContent='Sem estação de referência confirmada';
+      document.getElementById('nearestPluvioDistance').textContent='—';
+      document.getElementById('nearestPluvioStatus').textContent='aguardando dados';
+      document.getElementById('nearestPluvioUpdated').textContent='—';
+    }
+    document.getElementById('geoCard').textContent=g?.risk||'Indisponível';
+    document.getElementById('hidroCard').textContent=h?.risk||'Indisponível';
+    document.getElementById('inmetCard').textContent=imet?.risk||'Indisponível';
+    document.getElementById('inmetBadge').textContent='INMET';
+    document.getElementById('inmetMeta').textContent=imet?.status==='ok'?(imet?.active_count?((imet?.title||'Aviso meteorológico')+' · '+imet.active_count+' aviso(s) ativo(s).'):'Nenhum aviso meteorológico ativo identificado para Três Rios/RJ.'):'Sem informação meteorológica recente confirmada nesta coleta.';
+    document.getElementById('defesaCard').textContent=dc?.status==='ok'
+      ?(dc.stage||dc.risk||'Informação operacional')
+      :dc?.status==='no_recent_update'?'Sem atualização recente'
+      :dc?.status==='cache_only'?'Cache secundário ativo':'Indisponível';
+    document.getElementById('defesaBadge').textContent='DEFESA CIVIL';
+    document.getElementById('defesaMeta').textContent=dc?.status==='ok'
+      ?((dc.basis||'Informação operacional oficial')+(dc.official_updated_at?' · '+fmtDate(dc.official_updated_at):''))
+      :dc?.status==='no_recent_update'
+        ?'Canal oficial acessível, sem estágio ou sinal operacional recente dentro da janela definida.'
+        :dc?.status==='cache_only'
+          ?'Fonte oficial direta indisponível; cache secundário disponível somente para contexto e sem poder de escalada.'
+          :'Não foi possível confirmar a fonte oficial nesta coleta.';
+    document.getElementById('geoBadge').textContent=sourceBadge(g);
+    document.getElementById('hidroBadge').textContent=sourceBadge(h);
+    document.getElementById('geoMeta').textContent=sourceMeta(g);
+    document.getElementById('hidroMeta').textContent=sourceMeta(h);
+    const states=[g?.status,h?.status];
+    const officialWeatherOk=w.status==='ok' && w.temperature_c!=null;
+    const chosen=officialWeatherOk?w:wr;
+    const temp=chosen?.temperature_c;
+    const condition=chosen?.condition||(officialWeatherOk?'Observação meteorológica':'Condição atual');
+    const visual=weatherIconSvg(chosen?.weather_code,condition);
+    const weatherCard=document.getElementById('weatherCard');
+    weatherCard.classList.remove('weather-theme-clear','weather-theme-cloud','weather-theme-rain','weather-theme-storm','weather-theme-fog');
+    weatherCard.classList.add(visual.theme);
+    document.getElementById('weatherIconBox').innerHTML=visual.svg;
+    document.getElementById('weatherTemp').textContent=temp==null?'—°':numBR(temp,1)+'°';
+    document.getElementById('weatherCondition').textContent=condition;
+    document.getElementById('weatherTimestamp').textContent=relativeWeatherTime(chosen?.observed_at);
+    if(officialWeatherOk){
+      document.getElementById('weatherEyebrow').textContent='Observação oficial · INMET';
+      const stationName=w?.station?.name||'Três Rios';
+      const stationCode=w?.station?.code||'A625';
+      document.getElementById('weatherTitle').textContent=stationName+' ('+stationCode+')';
+      document.getElementById('weatherSourceBadge').textContent='Fonte oficial';
+      document.getElementById('weatherNote').textContent='Estação automática oficial do INMET em Três Rios. A condição no terreno do HCNSC pode variar por microclima.';
+    }else{
+      document.getElementById('weatherEyebrow').textContent='Referência atual próxima ao HCNSC';
+      document.getElementById('weatherTitle').textContent='Hospital de Clínicas Nossa Senhora da Conceição · Centro';
+      document.getElementById('weatherSourceBadge').textContent='Fonte complementar';
+      document.getElementById('weatherNote').textContent='Condição meteorológica complementar próxima ao HCNSC. Não substitui INMET, CEMADEN ou Defesa Civil para definição de alertas.';
+    }
+    const chips=[];
+    if(chosen?.humidity_pct!=null) chips.push(weatherChip('◉','Umidade',numBR(chosen.humidity_pct,0)+'%'));
+    if(chosen?.apparent_temperature_c!=null) chips.push(weatherChip('⌁','Sensação',numBR(chosen.apparent_temperature_c,1)+'°C'));
+    if(chosen?.precipitation_mm!=null) chips.push(weatherChip('◒','Precipitação',numBR(chosen.precipitation_mm,1)+' mm'));
+    if(officialWeatherOk && w.rain_1h_mm!=null) chips.push(weatherChip('↧','Chuva 1 h',numBR(w.rain_1h_mm,1)+' mm'));
+    if(chosen?.wind_speed_kmh!=null) chips.push(weatherChip('→','Vento',numBR(chosen.wind_speed_kmh,0)+' km/h'));
+    if(chosen?.wind_gust_kmh!=null) chips.push(weatherChip('≈','Rajada',numBR(chosen.wind_gust_kmh,0)+' km/h'));
+    document.getElementById('weatherMetaChips').innerHTML=chips.join('');
+
+    const climateCard=document.getElementById('climateCurrentCard');
+    if(climateCard){
+      climateCard.classList.remove('weather-theme-clear','weather-theme-cloud','weather-theme-rain','weather-theme-storm','weather-theme-fog');
+      climateCard.classList.add(visual.theme);
+      document.getElementById('climateCurrentIcon').innerHTML=visual.svg;
+      document.getElementById('climateCurrentTemp').textContent=temp==null?'—°':numBR(temp,1)+'°';
+      document.getElementById('climateCurrentCondition').textContent=condition;
+      document.getElementById('climateCurrentTime').textContent=relativeWeatherTime(chosen?.observed_at);
+      document.getElementById('climateCurrentChips').innerHTML=chips.join('');
+    }
+
+    const detailParts=[condition];
+    if(chosen?.humidity_pct!=null) detailParts.push('Umidade '+numBR(chosen.humidity_pct,0)+'%');
+    if(chosen?.apparent_temperature_c!=null) detailParts.push('Sensação '+numBR(chosen.apparent_temperature_c,1)+'°C');
+    if(chosen?.precipitation_mm!=null) detailParts.push('Precipitação '+numBR(chosen.precipitation_mm,1)+' mm');
+    if(chosen?.wind_speed_kmh!=null) detailParts.push('Vento '+numBR(chosen.wind_speed_kmh,0)+' km/h');
+    if(chosen?.wind_gust_kmh!=null) detailParts.push('Rajada '+numBR(chosen.wind_gust_kmh,0)+' km/h');
+    document.getElementById('weatherSummary').textContent=detailParts.join(' · ')+' · '+fmtDate(chosen?.observed_at);
+
+    document.getElementById('pluvioCount').textContent=pv.recent_stations??'—';
+    document.getElementById('pluvioHidden').textContent=pv.hidden_stations??(
+      pv.total_stations!=null&&pv.recent_stations!=null?Math.max(0,pv.total_stations-pv.recent_stations):'—'
+    );
+    document.getElementById('pluvioMax1').textContent=pv.highest_1h?.value!=null?numBR(pv.highest_1h.value,1)+' mm':'— mm';
+    document.getElementById('pluvioMax1Station').textContent=pv.highest_1h?.station||'';
+    document.getElementById('pluvioMax24').textContent=pv.highest_24h?.value!=null?numBR(pv.highest_24h.value,1)+' mm':'— mm';
+    document.getElementById('pluvioMax24Station').textContent=pv.highest_24h?.station||'';
+
+    const stations=(Array.isArray(pv.stations)?pv.stations:[])
+      .filter(s=>s?.status==='ok')
+      .sort((a,b)=>{
+        const da=Number.isFinite(Number(a?.distance_to_hcnsc_km))?Number(a.distance_to_hcnsc_km):99999;
+        const db=Number.isFinite(Number(b?.distance_to_hcnsc_km))?Number(b.distance_to_hcnsc_km):99999;
+        return da-db||String(a?.name||'').localeCompare(String(b?.name||''),'pt-BR');
+      });
+
+    document.getElementById('pluvioBody').innerHTML=stations.length?stations.map(s=>{
+      const val=k=>s[k]==null?'—':numBR(s[k],1);
+      const distance=s.distance_to_hcnsc_km==null?'—':numBR(s.distance_to_hcnsc_km,1)+' km';
+      const ageText=s.age_hours!=null?numBR(Math.max(0,s.age_hours),1)+' h atrás':'';
+      return '<tr>'+
+        '<td><strong>'+esc(s.name)+'</strong></td>'+
+        '<td><strong>'+esc(distance)+'</strong></td>'+
+        '<td>'+esc(fmtDate(s.observed_at))+(ageText?'<br><span class="small">'+esc(ageText)+'</span>':'')+'</td>'+
+        '<td>'+val('acc1h_mm')+'</td><td>'+val('acc6h_mm')+'</td><td>'+val('acc12h_mm')+'</td><td>'+val('acc24h_mm')+'</td><td>'+val('acc48h_mm')+'</td><td>'+val('acc72h_mm')+'</td><td>'+val('acc96h_mm')+'</td>'+
+      '</tr>';
+    }).join(''):'<tr><td colspan="10">Nenhuma estação com leitura válida recente nesta coleta.</td></tr>';
+    const days=Array.isArray(fc.days)?fc.days:[];
+    for(let idx=0;idx<3;idx++){
+      const d=days[idx];
+      const t=document.getElementById('forecastTitle'+idx);
+      const v=document.getElementById('forecastTemp'+idx);
+      const p=document.getElementById('forecastText'+idx);
+      if(d){
+        const dateObj=new Date(d.date+'T12:00:00');
+        t.textContent=(idx===0?'24 h':idx===1?'48 h':'72 h')+' · '+(isNaN(dateObj)?d.date:dateObj.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'}));
+        const temps=[];
+        if(d.temperature_min_c!=null) temps.push('mín '+Number(d.temperature_min_c).toFixed(0)+'°C');
+        if(d.temperature_max_c!=null) temps.push('máx '+Number(d.temperature_max_c).toFixed(0)+'°C');
+        v.textContent=temps.join(' · ')||'Previsão disponível';
+        const hum=[];
+        if(d.humidity_min_pct!=null) hum.push('umid. mín '+Number(d.humidity_min_pct).toFixed(0)+'%');
+        if(d.humidity_max_pct!=null) hum.push('máx '+Number(d.humidity_max_pct).toFixed(0)+'%');
+        p.textContent=(d.summary||'')+(hum.length?' · '+hum.join(' / '):'');
+        const forecastVisual=weatherIconSvg(null,d.summary||'');
+        document.getElementById('forecastIcon'+idx).innerHTML=forecastVisual.svg;
+      }else{
+        v.textContent=fc.status==='unavailable'?'Indisponível':'Aguardando';
+        p.textContent=fc.error?'Fonte oficial sem resposta válida.':'Previsão oficial INMET.';
+        document.getElementById('forecastIcon'+idx).innerHTML=weatherIconSvg(null,'nublado').svg;
+      }
+    }
+    const cemadenConnected=!states.some(x=>x==='source_unconfirmed');
+    setConnection('cemadenConnection',cemadenConnected?'ok':'off',cemadenConnected?'Conectividade ativa':'Sem confirmação');
+    const pluvioConnected=pv?.status==='ok' || pv?.status==='stale';
+    setConnection('pluvioConnection',pluvioConnected?'ok':'off',pluvioConnected?'Conectividade ativa':'Sem confirmação');
+    const inmetConnected=imet?.status==='ok' || fc?.status==='ok';
+    setConnection('inmetConnection',inmetConnected?'ok':'off',inmetConnected?'Conectividade ativa':'Sem confirmação');
+    const defesaDirect=dc?.status==='ok' || dc?.status==='no_recent_update';
+    const defesaCache=dc?.status==='cache_only';
+    setConnection(
+      'defesaConnection',
+      defesaDirect?'ok':defesaCache?'warn':'off',
+      defesaDirect?'Conectividade oficial ativa':defesaCache?'Cache secundário ativo':'Sem confirmação'
+    );
+    const weatherRefConnected=wr?.status==='ok';
+    setConnection('weatherRefConnection',weatherRefConnected?'ok':'off',weatherRefConnected?'Conectividade ativa':'Sem confirmação');
+    const roadsConnected=roads?.status==='ok';
+    const roadsDegraded=roads?.status==='degraded';
+    setConnection('roadsConnection',roadsConnected?'ok':roadsDegraded?'warn':'off',roadsConnected?'Conectividade ativa':roadsDegraded?'Conectividade parcial':'Sem confirmação');
+
+    const waterConnected=water?.status==='ok';
+    setConnection('waterConnection',waterConnected?'ok':'off',waterConnected?'Conectividade ativa':'Sem confirmação');
+    const waterNotice=document.getElementById('waterNotice');
+    if(waterNotice){
+      if(water?.operational_notice){
+        const txt=String(water.operational_notice).replace(/\s+/g,' ').trim();
+        waterNotice.textContent='Comunicado operacional: '+(txt.length>260?txt.slice(0,257)+'…':txt);
+      }else{
+        waterNotice.textContent=waterConnected
+          ?'Canal oficial acessível. Sem comunicado operacional destacado nesta consulta.'
+          :'Canal oficial sem confirmação nesta coleta. Fonte indisponível ≠ ausência de risco.';
+      }
+    }
+    const energyConnected=energy?.status==='ok';
+    setConnection('energyConnection',energyConnected?'ok':'off',energyConnected?'Conectividade ativa':'Sem confirmação');
+
+    const operationalEmail=data?.notifications?.group_operational_email||{};
+    const managersEmail=data?.notifications?.group_managers_email||{};
+    const recipientLabel=(cfg)=>{
+      const count=Number(cfg?.recipient_count||0);
+      return cfg?.recipient_configured
+        ?(count>1?count+' destinatários · protegido':count===1?'1 destinatário · protegido':'Configurado · protegido')
+        :'Não configurado';
+    };
+    setConnection(
+      'notificationOperationalRecipients',
+      operationalEmail.recipient_configured?'ok':'off',
+      recipientLabel(operationalEmail)
+    );
+    setConnection(
+      'notificationManagersRecipients',
+      managersEmail.recipient_configured?'ok':'warn',
+      recipientLabel(managersEmail)
+    );
+    const providerCfg=operationalEmail.provider_configured?operationalEmail:managersEmail;
+    const emailProvider=providerCfg.provider==='smtp'?'Gmail SMTP':'Serviço de e-mail';
+    setConnection(
+      'notificationProviderStatus',
+      providerCfg.provider_configured?'ok':'warn',
+      providerCfg.provider_configured?emailProvider+' configurado':'Aguardando serviço de e-mail'
+    );
+    const emailEnabled=!!(operationalEmail.automatic_sending_enabled||managersEmail.automatic_sending_enabled);
+    setConnection(
+      'notificationSendStatus',
+      emailEnabled?'ok':providerCfg.provider_configured?'warn':'off',
+      emailEnabled?'Ativo':providerCfg.provider_configured?'Pronto · desativado':'Não configurado'
+    );
+    const operationalLast=document.getElementById('notificationOperationalLastSent');
+    if(operationalLast) operationalLast.textContent=operationalEmail.last_sent_at?fmtDate(operationalEmail.last_sent_at):'Nenhum envio';
+    const managersLast=document.getElementById('notificationManagersLastSent');
+    if(managersLast) managersLast.textContent=managersEmail.last_sent_at?fmtDate(managersEmail.last_sent_at):'Nenhum envio';
+    const ep=roads?.endpoint_status||{};
+    const alerts=Array.isArray(roads?.active_alerts)?roads.active_alerts:[];
+    document.getElementById('roadsAlertState').textContent=alerts.length
+      ?alerts.length+' alerta'+(alerts.length>1?'s':'')+' operacional'+(alerts.length>1?'is':'')+' recente'+(alerts.length>1?'s':'')+' confirmado'+(alerts.length>1?'s':'')
+      :(roads?.status==='ok'||roads?.status==='degraded'
+        ?'Nenhum alerta recente específico da Serra confirmado'
+        :'Canal operacional sem confirmação');
+    document.getElementById('roadsAlertList').innerHTML=alerts.slice(0,4).map(a=>
+      '<div class="road-alert-item"><strong>'+esc(a.title||'Aviso ELOvias + K-Infra Rodovia do Aço')+'</strong>'+(a.summary?'<br>'+esc(a.summary):'')+'</div>'
+    ).join('');
+    const roadCache=roads?.cache_context||{};
+    document.getElementById('roadsAlertNote').textContent=
+      'Última consulta: '+fmtDate(roads?.collected_at)+'. '+
+      (roadCache.used
+        ?'Parte do conteúdo foi recuperada por cache contextual; isso não confirma tráfego em tempo real.'
+        :'Consulta baseada nos canais oficiais disponíveis.')+
+      ' Ausência de alerta identificado não equivale a garantia de tráfego livre.';
+    const sourceMode=roads?.source_mode||'unavailable';
+    setConnection(
+      'roadsSourceMode',
+      sourceMode==='direct'?'ok':sourceMode==='mixed'||sourceMode==='direct_partial'?'warn':sourceMode==='cache_context'?'warn':'off',
+      sourceMode==='direct'?'Fonte direta':sourceMode==='mixed'?'Direta + cache contextual':sourceMode==='direct_partial'?'Fonte direta parcial':sourceMode==='cache_context'?'Cache contextual':'Sem confirmação'
+    );
+
+    const rw=roads?.tresrios_weather||{};
+    const roadVisual=weatherIconSvg(null,rw.condition||'');
+    document.getElementById('roadsWeatherIcon').innerHTML=roadVisual.svg;
+    document.getElementById('roadsWeatherTemp').textContent=rw.temperature_c!=null?numBR(rw.temperature_c,1)+' °C':'—';
+    document.getElementById('roadsWeatherCondition').textContent=rw.condition||'Sem condição confirmada';
+    document.getElementById('roadsWeatherMeta').textContent=(rw.wind_speed_kmh!=null?'Vento '+numBR(rw.wind_speed_kmh,1)+' km/h'+(rw.wind_direction?' · '+rw.wind_direction:'')+' · ':'')+(rw.updated_at?'Atualizado '+fmtDate(rw.updated_at):'');
+    document.getElementById('roadsWeatherSource').textContent=(rw.source||'Referência meteorológica próxima ao HCNSC')+' · apoio meteorológico, não sensor viário da concessionária.';
+
+    const serra=roads?.latest_serra_update||{};
+    document.getElementById('roadsSerraTitle').textContent=serra.title||'Sem atualização recente identificada';
+    document.getElementById('roadsSerraText').textContent=serra.serra_summary||serra.summary||'—';
+    document.getElementById('roadsSerraDate').textContent=serra.published_at?'Publicado em '+fmtDate(serra.published_at):'—';
+    const serraLink=document.getElementById('roadsSerraLink');
+    if(serra.url){serraLink.href=serra.url;serraLink.style.display='inline-block';}else{serraLink.style.display='none';}
+
+    const sched=roads?.latest_schedule||{};
+    document.getElementById('roadsScheduleTitle').textContent=sched.title||'Sem cronograma recente identificado';
+    document.getElementById('roadsScheduleText').textContent=sched.summary||'—';
+    document.getElementById('roadsScheduleDate').textContent=sched.published_at?'Publicado em '+fmtDate(sched.published_at):'—';
+    const schedLink=document.getElementById('roadsScheduleLink');
+    if(sched.url){schedLink.href=sched.url;schedLink.style.display='inline-block';}else{schedLink.style.display='none';}
+
+    const rb=roads?.latest_bulletin||{};
+    document.getElementById('roadsBulletinTitle').textContent=rb.title||'Sem boletim recente específico da Serra';
+    document.getElementById('roadsBulletinDate').textContent=rb.published_at?'Publicado em '+fmtDate(rb.published_at):'—';
+    const rbLink=document.getElementById('roadsBulletinLink');
+    const rbUrl=rb.url||rb.pdf_url;
+    if(rbUrl){rbLink.href=rbUrl;rbLink.style.display='inline-block';}else{rbLink.style.display='none';}
+    document.getElementById('roadsEmergency').textContent=roads?.emergency_phone||'0800 116 0493';
+    document.getElementById('roadsWhatsapp').textContent=roads?.whatsapp||'0800 116 0493';
+    document.getElementById('roadsAccessibility').textContent=roads?.accessibility_phone||'0800 116 0465';
+
+    const level=Math.max(1,Math.min(5,Number(data.overall?.level)||1));
+    applyLevel(level,data.overall?.reason||'Monitoramento CEMADEN-RJ ativo.',data.generated_at,data);
+    document.getElementById('systemMode').textContent='CEMADEN + INMET + DEFESA CIVIL';
+    document.getElementById('climateMode').textContent='INMET AUTOMÁTICO';
+    if(!window.currentHistory?.length){
+      document.getElementById('historyBody').innerHTML='<tr><td colspan="9">Histórico ainda não carregado.</td></tr>';
+    }
+  }catch(err){
+    setConnection('cemadenConnection','off','Sem confirmação');
+    document.getElementById('systemMode').textContent='DADOS INDISPONÍVEIS';
+    document.getElementById('levelReason').textContent='Falha ao carregar o snapshot oficial publicado: '+err.message;
+  }
+}
+function climatePeriodCard(item,label){
+  if(!item) return '<div class="climate-period-card empty"><span>'+label+'<br><small>sem registro</small></span></div>';
+  const visual=weatherIconSvg(item.weather_code,item.condition||'');
+  const min=item.temperature_min_c, max=item.temperature_max_c;
+  const temp=min!=null && max!=null
+    ?(Math.abs(Number(min)-Number(max))<0.1?numBR(min,1)+'°C':numBR(min,1)+'–'+numBR(max,1)+'°C')
+    :(item.temperature_last_c!=null?numBR(item.temperature_last_c,1)+'°C':'—');
+  const hum=item.humidity_min_pct!=null && item.humidity_max_pct!=null
+    ?numBR(item.humidity_min_pct,0)+'–'+numBR(item.humidity_max_pct,0)+'%'
+    :(item.humidity_last_pct!=null?numBR(item.humidity_last_pct,0)+'%':'—');
+  const gust=item.wind_gust_max_kmh!=null?' · rajada '+numBR(item.wind_gust_max_kmh,0)+' km/h':'';
+  return '<div class="climate-period-card">'+
+    '<div class="climate-period-top"><div><div class="climate-period-name">'+esc(label)+'</div><div class="climate-period-temp">'+esc(temp)+'</div></div><div class="climate-period-icon">'+visual.svg+'</div></div>'+
+    '<div class="climate-period-condition">'+esc(item.condition||'Condição registrada')+'</div>'+
+    '<div class="climate-period-detail">Umidade '+esc(hum)+gust+'<br>'+esc(item.samples||1)+' coleta(s) no período</div>'+
+  '</div>';
+}
+async function loadClimateHistory(){
+  const grid=document.getElementById('climateHistoryGrid');
+  if(!grid) return;
+  try{
+    const r=await fetch('data/climate_history.json?ts='+Date.now(),{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    const periods=Array.isArray(data.periods)?data.periods:[];
+    const byDate={};
+    periods.forEach(p=>{
+      if(!byDate[p.date]) byDate[p.date]={};
+      byDate[p.date][p.period]=p;
+    });
+    const dates=Object.keys(byDate).sort().reverse().slice(0,7);
+    if(!dates.length){
+      grid.innerHTML='<div class="card">O histórico climático começará a aparecer após a primeira coleta de manhã, tarde ou noite.</div>';
+      return;
+    }
+    grid.innerHTML=dates.map(date=>{
+      const d=new Date(date+'T12:00:00');
+      const title=isNaN(d)?date:d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'});
+      const row=byDate[date];
+      return '<article class="climate-day">'+
+        '<div class="climate-day-title"><strong>'+esc(title)+'</strong><span class="small">'+Object.keys(row).length+' período(s) registrado(s)</span></div>'+
+        '<div class="climate-periods">'+
+          climatePeriodCard(row.madrugada,'Madrugada')+
+          climatePeriodCard(row.manha,'Manhã')+
+          climatePeriodCard(row.tarde,'Tarde')+
+          climatePeriodCard(row.noite,'Noite')+
+        '</div>'+
+      '</article>';
+    }).join('');
+  }catch(err){
+    grid.innerHTML='<div class="card">Histórico climático ainda não disponível: '+esc(err.message)+'</div>';
+  }
+}
+
+let bingenHistorySnapshots=[];
+
+function bingenDayKey(value){
+  const raw=String(value||'');
+  const m=raw.match(/^(\d{4}-\d{2}-\d{2})/);
+  if(m) return m[1];
+  const d=new Date(value);
+  if(isNaN(d)) return raw;
+  return d.toLocaleDateString('en-CA',{timeZone:'America/Sao_Paulo'});
+}
+function groupReferenceStationDaily(snaps){
+  const groups=new Map();
+  snaps.forEach(s=>{
+    const b=s?.pluviometers?.bingen;
+    if(!b || b.status!=='ok' || !b.observed_at) return;
+    const key=bingenDayKey(b.observed_at);
+    const old=groups.get(key);
+    if(!old || String(b.observed_at).localeCompare(String(old.observed_at))>0){
+      groups.set(key,{...b,_snapshot_ts:s.ts,_day:key});
+    }
+  });
+  return [...groups.values()].sort((a,b)=>String(b._day||'').localeCompare(String(a._day||'')));
+}
+function renderReferenceStationHistory(){
+  const rows=groupReferenceStationDaily(bingenHistorySnapshots).slice(0,90);
+  const body=document.getElementById('bingenHistoryBody');
+  const current=rows[0]||null;
+  if(!rows.length){
+    body.innerHTML='<tr><td colspan="10">O histórico começará a ser preenchido a partir da primeira coleta válida da estação de referência.</td></tr>';
+    document.getElementById('bingenHistoryStatus').textContent='AGUARDANDO DADOS';
+    document.getElementById('bingenHistoryLast').textContent='—';
+    document.getElementById('bingenHistory1h').textContent='—';
+    document.getElementById('bingenHistory24h').textContent='—';
+    document.getElementById('bingenHistoryDistance').textContent='—';
+    return;
+  }
+  const mm=v=>v==null?'—':numBR(v,1)+' mm';
+  document.getElementById('bingenHistoryStatus').textContent='HISTÓRICO ATIVO';
+  document.getElementById('bingenHistoryLast').textContent=fmtDate(current.observed_at);
+  document.getElementById('bingenHistory1h').textContent=mm(current.acc1h_mm);
+  document.getElementById('bingenHistory24h').textContent=mm(current.acc24h_mm);
+  document.getElementById('bingenHistoryDistance').textContent=current.distance_to_hcnsc_km==null?'—':numBR(current.distance_to_hcnsc_km,1)+' km';
+  body.innerHTML=rows.map(b=>{
+    const d=new Date((b._day||'')+'T12:00:00-03:00');
+    const dayLabel=isNaN(d)?b._day:d.toLocaleDateString('pt-BR');
+    return '<tr>'+
+      '<td><strong>'+esc(dayLabel)+'</strong></td>'+
+      '<td>'+esc(fmtDate(b.observed_at))+'</td>'+
+      '<td>'+esc(mm(b.acc1h_mm))+'</td>'+
+      '<td>'+esc(mm(b.acc3h_mm))+'</td>'+
+      '<td>'+esc(mm(b.acc6h_mm))+'</td>'+
+      '<td>'+esc(mm(b.acc12h_mm))+'</td>'+
+      '<td>'+esc(mm(b.acc24h_mm))+'</td>'+
+      '<td>'+esc(mm(b.acc48h_mm))+'</td>'+
+      '<td>'+esc(mm(b.acc72h_mm))+'</td>'+
+      '<td>'+esc(mm(b.acc96h_mm))+'</td>'+
+    '</tr>';
+  }).join('');
+}
+async function loadReferenceStationHistory(){
+  try{
+    const r=await fetch('data/history.json?ts='+Date.now(),{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    bingenHistorySnapshots=Array.isArray(data.snapshots)?data.snapshots:[];
+    renderReferenceStationHistory();
+  }catch(err){
+    document.getElementById('bingenHistoryStatus').textContent='INDISPONÍVEL';
+    document.getElementById('bingenHistoryBody').innerHTML='<tr><td colspan="9">Histórico da estação de referência indisponível nesta consulta.</td></tr>';
+  }
+}
+
+let currentHistory=[];
+let currentHistoryLabel='janela de 90 dias';
+let historyView='risk';
+let pluvioHistoryMode='hourly';
+
+function esc(v){
+  return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function historyMmValue(obj){
+  const v=obj?.value;
+  return v==null?'—':Number(v).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+' mm';
+}
+function normalizeHistoryText(v){
+  return String(v??'').trim().replace(/\s+/g,' ').toLowerCase();
+}
+function riskHistorySignature(s){
+  // Mantido como helper de compatibilidade do frontend. O histórico visível de
+  // níveis é baseado somente em transições de subida, não em mudanças de texto.
+  return String(Number(s?.level)||1);
+}
+function groupRiskHistory(snaps){
+  const asc=[...snaps].filter(Boolean).sort((a,b)=>String(a.ts||'').localeCompare(String(b.ts||'')));
+  const events=[];
+  let previousLevel=1;
+  for(const s of asc){
+    const level=Number(s?.level)||1;
+    if(level>1 && level>previousLevel){
+      events.push({...s,_previousLevel:previousLevel,_activation:true});
+    }
+    previousLevel=level;
+  }
+  return events;
+}
+function historyPeriod(row){
+  return '<span class="history-period">'+esc(fmtDate(row?.ts))+'</span>';
+}
+function activationCause(s){
+  const drivers=[];
+  const geo=s?.geological||{}, hydro=s?.hydrological||{}, imet=s?.inmet||{}, dcHist=s?.defesa_civil||{};
+  if(geo.status==='ok' && Number(geo.level)>1 && geo.risk) drivers.push('Geológico: '+geo.risk);
+  if(hydro.status==='ok' && Number(hydro.level)>1 && hydro.risk) drivers.push('Hidrológico: '+hydro.risk);
+  if(imet.status==='ok' && Number(imet.level)>1 && imet.risk) drivers.push('INMET: '+imet.risk);
+  if(dcHist.status==='ok' && Number(dcHist.level)>1 && (dcHist.basis||dcHist.risk)) drivers.push('Defesa Civil: '+(dcHist.basis||dcHist.risk));
+
+  const reason=String(s?.reason||'').trim();
+  const extra=[];
+  if(/corrobora/i.test(reason)) extra.push('corroboração entre fontes oficiais');
+  const rainMatch=reason.match(/(Chuva elevada no CEMADEN:[^.]+|Acumulado elevado no CEMADEN:[^.]+|Previsão INMET com chuva forte[^.]*|Previsão INMET com chuva intensa[^.]*)/gi);
+  if(rainMatch) extra.push(...rainMatch.map(x=>x.trim()));
+
+  if(drivers.length) return [...drivers,...extra].join(' · ')+'.';
+  if(reason) return reason;
+  return 'Elevação identificada pelas fontes integradas do HCNSC Alerta.';
+}
+function riskObservation(s){
+  return activationCause(s);
+}
+function renderRiskHistory(){
+  const display=groupRiskHistory(currentHistory).sort((a,b)=>String(b.ts||'').localeCompare(String(a.ts||'')));
+  const body=document.getElementById('historyBody');
+  if(!display.length){
+    body.innerHTML='<tr><td colspan="3">Nenhum acionamento de nível acima de 1 registrado nesta janela.</td></tr>';
+  }else{
+    body.innerHTML=display.map(s=>'<tr>'+
+      '<td><strong>'+esc(fmtDate(s.ts))+'</strong></td>'+
+      '<td><strong>'+esc((s.level??'—')+(s.label?' · '+s.label:''))+'</strong>'+
+        '<div class="small">Anterior: '+esc((s._previousLevel??1)+' · '+(labels[s._previousLevel]||'Vigilância'))+'</div></td>'+
+      '<td>'+esc(activationCause(s))+'</td>'+
+    '</tr>').join('');
+  }
+  document.getElementById('historyCountLabel').textContent='Acionamentos de nível';
+  document.getElementById('historyCount').textContent=display.length+(display.length===1?' acionamento':' acionamentos');
+  const asc=[...display].sort((a,b)=>String(a.ts||'').localeCompare(String(b.ts||'')));
+  document.getElementById('historyOldest').textContent=asc.length?fmtDate(asc[0].ts):'—';
+  document.getElementById('historyNewest').textContent=asc.length?fmtDate(asc[asc.length-1].ts):'—';
+}
+function hourBucket(ts){
+  const d=new Date(ts);
+  if(isNaN(d)) return String(ts||'');
+  d.setMinutes(0,0,0);
+  return d.toISOString();
+}
+function groupPluvioHourly(snaps){
+  const map=new Map();
+  [...snaps].filter(Boolean).sort((a,b)=>String(a.ts||'').localeCompare(String(b.ts||''))).forEach(s=>{
+    const key=hourBucket(s.ts);
+    if(!map.has(key)) map.set(key,{_from:s.ts,_to:s.ts,_count:0,highest_1h:null,highest_24h:null});
+    const g=map.get(key);
+    g._to=s.ts;
+    g._count+=1;
+    for(const field of ['highest_1h','highest_24h']){
+      const cand=s.pluviometers?.[field];
+      if(cand?.value!=null && (g[field]?.value==null || Number(cand.value)>Number(g[field].value))) g[field]=cand;
+    }
+  });
+  return [...map.values()];
+}
+function renderPluvioHistory(){
+  let rows;
+  if(pluvioHistoryMode==='hourly'){
+    rows=groupPluvioHourly(currentHistory);
+  }else{
+    rows=currentHistory.map(s=>({
+      _from:s.ts,_to:s.ts,_count:1,
+      highest_1h:s.pluviometers?.highest_1h||null,
+      highest_24h:s.pluviometers?.highest_24h||null
+    }));
+  }
+  rows.sort((a,b)=>String(b._to||'').localeCompare(String(a._to||'')));
+  const body=document.getElementById('pluvioHistoryBody');
+  if(!rows.length){
+    body.innerHTML='<tr><td colspan="6">Nenhum registro pluviométrico disponível.</td></tr>';
+  }else{
+    body.innerHTML=rows.map(r=>{
+      let period;
+      if(pluvioHistoryMode==='hourly'){
+        const d=new Date(r._from);
+        period=isNaN(d)?fmtDate(r._from):d.toLocaleDateString('pt-BR')+' · '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'–'+String(d.getHours()).padStart(2,'0')+':59';
+      }else{
+        period=fmtDate(r._from);
+      }
+      return '<tr>'+
+        '<td><strong>'+esc(period)+'</strong></td>'+
+        '<td>'+esc(historyMmValue(r.highest_1h))+'</td>'+
+        '<td>'+esc(r.highest_1h?.station||'—')+'</td>'+
+        '<td>'+esc(historyMmValue(r.highest_24h))+'</td>'+
+        '<td>'+esc(r.highest_24h?.station||'—')+'</td>'+
+        '<td>'+esc(r._count)+'</td>'+
+      '</tr>';
+    }).join('');
+  }
+  document.getElementById('historyCountLabel').textContent=pluvioHistoryMode==='hourly'?'Horas pluviométricas':'Coletas pluviométricas';
+  document.getElementById('historyCount').textContent=rows.length+(pluvioHistoryMode==='hourly'?' períodos horários':' coletas')+' · '+currentHistory.length+' snapshots preservados';
+}
+function updateHistorySummary(){
+  const asc=[...currentHistory].sort((a,b)=>String(a.ts||'').localeCompare(String(b.ts||'')));
+  document.getElementById('historyOldest').textContent=asc.length?fmtDate(asc[0].ts):'—';
+  document.getElementById('historyNewest').textContent=asc.length?fmtDate(asc[asc.length-1].ts):'—';
+}
+function renderHistory(snaps,label='janela de 90 dias'){
+  currentHistory=Array.isArray(snaps)?[...snaps]:[];
+  currentHistoryLabel=label;
+  updateHistorySummary();
+  if(historyView==='risk') renderRiskHistory(); else renderPluvioHistory();
+  renderDefenseCivilHistory();
+}
+function setHistoryView(view){
+  historyView=view;
+  const risk=view==='risk';
+  document.getElementById('historyRiskView').classList.toggle('active',risk);
+  document.getElementById('historyRainView').classList.toggle('active',!risk);
+  document.getElementById('historyRiskPanel').classList.toggle('active',risk);
+  document.getElementById('historyRainPanel').classList.toggle('active',!risk);
+  if(risk) renderRiskHistory(); else renderPluvioHistory();
+}
+async function loadArchive(file,month){
+  try{
+    const r=await fetch(file+'?ts='+Date.now(),{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    renderHistory(d.snapshots||[],month);
+  }catch(err){
+    const id=historyView==='risk'?'historyBody':'pluvioHistoryBody';
+    document.getElementById(id).innerHTML='<tr><td colspan="'+(historyView==='risk'?'3':'6')+'">Falha ao carregar arquivo '+esc(month)+': '+esc(err.message)+'</td></tr>';
+  }
+}
+async function loadHistory(){
+  try{
+    const [rh,ri]=await Promise.all([
+      fetch('data/history.json?ts='+Date.now(),{cache:'no-store'}),
+      fetch('data/history_index.json?ts='+Date.now(),{cache:'no-store'})
+    ]);
+    if(!rh.ok) throw new Error('histórico HTTP '+rh.status);
+    const h=await rh.json();
+    const rolling=h.snapshots||[];
+    renderHistory(rolling,'últimos '+(h.retention_days||90)+' dias');
+    if(ri.ok){
+      const idx=await ri.json();
+      const months=Array.isArray(idx.months)?idx.months:[];
+      document.getElementById('historyMonths').textContent=months.length;
+      const box=document.getElementById('historyArchiveLinks');
+      box.innerHTML='<button class="btn" id="historyRolling">Últimos 90 dias</button>'+months.map(m=>'<button class="btn archiveBtn" data-file="'+esc(m.file)+'" data-month="'+esc(m.month)+'">'+esc(m.month)+(m.snapshots!=null?' · '+m.snapshots:'')+'</button>').join('');
+      document.getElementById('historyRolling').onclick=()=>renderHistory(rolling,'últimos '+(h.retention_days||90)+' dias');
+      box.querySelectorAll('.archiveBtn').forEach(b=>b.onclick=()=>loadArchive(b.dataset.file,b.dataset.month));
+    }else{
+      document.getElementById('historyMonths').textContent='—';
+    }
+  }catch(err){
+    document.getElementById('historyBody').innerHTML='<tr><td colspan="3">Histórico indisponível: '+esc(err.message)+'</td></tr>';
+    document.getElementById('pluvioHistoryBody').innerHTML='<tr><td colspan="6">Histórico indisponível: '+esc(err.message)+'</td></tr>';
+  }
+}
+document.getElementById('historyRiskView').onclick=()=>setHistoryView('risk');
+document.getElementById('historyRainView').onclick=()=>setHistoryView('rain');
+document.getElementById('pluvioHistoryHourly').onclick=()=>{
+  pluvioHistoryMode='hourly';
+  document.getElementById('pluvioHistoryHourly').classList.add('active-filter');
+  document.getElementById('pluvioHistoryAll').classList.remove('active-filter');
+  renderPluvioHistory();
+};
+document.getElementById('pluvioHistoryAll').onclick=()=>{
+  pluvioHistoryMode='all';
+  document.getElementById('pluvioHistoryAll').classList.add('active-filter');
+  document.getElementById('pluvioHistoryHourly').classList.remove('active-filter');
+  renderPluvioHistory();
+};
+document.getElementById('exportHistory').onclick=()=>{
+  const rows=groupRiskHistory(currentHistory);
+  if(!rows.length) return;
+  const cols=['data_hora','nivel_anterior','nivel_acionado','rotulo','motivo'];
+  const data=rows.map(s=>[s.ts,s._previousLevel,s.level,s.label,activationCause(s)]);
+  const csv=[cols,...data].map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hcnsc-alerta-acionamentos-nivel.csv';a.click();URL.revokeObjectURL(a.href);
+};
+document.getElementById('exportPluvioHistory').onclick=()=>{
+  let rows=pluvioHistoryMode==='hourly'?groupPluvioHourly(currentHistory):currentHistory.map(s=>({
+    _from:s.ts,_to:s.ts,_count:1,highest_1h:s.pluviometers?.highest_1h||null,highest_24h:s.pluviometers?.highest_24h||null
+  }));
+  if(!rows.length) return;
+  const cols=['inicio','fim','coletas','max_1h_mm','estacao_1h','max_24h_mm','estacao_24h'];
+  const data=rows.map(r=>[r._from,r._to,r._count,r.highest_1h?.value,r.highest_1h?.station,r.highest_24h?.value,r.highest_24h?.station]);
+  const csv=[cols,...data].map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hcnsc-alerta-historico-pluviometros.csv';a.click();URL.revokeObjectURL(a.href);
+};
+
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById(b.dataset.target).classList.add('active');
+  if(b.dataset.target==='mapa') setTimeout(()=>ensureOperationalMap(latestOfficialData),60);
+  if(b.dataset.target==='defesa') renderDefenseCivilHistory();
+});
+document.querySelectorAll('[data-map-mode]').forEach(btn=>btn.onclick=()=>activateMapMode(btn.dataset.mapMode));
+document.getElementById('mapStationsToggle').onclick=()=>toggleMapSupport('stations');
+document.getElementById('mapRadiusToggle').onclick=()=>toggleMapSupport('radius');
+
+
+renderActions(1);
+loadOfficialData();
+loadClimateHistory();
+loadReferenceStationHistory();
+loadHistory();
+setInterval(loadOfficialData,60000);
+setInterval(loadClimateHistory,15*60000);
+setInterval(loadReferenceStationHistory,15*60000);
+setInterval(loadHistory,15*60000);
+</script>
+</body>
+</html>
