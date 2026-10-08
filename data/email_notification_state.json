@@ -1,0 +1,28 @@
+{
+  "schema_version": 2,
+  "last_seen_level": 1,
+  "last_seen_context": "rain",
+  "groups": {
+    "operational": {
+      "last_notified_level": null,
+      "last_notified_context": null,
+      "last_sent_at": null,
+      "last_attempt_at": null,
+      "last_event": null,
+      "last_result": "no_event",
+      "last_error": null,
+      "last_message_id": null
+    },
+    "managers": {
+      "last_notified_level": null,
+      "last_notified_context": null,
+      "last_sent_at": null,
+      "last_attempt_at": null,
+      "last_event": null,
+      "last_result": "no_event",
+      "last_error": null,
+      "last_message_id": null
+    }
+  },
+  "updated_at": "2026-10-08T22:09:34.236982+00:00"
+}
