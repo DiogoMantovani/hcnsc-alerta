@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "last_seen_level": 2,
+  "last_seen_level": 3,
   "last_seen_context": "rain",
   "groups": {
     "operational": {
@@ -8,9 +8,9 @@
       "last_notified_context": null,
       "last_sent_at": null,
       "last_attempt_at": null,
-      "last_event": null,
-      "last_result": "no_event",
-      "last_error": null,
+      "last_event": "entry",
+      "last_result": "not_configured",
+      "last_error": "Destinatários ou serviço de e-mail não configurados.",
       "last_message_id": null
     },
     "managers": {
@@ -24,5 +24,5 @@
       "last_message_id": null
     }
   },
-  "updated_at": "2026-10-09T19:41:04.974623+00:00"
+  "updated_at": "2026-10-09T19:56:01.290058+00:00"
 }
