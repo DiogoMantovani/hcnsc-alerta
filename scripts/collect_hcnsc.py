@@ -50,6 +50,10 @@ KINFRA_HOME = "https://www.rodoviadoaco.com.br/"
 KINFRA_CONTACT = "https://www.rodoviadoaco.com.br/contato"
 KINFRA_NEWS = "https://www.rodoviadoaco.com.br/noticia"
 SAAETRI_HOME = "https://saaetri.com.br/"
+SAAETRI_FALLBACKS = [
+    "https://conecta.tresrios.rj.gov.br/saaetri/",
+    "https://tresrios.rj.gov.br/saaetri-servico-autonomo-de-agua-e-esgoto-de-tres-rios/",
+]
 ENEL_RIO_CHANNELS = "https://www.enel.com.br/pt/Canais.html"
 
 RISK_TO_LEVEL = {"MUITO BAIXO":1,"BAIXO":2,"MODERADO":3,"ALTO":4,"MUITO ALTO":5}
@@ -301,7 +305,7 @@ def fetch_open_meteo_current(previous):
             "source_type":"estimativa meteorológica complementar",
             "official":False,
             "status":status,
-            "location":{"name":"Hospital Santa Teresa","latitude":HCNSC_LAT,"longitude":HCNSC_LON},
+            "location":{"name":"Hospital de Clínicas Nossa Senhora da Conceição","latitude":HCNSC_LAT,"longitude":HCNSC_LON},
             "observed_at":observed.isoformat() if observed else cur.get("time"),
             "age_hours":age,
             "temperature_c":safe_float(cur.get("temperature_2m")),
@@ -411,7 +415,7 @@ def fetch_weather_map(previous):
         "provider":"Open-Meteo + RainViewer",
         "source_type":"mapa meteorológico complementar",
         "official":False,
-        "center":{"name":"Hospital Santa Teresa","latitude":HCNSC_LAT,"longitude":HCNSC_LON},
+        "center":{"name":"Hospital de Clínicas Nossa Senhora da Conceição","latitude":HCNSC_LAT,"longitude":HCNSC_LON},
         "operational_radius_km":5,
         "grid_updated_at":now.isoformat() if grid_ok else prev.get("grid_updated_at"),
         "grid":grid,
@@ -1179,15 +1183,26 @@ def fetch_utilities(previous):
     headers={"User-Agent":"Mozilla/5.0 HCNSC-Alerta/1.0","Accept":"text/html,application/xhtml+xml"}
 
     water_prev=prev.get("water") or {}
-    try:
-        r=requests.get(SAAETRI_HOME,timeout=10,headers=headers)
-        r.raise_for_status()
-        soup=BeautifulSoup(r.text,"html.parser")
-        text_body=re.sub(r"\s+"," ",soup.get_text(" ",strip=True)).strip()
+    water_errors=[]
+    water_response=None
+    water_url=None
+    for candidate in [SAAETRI_HOME,*SAAETRI_FALLBACKS]:
+        try:
+            r=requests.get(candidate,timeout=10,headers=headers,allow_redirects=True)
+            r.raise_for_status()
+            if not r.text.strip():
+                raise RuntimeError("resposta vazia")
+            water_response=r
+            water_url=r.url or candidate
+            break
+        except Exception as exc:
+            water_errors.append(f"{candidate}: {exc}")
+    if water_response is not None:
         water={
             "provider":"SAAETRI",
             "status":"ok",
-            "url":SAAETRI_HOME,
+            "url":water_url or SAAETRI_HOME,
+            "official_primary_url":SAAETRI_HOME,
             "operational_notice":None,
             "has_operational_notice":False,
             "phone":"(24) 2251-6950",
@@ -1196,13 +1211,16 @@ def fetch_utilities(previous):
             "message":"Canal oficial do SAAETRI acessível. Acessibilidade do portal não prova continuidade do abastecimento no hospital.",
             "error":None,
         }
-    except Exception as exc:
+    else:
         water=dict(water_prev)
         water.update({
-            "provider":"SAAETRI","status":"unavailable","url":SAAETRI_HOME,
+            "provider":"SAAETRI",
+            "status":"unavailable",
+            "url":SAAETRI_HOME,
+            "official_primary_url":SAAETRI_HOME,
             "collected_at":now.isoformat(),
-            "message":"Canal oficial do SAAETRI indisponível nesta coleta. Fonte indisponível ≠ ausência de risco.",
-            "error":str(exc)[:300],
+            "message":"Canais oficiais do SAAETRI indisponíveis nesta coleta. Fonte indisponível ≠ ausência de risco.",
+            "error":" | ".join(water_errors)[:900],
         })
 
     energy_prev=prev.get("energy") or {}
