@@ -6,10 +6,10 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="hcnsc-ui-revision" content="20261013-hcnsc-002">
+<meta name="hcnsc-ui-revision" content="20261015-hcnsc-003">
 <meta name="theme-color" content="#006f76">
 <script>
-window.HCNSC_UI_REVISION='20261013-hcnsc-002';
+window.HCNSC_UI_REVISION='20261015-hcnsc-003';
 window.checkHcnscUiRevision=async function(){
   try{
     const r=await fetch('index.html?ui-check='+Date.now(),{cache:'no-store'});
@@ -1281,7 +1281,7 @@ function applyLevel(l,reason,generatedAt,data){
   const base=generatedAt?new Date(generatedAt):new Date();
   const updatedEl=document.getElementById('updatedAt');
   const nextEl=document.getElementById('nextAt');
-  const scheduleMinutes=[0,15,30,45];
+  const scheduleMinutes=[10,25,40,55];
   const now=new Date();
 
   function nextQuarterAfter(d){
