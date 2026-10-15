@@ -6,10 +6,10 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="hcnsc-ui-revision" content="20261015-hcnsc-005">
+<meta name="hcnsc-ui-revision" content="20261015-hcnsc-006">
 <meta name="theme-color" content="#006f76">
 <script>
-window.HCNSC_UI_REVISION='20261015-hcnsc-005';
+window.HCNSC_UI_REVISION='20261015-hcnsc-006';
 window.checkHcnscUiRevision=async function(){
   try{
     const r=await fetch('index.html?ui-check='+Date.now(),{cache:'no-store'});
@@ -486,6 +486,20 @@ footer{
 .normalization-message{margin-top:12px;padding:10px 12px;border-radius:10px;background:#f4f8f8;font-size:12px;line-height:1.45;color:#42565f}
 @media(max-width:900px){.normalization-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.normalization-conditions{grid-template-columns:1fr}}
 @media(max-width:560px){.normalization-grid{grid-template-columns:1fr}.normalization-head{flex-direction:column}}
+
+
+.history-change-up{color:#a33a22;font-weight:900}
+.history-change-down{color:#267749;font-weight:900}
+.history-details{min-width:300px}
+.history-details summary{cursor:pointer;font-weight:800;color:var(--brand);list-style:none}
+.history-details summary::-webkit-details-marker{display:none}
+.history-details summary:before{content:"＋";display:inline-block;margin-right:6px;font-weight:900}
+.history-details[open] summary:before{content:"−"}
+.history-context{display:grid;gap:8px;margin-top:10px;min-width:300px}
+.history-context-row{border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:#f9fbfb}
+.history-context-row strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#50666e;margin-bottom:4px}
+.history-context-row span{font-size:12px;line-height:1.45;color:#2e484f}
+@media(max-width:760px){.history-details{min-width:220px}.history-context{min-width:220px}}
 
 </style>
 </head>
@@ -1010,13 +1024,13 @@ footer{
 
 <div id="historyRiskPanel" class="history-subpanel active">
   <div class="history-section-head">
-    <div><h3>Histórico de Alterações de Nível</h3><div class="small">Registra somente acionamentos para níveis acima de 1. Reduções de nível não entram nesta lista.</div></div>
-    <button id="exportHistory" class="btn">Exportar acionamentos CSV</button>
+    <div><h3>Histórico de Alterações de Nível</h3><div class="small">Registra subidas e rebaixamentos, com o contexto meteorológico e operacional disponível em cada alteração.</div></div>
+    <button id="exportHistory" class="btn">Exportar alterações CSV</button>
   </div>
-  <div class="history-table-note">Cada registro mostra quando um nível superior foi acionado e qual evidência provocou a alteração. Uma permanência no mesmo nível não gera novo registro.</div>
+  <div class="history-table-note">Cada registro mostra a mudança de nível, o motivo e o cenário daquele momento. Registros mais antigos exibem apenas os dados que já eram armazenados; novas coletas preservam contexto meteorológico ampliado.</div>
   <div class="card table"><table>
-    <thead><tr><th>Data/hora</th><th>Nível acionado</th><th>O que gerou a alteração</th></tr></thead>
-    <tbody id="historyBody"><tr><td colspan="3">Carregando acionamentos de nível…</td></tr></tbody>
+    <thead><tr><th>Data/hora</th><th>Alteração</th><th>Motivo</th><th>Contexto no momento</th></tr></thead>
+    <tbody id="historyBody"><tr><td colspan="4">Carregando alterações de nível…</td></tr></tbody>
   </table></div>
 </div>
 
@@ -2367,56 +2381,96 @@ function riskHistorySignature(s){
 }
 function groupRiskHistory(snaps){
   const asc=[...snaps].filter(Boolean).sort((a,b)=>String(a.ts||'').localeCompare(String(b.ts||'')));
+  if(asc.length<2) return [];
   const events=[];
-  let previousLevel=1;
-  for(const s of asc){
-    const level=Number(s?.level)||1;
-    if(level>1 && level>previousLevel){
-      events.push({...s,_previousLevel:previousLevel,_activation:true});
-    }
+  let previousLevel=Number(asc[0]?.level)||1;
+  for(let i=1;i<asc.length;i++){
+    const s=asc[i], level=Number(s?.level)||1;
+    if(level!==previousLevel) events.push({...s,_previousLevel:previousLevel,_changeType:level>previousLevel?'up':'down'});
     previousLevel=level;
   }
   return events;
 }
-function historyPeriod(row){
-  return '<span class="history-period">'+esc(fmtDate(row?.ts))+'</span>';
-}
+function historyPeriod(row){return '<span class="history-period">'+esc(fmtDate(row?.ts))+'</span>';}
 function activationCause(s){
-  const drivers=[];
-  const geo=s?.geological||{}, hydro=s?.hydrological||{}, imet=s?.inmet||{}, dcHist=s?.defesa_civil||{};
-  if(geo.status==='ok' && Number(geo.level)>1 && geo.risk) drivers.push('Geológico: '+geo.risk);
-  if(hydro.status==='ok' && Number(hydro.level)>1 && hydro.risk) drivers.push('Hidrológico: '+hydro.risk);
-  if(imet.status==='ok' && Number(imet.level)>1 && imet.risk) drivers.push('INMET: '+imet.risk);
-  if(dcHist.status==='ok' && Number(dcHist.level)>1 && (dcHist.basis||dcHist.risk)) drivers.push('Defesa Civil: '+(dcHist.basis||dcHist.risk));
-
   const reason=String(s?.reason||'').trim();
+  if(s?._changeType==='down'){
+    if(reason) return reason;
+    const n=s?.normalization||{};
+    return 'Rebaixamento confirmado após a janela de estabilidade e '+(n.confirmations_required||3)+' verificações válidas.';
+  }
+  const drivers=[], geo=s?.geological||{}, hydro=s?.hydrological||{}, imet=s?.inmet||{}, dcHist=s?.defesa_civil||{};
+  if(geo.status==='ok'&&Number(geo.level)>1&&geo.risk) drivers.push('Geológico: '+geo.risk);
+  if(hydro.status==='ok'&&Number(hydro.level)>1&&hydro.risk) drivers.push('Hidrológico: '+hydro.risk);
+  if(imet.status==='ok'&&Number(imet.level)>1&&imet.risk) drivers.push('INMET: '+imet.risk);
+  if(dcHist.status==='ok'&&Number(dcHist.level)>1&&(dcHist.basis||dcHist.risk)) drivers.push('Defesa Civil: '+(dcHist.basis||dcHist.risk));
   const extra=[];
   if(/corrobora/i.test(reason)) extra.push('corroboração entre fontes oficiais');
   const rainMatch=reason.match(/(Chuva elevada no CEMADEN:[^.]+|Acumulado elevado no CEMADEN:[^.]+|Previsão INMET com chuva forte[^.]*|Previsão INMET com chuva intensa[^.]*)/gi);
   if(rainMatch) extra.push(...rainMatch.map(x=>x.trim()));
-
   if(drivers.length) return [...drivers,...extra].join(' · ')+'.';
   if(reason) return reason;
-  return 'Elevação identificada pelas fontes integradas do HCNSC Alerta.';
+  return 'Alteração identificada pelas fontes integradas do HCNSC Alerta.';
 }
-function riskObservation(s){
-  return activationCause(s);
+function historyMm(v){return v==null||Number.isNaN(Number(v))?'—':numBR(v,1)+' mm';}
+function historyContextHtml(s){
+  const w=s?.weather||{}, pv=s?.pluviometers||{}, ref=pv.bingen||{}, fc=(s?.forecast?.days||[])[0]||{}, n=s?.normalization||{}, op=s?.operational_context||{}, supp=s?.supplemental||{};
+  const sourceParts=[];
+  for(const [label,obj] of [['Geológico',s?.geological||{}],['Hidrológico',s?.hydrological||{}],['INMET',s?.inmet||{}],['Defesa Civil',s?.defesa_civil||{}]]){
+    const state=obj.risk||obj.basis||obj.stage;
+    if(state) sourceParts.push(label+': '+state+(obj.status&&obj.status!=='ok'?' ['+obj.status+']':''));
+  }
+  const weatherParts=[];
+  if(w.condition) weatherParts.push(w.condition);
+  if(w.temperature_c!=null) weatherParts.push(numBR(w.temperature_c,1)+' °C');
+  if(w.apparent_temperature_c!=null) weatherParts.push('sensação '+numBR(w.apparent_temperature_c,1)+' °C');
+  if(w.humidity_pct!=null) weatherParts.push('umidade '+numBR(w.humidity_pct,0)+'%');
+  if(w.precipitation_mm!=null) weatherParts.push('precip. '+numBR(w.precipitation_mm,1)+' mm');
+  if(w.wind_speed_kmh!=null) weatherParts.push('vento '+numBR(w.wind_speed_kmh,1)+' km/h');
+  if(w.wind_gust_kmh!=null) weatherParts.push('rajada '+numBR(w.wind_gust_kmh,1)+' km/h');
+  const rainParts=[];
+  if(ref.name) rainParts.push(ref.name);
+  if(ref.acc1h_mm!=null) rainParts.push(historyMm(ref.acc1h_mm)+'/1 h');
+  else if(ref.acc12h_mm!=null) rainParts.push(historyMm(ref.acc12h_mm)+'/12 h');
+  if(ref.acc24h_mm!=null) rainParts.push(historyMm(ref.acc24h_mm)+'/24 h');
+  if(pv.highest_1h?.value!=null) rainParts.push('máx. municipal 1 h '+historyMm(pv.highest_1h.value)+' · '+(pv.highest_1h.station||''));
+  if(pv.highest_24h?.value!=null) rainParts.push('máx. municipal 24 h '+historyMm(pv.highest_24h.value)+' · '+(pv.highest_24h.station||''));
+  const forecastParts=[];
+  if(fc.summary) forecastParts.push(fc.summary);
+  if(fc.temperature_min_c!=null||fc.temperature_max_c!=null) forecastParts.push('temperatura '+(fc.temperature_min_c!=null?numBR(fc.temperature_min_c,1)+'°':'—')+' a '+(fc.temperature_max_c!=null?numBR(fc.temperature_max_c,1)+'°':'—'));
+  const normParts=[];
+  if(n.phase) normParts.push('fase '+n.phase);
+  if(n.target_level!=null) normParts.push('alvo nível '+n.target_level);
+  if(n.minimum_stability_remaining_minutes!=null) normParts.push('janela restante '+normalizationDuration(n.minimum_stability_remaining_minutes));
+  if(n.confirmations!=null||n.confirmations_required!=null) normParts.push('confirmações '+(n.confirmations||0)+'/'+(n.confirmations_required||3));
+  if(n.blocked_reasons?.length) normParts.push('bloqueios: '+n.blocked_reasons.join('; '));
+  const ops=[];
+  if(op.roads_status) ops.push('rodovias '+op.roads_status);
+  if(op.water_status) ops.push('água '+op.water_status);
+  if(op.energy_status) ops.push('energia '+op.energy_status);
+  const rows=[];
+  rows.push('<div class="history-context-row"><strong>Fontes oficiais</strong><span>'+esc(sourceParts.join(' · ')||'Sem detalhe adicional armazenado neste registro.')+'</span></div>');
+  rows.push('<div class="history-context-row"><strong>Clima no momento</strong><span>'+esc(weatherParts.join(' · ')||'Registro antigo sem contexto meteorológico detalhado.')+'</span></div>');
+  rows.push('<div class="history-context-row"><strong>Pluviometria</strong><span>'+esc(rainParts.join(' · ')||'Sem pluviometria detalhada armazenada neste registro.')+'</span></div>');
+  rows.push('<div class="history-context-row"><strong>Previsão</strong><span>'+esc(forecastParts.join(' · ')||'Registro sem resumo de previsão armazenado.')+'</span></div>');
+  if(normParts.length) rows.push('<div class="history-context-row"><strong>Normalização / rebaixamento</strong><span>'+esc(normParts.join(' · '))+'</span></div>');
+  if(supp.observation||supp.signals?.length) rows.push('<div class="history-context-row"><strong>Sinais complementares</strong><span>'+esc((supp.signals||[]).join(' · ')||'Observação suplementar ativa')+'</span></div>');
+  if(ops.length) rows.push('<div class="history-context-row"><strong>Contexto operacional externo</strong><span>'+esc(ops.join(' · '))+'</span></div>');
+  return '<details class="history-details"><summary>Ver contexto</summary><div class="history-context">'+rows.join('')+'</div></details>';
 }
+function riskObservation(s){return activationCause(s);}
 function renderRiskHistory(){
   const display=groupRiskHistory(currentHistory).sort((a,b)=>String(b.ts||'').localeCompare(String(a.ts||'')));
   const body=document.getElementById('historyBody');
-  if(!display.length){
-    body.innerHTML='<tr><td colspan="3">Nenhum acionamento de nível acima de 1 registrado nesta janela.</td></tr>';
-  }else{
-    body.innerHTML=display.map(s=>'<tr>'+
-      '<td><strong>'+esc(fmtDate(s.ts))+'</strong></td>'+
-      '<td><strong>'+esc((s.level??'—')+(s.label?' · '+s.label:''))+'</strong>'+
-        '<div class="small">Anterior: '+esc((s._previousLevel??1)+' · '+(labels[s._previousLevel]||'Vigilância'))+'</div></td>'+
-      '<td>'+esc(activationCause(s))+'</td>'+
-    '</tr>').join('');
-  }
-  document.getElementById('historyCountLabel').textContent='Acionamentos de nível';
-  document.getElementById('historyCount').textContent=display.length+(display.length===1?' acionamento':' acionamentos');
+  if(!display.length) body.innerHTML='<tr><td colspan="4">Nenhuma alteração de nível registrada nesta janela.</td></tr>';
+  else body.innerHTML=display.map(s=>{
+    const up=s._changeType==='up', symbol=up?'↑':'↓', cls=up?'history-change-up':'history-change-down';
+    return '<tr><td><strong>'+esc(fmtDate(s.ts))+'</strong></td>'+
+      '<td><span class="'+cls+'">'+symbol+' '+esc((s._previousLevel??1)+' → '+(s.level??'—'))+'</span><div class="small">'+esc((labels[s._previousLevel]||'Vigilância')+' → '+(s.label||labels[s.level]||'—'))+'</div></td>'+
+      '<td>'+esc(activationCause(s))+'</td><td>'+historyContextHtml(s)+'</td></tr>';
+  }).join('');
+  document.getElementById('historyCountLabel').textContent='Alterações de nível';
+  document.getElementById('historyCount').textContent=display.length+(display.length===1?' alteração':' alterações');
   const asc=[...display].sort((a,b)=>String(a.ts||'').localeCompare(String(b.ts||'')));
   document.getElementById('historyOldest').textContent=asc.length?fmtDate(asc[0].ts):'—';
   document.getElementById('historyNewest').textContent=asc.length?fmtDate(asc[asc.length-1].ts):'—';
@@ -2508,7 +2562,7 @@ async function loadArchive(file,month){
     renderHistory(d.snapshots||[],month);
   }catch(err){
     const id=historyView==='risk'?'historyBody':'pluvioHistoryBody';
-    document.getElementById(id).innerHTML='<tr><td colspan="'+(historyView==='risk'?'3':'6')+'">Falha ao carregar arquivo '+esc(month)+': '+esc(err.message)+'</td></tr>';
+    document.getElementById(id).innerHTML='<tr><td colspan="'+(historyView==='risk'?'4':'6')+'">Falha ao carregar arquivo '+esc(month)+': '+esc(err.message)+'</td></tr>';
   }
 }
 async function loadHistory(){
@@ -2533,7 +2587,7 @@ async function loadHistory(){
       document.getElementById('historyMonths').textContent='—';
     }
   }catch(err){
-    document.getElementById('historyBody').innerHTML='<tr><td colspan="3">Histórico indisponível: '+esc(err.message)+'</td></tr>';
+    document.getElementById('historyBody').innerHTML='<tr><td colspan="4">Histórico indisponível: '+esc(err.message)+'</td></tr>';
     document.getElementById('pluvioHistoryBody').innerHTML='<tr><td colspan="6">Histórico indisponível: '+esc(err.message)+'</td></tr>';
   }
 }
@@ -2552,13 +2606,11 @@ document.getElementById('pluvioHistoryAll').onclick=()=>{
   renderPluvioHistory();
 };
 document.getElementById('exportHistory').onclick=()=>{
-  const rows=groupRiskHistory(currentHistory);
-  if(!rows.length) return;
-  const cols=['data_hora','nivel_anterior','nivel_acionado','rotulo','motivo'];
-  const data=rows.map(s=>[s.ts,s._previousLevel,s.level,s.label,activationCause(s)]);
+  const rows=groupRiskHistory(currentHistory); if(!rows.length) return;
+  const cols=['data_hora','tipo_alteracao','nivel_anterior','nivel_novo','rotulo','motivo','clima','temperatura_c','sensacao_c','umidade_pct','precipitacao_mm','vento_kmh','rajada_kmh','estacao_referencia','chuva_curto_prazo_mm','chuva_24h_mm','max_municipal_1h_mm','max_municipal_24h_mm','previsao','fase_normalizacao','alvo_rebaixamento','confirmacoes'];
+  const data=rows.map(s=>{const w=s.weather||{},pv=s.pluviometers||{},ref=pv.bingen||{},fc=(s.forecast?.days||[])[0]||{},n=s.normalization||{};const short=ref.acc1h_mm!=null?ref.acc1h_mm:ref.acc12h_mm!=null?ref.acc12h_mm:ref.acc24h_mm;return [s.ts,s._changeType,s._previousLevel,s.level,s.label,activationCause(s),w.condition,w.temperature_c,w.apparent_temperature_c,w.humidity_pct,w.precipitation_mm,w.wind_speed_kmh,w.wind_gust_kmh,ref.name,short,ref.acc24h_mm,pv.highest_1h?.value,pv.highest_24h?.value,fc.summary,n.phase,n.target_level,(n.confirmations||0)+'/'+(n.confirmations_required||3)];});
   const csv=[cols,...data].map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');
-  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hcnsc-alerta-acionamentos-nivel.csv';a.click();URL.revokeObjectURL(a.href);
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}); const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hcnsc-alerta-alteracoes-nivel.csv';a.click();URL.revokeObjectURL(a.href);
 };
 document.getElementById('exportPluvioHistory').onclick=()=>{
   let rows=pluvioHistoryMode==='hourly'?groupPluvioHourly(currentHistory):currentHistory.map(s=>({
