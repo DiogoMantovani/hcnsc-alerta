@@ -1255,6 +1255,16 @@ def history_snapshot(payload):
         (s for s in (pv.get("stations") or []) if (s or {}).get("status")=="ok"),
         None,
     )
+    weather_ref=payload.get("weather_reference") or {}
+    weather_official=payload.get("weather") or {}
+    weather_current=weather_ref if weather_ref.get("status")=="ok" else weather_official
+    forecast=payload.get("forecast") or {}
+    forecast_days=forecast.get("days") or []
+    overall=payload.get("overall") or {}
+    deesc=overall.get("deescalation") or {}
+    roads=payload.get("roads") or {}
+    utilities=payload.get("utilities") or {}
+
     return {
         "ts":payload.get("generated_at"),
         "level":(payload.get("overall") or {}).get("level"),
@@ -1307,9 +1317,61 @@ def history_snapshot(payload):
             } if bingen else None,
         },
         "weather":{
-            "status":(payload.get("weather_reference") or {}).get("status") or (payload.get("weather") or {}).get("status"),
-            "provider":(payload.get("weather_reference") or {}).get("provider") or (payload.get("weather") or {}).get("provider"),
-            "temperature_c":(payload.get("weather_reference") or {}).get("temperature_c") if (payload.get("weather_reference") or {}).get("temperature_c") is not None else (payload.get("weather") or {}).get("temperature_c"),
+            "status":weather_current.get("status"),
+            "provider":weather_current.get("provider"),
+            "official":weather_current.get("official"),
+            "observed_at":weather_current.get("observed_at"),
+            "condition":weather_current.get("condition"),
+            "temperature_c":weather_current.get("temperature_c"),
+            "apparent_temperature_c":weather_current.get("apparent_temperature_c"),
+            "humidity_pct":weather_current.get("humidity_pct"),
+            "precipitation_mm":weather_current.get("precipitation_mm"),
+            "rain_mm":weather_current.get("rain_mm"),
+            "wind_speed_kmh":weather_current.get("wind_speed_kmh"),
+            "wind_gust_kmh":weather_current.get("wind_gust_kmh"),
+            "wind_direction":weather_current.get("wind_direction"),
+        },
+        "forecast":{
+            "status":forecast.get("status"),
+            "provider":forecast.get("provider"),
+            "days":[
+                {
+                    "date":day.get("date"),
+                    "summary":day.get("summary"),
+                    "temperature_min_c":day.get("temperature_min_c"),
+                    "temperature_max_c":day.get("temperature_max_c"),
+                    "humidity_min_pct":day.get("humidity_min_pct"),
+                    "humidity_max_pct":day.get("humidity_max_pct"),
+                }
+                for day in forecast_days[:3]
+                if isinstance(day,dict)
+            ],
+        },
+        "normalization":{
+            "phase":deesc.get("phase"),
+            "pending":deesc.get("pending"),
+            "target_level":deesc.get("target_level"),
+            "raw_candidate_level":deesc.get("raw_candidate_level"),
+            "effective_candidate_level":deesc.get("effective_candidate_level"),
+            "minimum_stability_window_hours":deesc.get("minimum_stability_window_hours") or deesc.get("official_hold_hours"),
+            "minimum_stability_elapsed_minutes":deesc.get("minimum_stability_elapsed_minutes"),
+            "minimum_stability_remaining_minutes":deesc.get("minimum_stability_remaining_minutes"),
+            "confirmations":deesc.get("consecutive_confirmations"),
+            "confirmations_required":deesc.get("confirmations_required"),
+            "last_relevant_official_at":deesc.get("last_relevant_official_at"),
+            "last_relevant_official_source":deesc.get("last_relevant_official_source"),
+            "blocked_by_source_gap":deesc.get("blocked_by_source_gap"),
+            "blocked_reasons":deesc.get("blocked_reasons") or [],
+        },
+        "supplemental":{
+            "observation":overall.get("supplemental_observation"),
+            "signals":overall.get("supplemental_signals") or [],
+        },
+        "operational_context":{
+            "roads_status":roads.get("status"),
+            "utilities_status":utilities.get("status"),
+            "water_status":(utilities.get("water") or {}).get("status"),
+            "energy_status":(utilities.get("energy") or {}).get("status"),
         },
     }
 
