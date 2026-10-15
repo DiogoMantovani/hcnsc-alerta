@@ -2002,15 +2002,7 @@ def update_official_hold_state(previous, current_level, geo, hydro, inmet, defes
 
 
 def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, defesa, local_hydro, supplemental_observation=False):
-    """Escalate immediately; descend after 3 h quiet + 3 spaced safe checks.
-
-    A CEMADEN level-2 classification (Baixo) is treated as an event that starts
-    an observation window. If no new CEMADEN level-2 publication arrives for
-    two hours, no other official provider is sustaining level 2, and there is
-    no supplemental observation signal, the system may start the three-check
-    confirmation cycle back to Vigilância. Re-reading the same CEMADEN event
-    never restarts the three-hour clock.
-    """
+    """Escalate immediately; each one-level descent needs 3 h stable + 3 spaced checks."""
     now=datetime.now(TZ)
     prev_overall=(previous.get("overall") or {}) if isinstance(previous,dict) else {}
     try:
@@ -2039,13 +2031,12 @@ def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, 
         ):
             active_level2_sources.append(key)
 
-    # Level 2 must not become a permanent floor merely because the same
-    # CEMADEN "Baixo" publication keeps being returned by the source endpoint.
-    # Once its three-hour hold expires, only CEMADEN is sustaining level 2, and
-    # no supplemental early-warning signal is active, the effective candidate
-    # becomes 1 and the normal three-confirmation descent cycle starts.
+    # A repeated CEMADEN "Baixo" event must not become a permanent level-2 floor.
+    # It becomes eligible for level 1 only after the same event has remained
+    # without a new relevant publication for the full stability window.
     level2_decay_eligible=bool(
         candidate_level==2
+        and previous_level==2
         and not supplemental_observation
         and active_level2_sources
         and all(
@@ -2055,6 +2046,31 @@ def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, 
         and not official.get("official_hold_active")
     )
     effective_candidate=1 if level2_decay_eligible else candidate_level
+
+    target=max(effective_candidate,previous_level-1) if effective_candidate<previous_level else None
+
+    # Every one-level descent has its own 3-hour continuous stability window.
+    # For the special 2->1 CEMADEN decay, backdate the window to the last relevant
+    # official publication so the same 3 hours are not counted twice.
+    descent_window_start=None
+    descent_elapsed_minutes=0.0
+    descent_remaining_minutes=0.0
+    same_window=bool(
+        target is not None
+        and prior_state.get("descent_from_level")==previous_level
+        and prior_state.get("descent_window_target")==target
+        and prior_state.get("descent_window_started_at")
+    )
+    if target is not None:
+        if same_window:
+            descent_window_start=parse_dt(prior_state.get("descent_window_started_at"))
+        elif level2_decay_eligible and official.get("last_relevant_official_at"):
+            descent_window_start=parse_dt(official.get("last_relevant_official_at"))
+        if descent_window_start is None or descent_window_start>now:
+            descent_window_start=now
+        descent_elapsed_minutes=max(0.0,(now-descent_window_start).total_seconds()/60.0)
+        required_minutes=float(DEESCALATION_OFFICIAL_HOLD_HOURS*60)
+        descent_remaining_minutes=max(0.0,required_minutes-descent_elapsed_minutes)
 
     def state_base():
         return {
@@ -2067,6 +2083,12 @@ def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, 
             "effective_candidate_level":effective_candidate,
             "aged_level2_decay":level2_decay_eligible,
             "aged_level2_sources":active_level2_sources if level2_decay_eligible else [],
+            "descent_from_level":previous_level if target is not None else None,
+            "descent_window_target":target,
+            "descent_window_started_at":descent_window_start.isoformat() if descent_window_start else None,
+            "minimum_stability_elapsed_minutes":round(descent_elapsed_minutes,1),
+            "minimum_stability_remaining_minutes":round(descent_remaining_minutes,1),
+            "minimum_stability_window_hours":DEESCALATION_OFFICIAL_HOLD_HOURS,
             **official,
         }
 
@@ -2083,20 +2105,18 @@ def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, 
             "last_confirmation_at":None,
         },False
 
-    target=max(effective_candidate,previous_level-1)
-
-    # A new/recent official publication supporting the current elevated level
-    # blocks any descent for three full hours. Re-reading the same publication does
-    # not restart this timer because its stable signature is preserved above.
-    if official.get("official_hold_active"):
+    # The stability clock keeps running even if a source is temporarily missing,
+    # but no confirmation may be counted while evidence is insufficient.
+    stability_wait=descent_remaining_minutes>0 or bool(official.get("official_hold_active"))
+    if stability_wait:
         return previous_level,{
             **state_base(),
             "pending":True,
-            "phase":"official_hold",
+            "phase":"observation_window",
             "target_level":target,
-            "blocked_by_source_gap":False,
+            "blocked_by_source_gap":bool(blockers),
             "blocked_by_official_hold":True,
-            "blocked_reasons":[],
+            "blocked_reasons":blockers,
             "consecutive_confirmations":0,
             "last_confirmation_at":None,
         },True
@@ -2117,6 +2137,8 @@ def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, 
     same_target=(
         prior_state.get("phase")=="confirming"
         and prior_state.get("target_level")==target
+        and prior_state.get("descent_from_level")==previous_level
+        and prior_state.get("descent_window_target")==target
         and not prior_state.get("blocked_by_source_gap")
         and not prior_state.get("blocked_by_official_hold")
     )
@@ -2136,10 +2158,10 @@ def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, 
         new_level=target
         still_pending=effective_candidate<new_level
         next_target=max(effective_candidate,new_level-1) if still_pending else None
-        return new_level,{
+        next_state={
             **state_base(),
             "pending":still_pending,
-            "phase":"confirming" if still_pending else "stable",
+            "phase":"observation_window" if still_pending else "stable",
             "target_level":next_target,
             "blocked_by_source_gap":False,
             "blocked_by_official_hold":False,
@@ -2147,7 +2169,17 @@ def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, 
             "consecutive_confirmations":0,
             "last_confirmation_at":None,
             "last_step_at":now.isoformat(),
-        },False
+        }
+        if still_pending:
+            # A new 3-hour window starts for the next one-level reduction.
+            next_state.update({
+                "descent_from_level":new_level,
+                "descent_window_target":next_target,
+                "descent_window_started_at":now.isoformat(),
+                "minimum_stability_elapsed_minutes":0.0,
+                "minimum_stability_remaining_minutes":float(DEESCALATION_OFFICIAL_HOLD_HOURS*60),
+            })
+        return new_level,next_state,False
 
     return previous_level,{
         **state_base(),
@@ -2272,12 +2304,14 @@ def main():
 
     if deescalation_held:
         if deescalation.get("blocked_by_official_hold"):
-            remaining=safe_float(deescalation.get("official_hold_remaining_minutes")) or 0
+            remaining=safe_float(deescalation.get("minimum_stability_remaining_minutes"))
+            if remaining is None:
+                remaining=safe_float(deescalation.get("official_hold_remaining_minutes")) or 0
             reason_parts.append(
-                "Descida bloqueada pela janela de segurança após informação oficial: "
+                "Descida aguardando janela mínima de estabilidade: "
                 +f"restam aproximadamente {remaining:.0f} min das "
                 +str(DEESCALATION_OFFICIAL_HOLD_HOURS)
-                +" h mínimas"
+                +" h exigidas para esta faixa"
             )
         elif deescalation.get("blocked_by_source_gap"):
             blocked=", ".join(deescalation.get("blocked_reasons") or [])
@@ -2322,7 +2356,7 @@ def main():
           "supplemental_observation":supplemental_observation,
           "supplemental_signals":supplemental_signals,
           "deescalation":deescalation,
-          "rule":"Escalada imediata somente por fonte oficial com status ok. Informação antiga não provoca nova subida. O risco Hidrológico é prioritário para o HCNSC; quando o CEMADEN Hidrológico ultrapassa sua janela de 24 h sem nova atualização, a estação pluviométrica de referência pode atuar como evidência local de normalização, desde que esteja recente e abaixo de 20 mm no curto prazo e 50 mm/24 h, sem outro pluviômetro recente acima desses gatilhos, sem aviso INMET, sem previsão forte e sem sinal operacional recente da Defesa Civil. O risco Geológico antigo não congela indefinidamente o rebaixamento, mas volta a participar imediatamente quando atualizado. Defesa Civil de Três Rios pode elevar por estágio ou sinal operacional oficial recente. CEMADEN-RJ + INMET, ambos atuais e em nível >=3, podem elevar +1. Após uma informação oficial relevante, o nível não pode cair por 3 horas. Encerrada essa janela sem nova informação de mesmo peso ou maior, são exigidas 3 verificações válidas consecutivas, separadas por ciclos reais de monitoramento, para reduzir apenas uma faixa. Novas publicações oficiais relevantes reiniciam as 3 horas; reler o mesmo aviso não reinicia o relógio. Quando o único sustentador do nível 2 for uma classificação CEMADEN Baixo sem nova publicação por 3 horas, inicia-se o ciclo de 3 confirmações para retorno à Vigilância. Depois da primeira queda, não há nova espera de 2 horas: são necessárias 3 novas verificações válidas para cada faixa seguinte, desde que não haja agravamento."
+          "rule":"Escalada imediata somente por fonte oficial com status ok. Informação antiga não provoca nova subida. O risco Hidrológico é prioritário para o HCNSC; quando o CEMADEN Hidrológico ultrapassa sua janela de 24 h sem nova atualização, a estação pluviométrica de referência pode atuar como evidência local de normalização, desde que esteja recente e abaixo de 20 mm no curto prazo e 50 mm/24 h, sem outro pluviômetro recente acima desses gatilhos, sem aviso INMET, sem previsão forte e sem sinal operacional recente da Defesa Civil. O risco Geológico antigo não congela indefinidamente o rebaixamento, mas volta a participar imediatamente quando atualizado. Defesa Civil de Três Rios pode elevar por estágio ou sinal operacional oficial recente. CEMADEN-RJ + INMET, ambos atuais e em nível >=3, podem elevar +1. Após uma informação oficial relevante, o nível não pode cair por 3 horas. Cada rebaixamento de uma faixa exige 3 horas contínuas de estabilidade e, depois dessa janela, 3 verificações válidas consecutivas separadas por ciclos reais de monitoramento. Novas informações oficiais que agravem ou sustentem o risco reiniciam ou interrompem a normalização conforme aplicável; reler o mesmo aviso não reinicia o relógio. Quando o único sustentador do nível 2 for uma classificação CEMADEN Baixo sem nova publicação por 3 horas, inicia-se o ciclo de 3 confirmações para retorno à Vigilância. Após cada queda de faixa, uma nova janela de 3 horas é iniciada antes de qualquer redução adicional."
       },
       "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet,"defesa_civil":defesa},
       "weather":weather,
