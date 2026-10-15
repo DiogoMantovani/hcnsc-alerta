@@ -6,10 +6,10 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="hcnsc-ui-revision" content="20261015-hcnsc-003">
+<meta name="hcnsc-ui-revision" content="20261015-hcnsc-004">
 <meta name="theme-color" content="#006f76">
 <script>
-window.HCNSC_UI_REVISION='20261015-hcnsc-003';
+window.HCNSC_UI_REVISION='20261015-hcnsc-004';
 window.checkHcnscUiRevision=async function(){
   try{
     const r=await fetch('index.html?ui-check='+Date.now(),{cache:'no-store'});
@@ -465,6 +465,28 @@ footer{
   .tab{padding-left:11px;padding-right:11px}
 }
 
+
+.normalization-card{margin:0 0 18px;border-left:5px solid var(--brand);padding:20px}
+.normalization-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:16px}
+.normalization-head h3{margin:4px 0 4px;font-size:21px}
+.normalization-head p{margin:0;color:var(--muted);font-size:12px;line-height:1.45}
+.normalization-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.normalization-metric{border:1px solid var(--line);border-radius:12px;padding:12px;background:#f9fbfb;min-height:92px}
+.normalization-metric span{display:block;font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px}
+.normalization-metric strong{display:block;font-size:17px;line-height:1.25}
+.normalization-metric small{display:block;margin-top:5px;color:var(--muted);line-height:1.35}
+.normalization-conditions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.normalization-condition{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff}
+.normalization-dot{width:10px;height:10px;border-radius:50%;margin-top:4px;flex:0 0 auto;background:#8a9aa0}
+.normalization-condition.ok .normalization-dot{background:#2d8a56}
+.normalization-condition.warn .normalization-dot{background:#c89a05}
+.normalization-condition.off .normalization-dot{background:#c63b35}
+.normalization-condition strong{display:block;font-size:12px}
+.normalization-condition small{display:block;color:var(--muted);margin-top:2px;line-height:1.35}
+.normalization-message{margin-top:12px;padding:10px 12px;border-radius:10px;background:#f4f8f8;font-size:12px;line-height:1.45;color:#42565f}
+@media(max-width:900px){.normalization-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.normalization-conditions{grid-template-columns:1fr}}
+@media(max-width:560px){.normalization-grid{grid-template-columns:1fr}.normalization-head{flex-direction:column}}
+
 </style>
 </head>
 <body>
@@ -529,6 +551,27 @@ footer{
 </div>
 </article>
 </div>
+
+
+<article id="normalizationCard" class="card normalization-card">
+  <div class="normalization-head">
+    <div>
+      <div class="eyebrow">Segurança para rebaixamento</div>
+      <h3>Normalização / possível rebaixamento</h3>
+      <p>Cada redução de uma faixa exige 3 h de estabilidade e, depois, 3 verificações válidas consecutivas. Uma nova piora interrompe o processo.</p>
+    </div>
+    <span id="normalizationStatus" class="badge">Verificando</span>
+  </div>
+  <div class="normalization-grid">
+    <div class="normalization-metric"><span>Última informação oficial relevante</span><strong id="normOfficial">—</strong><small id="normOfficialTime">—</small></div>
+    <div class="normalization-metric"><span>Tempo decorrido / janela mínima</span><strong id="normElapsed">—</strong><small>Janela exigida: 3 h por faixa</small></div>
+    <div class="normalization-metric"><span>Tempo mínimo para possível rebaixamento</span><strong id="normRemaining">—</strong><small>Estimativa mínima; pode aumentar se houver novo risco ou bloqueio de fonte.</small></div>
+    <div class="normalization-metric"><span>Confirmações válidas</span><strong id="normConfirmations">0 / 3</strong><small>Coletas separadas pelo intervalo mínimo definido no sistema.</small></div>
+  </div>
+  <div class="eyebrow" style="margin-bottom:8px">Condições relacionadas à normalização</div>
+  <div id="normConditions" class="normalization-conditions"></div>
+  <div id="normMessage" class="normalization-message">Aguardando estado de normalização.</div>
+</article>
 
 <div class="riskgrid">
 <article class="risk">
@@ -1722,6 +1765,141 @@ function renderDefenseCivilHistory(){
   }).join('');
 }
 
+
+function normalizationDuration(minutes){
+  if(minutes==null || !Number.isFinite(Number(minutes))) return '—';
+  const total=Math.max(0,Math.round(Number(minutes)));
+  const h=Math.floor(total/60), m=total%60;
+  if(h && m) return h+' h '+m+' min';
+  if(h) return h+' h';
+  return m+' min';
+}
+function renderNormalizationPanel(data){
+  const overall=data?.overall||{};
+  const d=overall.deescalation||{};
+  const level=Math.max(1,Math.min(5,Number(overall.level)||1));
+  const target=d.target_level!=null?Number(d.target_level):null;
+  const required=Math.max(1,Number(d.confirmations_required)||3);
+  const count=Math.max(0,Number(d.consecutive_confirmations)||0);
+  const interval=Math.max(1,Number(d.confirmation_min_interval_minutes)||15);
+  const holdHours=Math.max(1,Number(d.minimum_stability_window_hours||d.official_hold_hours)||3);
+  const now=new Date();
+  const sourceKey=d.last_relevant_official_source||null;
+  const sourceLabels={
+    cemaden_geological:'CEMADEN · Deslizamento',
+    cemaden_hydrological:'CEMADEN · Hidrológico',
+    inmet_alerts:'INMET',
+    defesa_civil:'Defesa Civil'
+  };
+  const sourceObj=sourceKey?(data?.sources?.[sourceKey]||{}):{};
+  const sourceRisk=sourceObj.basis||sourceObj.risk||sourceObj.stage||sourceObj.title||'informação oficial';
+  const officialAt=d.last_relevant_official_at||sourceObj.official_updated_at||null;
+  document.getElementById('normOfficial').textContent=sourceKey
+    ?(sourceLabels[sourceKey]||sourceKey)+' · '+sourceRisk
+    :'Nenhuma informação oficial elevada recente';
+  document.getElementById('normOfficialTime').textContent=officialAt
+    ?'Referência: '+fmtDate(officialAt)
+    :'Sem horário oficial relevante disponível';
+
+  const windowStart=d.descent_window_started_at||officialAt;
+  let elapsedMinutes=null;
+  let stabilityRemaining=null;
+  if(windowStart){
+    const dt=new Date(windowStart);
+    if(!isNaN(dt)){
+      elapsedMinutes=Math.max(0,(now.getTime()-dt.getTime())/60000);
+      stabilityRemaining=Math.max(0,holdHours*60-elapsedMinutes);
+    }
+  }
+  if(d.minimum_stability_remaining_minutes!=null && windowStart==null){
+    stabilityRemaining=Math.max(0,Number(d.minimum_stability_remaining_minutes)||0);
+  }
+  document.getElementById('normElapsed').textContent=elapsedMinutes!=null
+    ?normalizationDuration(elapsedMinutes)+' / '+holdHours+' h'
+    :(level<=1?'Nível mínimo':'Aguardando início da janela');
+
+  let minimumText='Aguardando redução do risco oficial';
+  if(level<=1){
+    minimumText='Sem rebaixamento pendente';
+  }else if(d.blocked_by_source_gap && (stabilityRemaining==null || stabilityRemaining<=0)){
+    minimumText='Bloqueado por evidência insuficiente';
+  }else if(target!=null){
+    let minMinutes=0;
+    if(stabilityRemaining!=null && stabilityRemaining>0){
+      minMinutes=stabilityRemaining+Math.max(0,required-1)*interval;
+    }else if(d.phase==='confirming'){
+      minMinutes=Math.max(0,required-count)*interval;
+    }else{
+      minMinutes=Math.max(0,required-1)*interval;
+    }
+    minimumText='≥ '+normalizationDuration(minMinutes);
+  }
+  document.getElementById('normRemaining').textContent=minimumText;
+  document.getElementById('normConfirmations').textContent=count+' / '+required;
+
+  const badge=document.getElementById('normalizationStatus');
+  let statusText='Sem rebaixamento elegível';
+  if(level<=1) statusText='Nível mínimo · Vigilância';
+  else if(d.blocked_by_source_gap && (stabilityRemaining==null || stabilityRemaining<=0)) statusText='Rebaixamento bloqueado';
+  else if(stabilityRemaining!=null && stabilityRemaining>0) statusText='Janela de '+holdHours+' h em andamento';
+  else if(d.phase==='confirming') statusText='Normalização em confirmação';
+  else if(d.pending) statusText='Normalização em análise';
+  badge.textContent=statusText;
+
+  const rows=[];
+  const add=(state,label,detail)=>rows.push(
+    '<div class="normalization-condition '+state+'"><span class="normalization-dot"></span><div><strong>'+esc(label)+'</strong><small>'+esc(detail)+'</small></div></div>'
+  );
+  const inmet=data?.sources?.inmet_alerts||{};
+  if(inmet.status==='ok' && Number(inmet.level||1)<=1) add('ok','INMET','Sem aviso meteorológico relevante ativo para sustentar elevação.');
+  else if(inmet.status==='ok') add('warn','INMET',(inmet.risk||inmet.title||'Aviso ativo')+' · nível de referência '+String(inmet.level||'—')+'.');
+  else add('off','INMET','Sem confirmação atual da fonte; fonte indisponível ≠ ausência de risco.');
+
+  const supplemental=!!overall.supplemental_observation;
+  const signals=Array.isArray(overall.supplemental_signals)?overall.supplemental_signals:[];
+  if(!supplemental) add('ok','Previsão / sinais antecipados','Sem sinal suplementar forte identificado para impedir a normalização.');
+  else add('warn','Previsão / sinais antecipados',signals.join(' · ')||'Há sinal meteorológico suplementar de atenção.');
+
+  const pv=data?.pluviometers||{};
+  const nearest=pv.nearest_to_hst||pv.nearest_to_hsj||pv.nearest_to_hcnsc||{};
+  const short=nearest.acc1h_mm!=null?Number(nearest.acc1h_mm):nearest.acc12h_mm!=null?Number(nearest.acc12h_mm):nearest.acc24h_mm!=null?Number(nearest.acc24h_mm):null;
+  const shortWindow=nearest.acc1h_mm!=null?'1 h':nearest.acc12h_mm!=null?'12 h':nearest.acc24h_mm!=null?'24 h':'curto prazo';
+  const day=nearest.acc24h_mm!=null?Number(nearest.acc24h_mm):null;
+  if(nearest.status==='ok' && short!=null){
+    add(short<20?'ok':'warn','Pluviômetro de referência · curto prazo',(nearest.name||'Estação de referência')+' · '+numBR(short,1)+' mm/'+shortWindow+' · critério < 20 mm.');
+  }else{
+    add('off','Pluviômetro de referência · curto prazo','Sem leitura recente suficiente para confirmar o critério < 20 mm.');
+  }
+  if(nearest.status==='ok' && day!=null){
+    add(day<50?'ok':'warn','Pluviômetro de referência · 24 h',(nearest.name||'Estação de referência')+' · '+numBR(day,1)+' mm/24 h · critério < 50 mm.');
+  }else{
+    add('off','Pluviômetro de referência · 24 h','Sem acumulado recente de 24 h suficiente para confirmar o critério < 50 mm.');
+  }
+
+  const highest1=pv.highest_1h?.value!=null?Number(pv.highest_1h.value):null;
+  const highest24=pv.highest_24h?.value!=null?Number(pv.highest_24h.value):null;
+  if(highest1!=null) add(highest1<20?'ok':'warn','Maior acumulado municipal · 1 h',numBR(highest1,1)+' mm · critério < 20 mm.');
+  else add('off','Maior acumulado municipal · 1 h','Sem valor recente confirmado para comparação.');
+  if(highest24!=null) add(highest24<50?'ok':'warn','Maior acumulado municipal · 24 h',numBR(highest24,1)+' mm · critério < 50 mm.');
+  else add('off','Maior acumulado municipal · 24 h','Sem valor recente confirmado para comparação.');
+
+  const dc=data?.sources?.defesa_civil||{};
+  if(dc.status==='ok' && Number(dc.level||1)>1) add('warn','Defesa Civil',dc.basis||dc.risk||'Sinal operacional oficial recente.');
+  else if(dc.status==='ok' || dc.status==='no_recent_update') add('ok','Defesa Civil','Sem sinal operacional recente confirmado que sustente elevação.');
+  else add('off','Defesa Civil','Sem confirmação direta recente; não é interpretado como ausência de risco.');
+
+  document.getElementById('normConditions').innerHTML=rows.join('');
+
+  const blockers=Array.isArray(d.blocked_reasons)?d.blocked_reasons:[];
+  let message='O rebaixamento só ocorre se a melhora permanecer estável durante toda a janela e as confirmações subsequentes forem válidas.';
+  if(level<=1) message='O sistema está em Vigilância. Uma nova informação oficial ou condição meteorológica relevante pode elevar o nível imediatamente.';
+  else if(stabilityRemaining!=null && stabilityRemaining>0) message='A janela mínima ainda está em andamento. Tempo restante da estabilidade: '+normalizationDuration(stabilityRemaining)+'. Depois disso serão exigidas '+required+' verificações válidas.';
+  else if(d.phase==='confirming') message='Janela mínima cumprida. Confirmações válidas: '+count+'/'+required+'.';
+  if(blockers.length) message+=' Bloqueios atuais: '+blockers.join('; ')+'.';
+  message+=' Fonte indisponível ≠ ausência de risco.';
+  document.getElementById('normMessage').textContent=message;
+}
+
 async function loadOfficialData(){
   try{
     const r=await fetch('data/status.json?ts='+Date.now(),{cache:'no-store'});
@@ -1735,6 +1913,7 @@ async function loadOfficialData(){
     const imet=data.sources?.inmet_alerts;
     const dc=data.sources?.defesa_civil||{};
     renderDefenseCivilPanel(data);
+    renderNormalizationPanel(data);
     const roads=data.roads||{};
     const utilities=data.utilities||{};
     const water=utilities.water||{};
