@@ -6,10 +6,10 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="hcnsc-ui-revision" content="20261015-hcnsc-006">
+<meta name="hcnsc-ui-revision" content="20261015-hcnsc-007">
 <meta name="theme-color" content="#006f76">
 <script>
-window.HCNSC_UI_REVISION='20261015-hcnsc-006';
+window.HCNSC_UI_REVISION='20261015-hcnsc-007';
 window.checkHcnscUiRevision=async function(){
   try{
     const r=await fetch('index.html?ui-check='+Date.now(),{cache:'no-store'});
@@ -1060,16 +1060,41 @@ footer{
 
 <h3>2. Como o nível é calculado</h3>
 <ul>
-  <li>O ponto de partida é o maior nível oficial válido entre os riscos geológico e hidrológico do CEMADEN-RJ, os avisos meteorológicos do INMET e a informação operacional recente da Defesa Civil de Três Rios.</li>
-  <li>A Defesa Civil pode elevar o nível quando houver estágio operacional recente ou sinal oficial recente, como primeiro/segundo toque de sirene, alerta de risco com mobilização ou abertura de pontos de apoio. Sinais antigos não provocam nova escalada.</li>
-  <li>Quando CEMADEN-RJ e INMET, como fontes independentes, estiverem simultaneamente em nível 3 ou superior, o HCNSC Alerta pode elevar o nível geral em uma faixa, limitado ao nível 5.</li>
-  <li>Previsão de chuva forte/intensa ou tempestade e pluviometria elevada são sinais complementares de antecipação e podem elevar somente para <strong>2 · Observação</strong>, caso as fontes oficiais ainda estejam em Vigilância.</li>
-  <li>Quando o contexto predominante for chuva, as ações recomendadas tratam <strong>água, energia e acessos de forma conjunta</strong>, pois chuva intensa também pode provocar quedas de árvores, interrupções na rede elétrica externa e bloqueios viários.</li>
-  <li>Como referência operacional de Observação pluviométrica, o sistema considera acumulado recente igual ou superior a <strong>20 mm em 1 hora</strong> ou <strong>50 mm em 24 horas</strong> em estação CEMADEN com leitura recente.</li>
+  <li>O ponto de partida é o maior nível <strong>oficial, válido e recente</strong> entre os riscos geológico e hidrológico do CEMADEN-RJ, os avisos meteorológicos do INMET e a informação operacional recente da Defesa Civil de Três Rios.</li>
+  <li>Somente uma fonte oficial com informação atual e elegível pode provocar uma <strong>nova escalada</strong>. Informação antiga preservada no histórico não cria uma nova subida.</li>
+  <li>Quando CEMADEN-RJ e INMET, como fontes independentes, estiverem simultaneamente em nível 3 ou superior, o HCNSC Alerta pode elevar o nível geral em uma faixa, limitado ao Nível 5.</li>
+  <li>Previsão de chuva forte/intensa, tempestade ou pluviometria elevada atuam como sinais complementares de antecipação e podem elevar de Vigilância para, no máximo, <strong>2 · Observação</strong> quando ainda não existe fonte oficial em nível superior.</li>
+  <li>Como referência operacional de chuva, o sistema considera gatilho de Observação quando houver acumulado recente igual ou superior a <strong>20 mm no curto prazo</strong> ou <strong>50 mm em 24 horas</strong> em estação CEMADEN com leitura recente.</li>
+  <li>Além da estação de referência, o sistema verifica os maiores acumulados municipais recentes para evitar normalização baseada apenas em um único ponto.</li>
+  <li>Clima atual, sensação térmica, umidade, precipitação, vento, rajadas, previsão, rodovias, água e energia compõem o contexto operacional, mas somente alteram o nível conforme as regras específicas de risco do sistema.</li>
+  <li><strong>Fonte indisponível ≠ ausência de risco.</strong> A indisponibilidade é exibida e pode impedir a confirmação de um rebaixamento quando a evidência daquela fonte for necessária.</li>
 </ul>
 
-<h3>3. Subida e descida do nível</h3>
-<p><strong>Subida:</strong> ocorre imediatamente quando surge evidência válida de maior risco. <strong>Descida:</strong> cada redução de uma faixa exige <strong>3 horas contínuas de estabilidade</strong> após surgir condição elegível para rebaixamento. Encerrada essa janela sem novo agravamento, são necessárias <strong>3 verificações válidas consecutivas</strong>, em ciclos separados de monitoramento, antes de reduzir apenas uma faixa. Se o cenário ainda permitir nova redução, inicia-se uma <strong>nova janela de 3 horas</strong> para a faixa seguinte. Nova informação oficial que agrave ou sustente o risco reinicia ou interrompe a normalização conforme aplicável; a simples releitura do mesmo aviso não reinicia o relógio. Para o risco hidrológico, quando a classificação do CEMADEN ultrapassa sua janela de 24 h sem nova atualização, o <strong>Estação de referência</strong> pode atuar como evidência local de normalização, desde que esteja recente, abaixo dos limites de 20 mm no curto prazo e 50 mm em 24 h, sem outro pluviômetro recente acima desses gatilhos, sem aviso INMET e sem sinal oficial recente de agravamento. Informação geológica antiga não congela indefinidamente o rebaixamento, mas volta a participar imediatamente quando atualizada.</p>
+<h3>3. Subida e rebaixamento do nível</h3>
+<p><strong>Subida:</strong> ocorre imediatamente quando surge evidência válida de maior risco. <strong>Rebaixamento:</strong> ocorre sempre uma faixa por vez e somente depois de uma janela contínua de estabilidade e de confirmações válidas.</p>
+<ul>
+  <li>Cada redução de uma faixa exige <strong>3 horas contínuas de estabilidade</strong> após o cenário tornar-se elegível para rebaixamento.</li>
+  <li>Depois das 3 horas, são necessárias <strong>3 verificações válidas consecutivas</strong>, separadas por no mínimo <strong>15 minutos</strong>, antes da redução de apenas uma faixa.</li>
+  <li>Se, após a primeira redução, o cenário ainda justificar nova queda, começa uma <strong>nova janela completa de 3 horas</strong> para a faixa seguinte.</li>
+  <li>Uma nova informação oficial relevante que agrave ou volte a sustentar o nível interrompe ou reinicia a normalização conforme o caso.</li>
+  <li>A simples releitura do mesmo aviso ou da mesma publicação oficial não reinicia o relógio de estabilidade.</li>
+  <li>No retorno de <strong>Nível 2 para Nível 1</strong>, uma classificação CEMADEN “Baixo” não permanece como piso indefinido: se for a mesma informação, não houver nova publicação relevante por 3 horas e não existir sinal suplementar de atenção, o sistema pode iniciar as 3 confirmações para retorno à Vigilância.</li>
+</ul>
+
+<h3>3.1. Critérios usados para confirmar normalização</h3>
+<ul>
+  <li>Estação pluviométrica de referência com leitura recente e acumulados abaixo de <strong>20 mm no curto prazo</strong> e <strong>50 mm em 24 horas</strong>.</li>
+  <li>Maiores acumulados municipais recentes também abaixo dos mesmos gatilhos operacionais quando disponíveis.</li>
+  <li>Sem aviso INMET relevante capaz de sustentar ou elevar o nível.</li>
+  <li>Sem previsão de chuva forte/intensa ou outro sinal suplementar que justifique permanência em Observação.</li>
+  <li>Sem sinal operacional recente da Defesa Civil de Três Rios que sustente risco superior.</li>
+  <li>Risco geológico antigo não congela indefinidamente o rebaixamento; se houver nova atualização, volta a participar imediatamente da decisão.</li>
+  <li>Quando o risco hidrológico ultrapassar sua janela de atualização e ficar antigo, a evidência pluviométrica local pode apoiar a normalização somente se o conjunto dos critérios acima permanecer seguro.</li>
+  <li>Se uma fonte necessária estiver indisponível ou sem evidência suficiente, as confirmações podem ser bloqueadas até que haja dados adequados.</li>
+</ul>
+
+<h3>3.2. Transparência do processo</h3>
+<p>O card <strong>Normalização / possível rebaixamento</strong> mostra a última informação oficial relevante, o tempo já transcorrido da janela de 3 horas, o tempo mínimo restante, as condições meteorológicas relacionadas aos critérios, os bloqueios existentes e o contador de confirmações válidas. O tempo exibido é sempre um <strong>tempo mínimo para possível rebaixamento</strong>, nunca uma promessa de redução automática.</p>
 
 <h3>4. Significado operacional dos níveis</h3>
 <div class="table"><table>
