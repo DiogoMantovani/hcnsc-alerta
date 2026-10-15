@@ -6,10 +6,10 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="hcnsc-ui-revision" content="20261015-hcnsc-004">
+<meta name="hcnsc-ui-revision" content="20261015-hcnsc-005">
 <meta name="theme-color" content="#006f76">
 <script>
-window.HCNSC_UI_REVISION='20261015-hcnsc-004';
+window.HCNSC_UI_REVISION='20261015-hcnsc-005';
 window.checkHcnscUiRevision=async function(){
   try{
     const r=await fetch('index.html?ui-check='+Date.now(),{cache:'no-store'});
@@ -1055,7 +1055,7 @@ footer{
 </ul>
 
 <h3>3. Subida e descida do nível</h3>
-<p><strong>Subida:</strong> ocorre imediatamente quando surge evidência válida de maior risco. <strong>Descida:</strong> após uma informação oficial relevante, o nível permanece sem possibilidade de redução por <strong>2 horas</strong>. Encerrada essa janela sem nova informação de mesmo peso ou maior, são necessárias <strong>3 verificações válidas consecutivas</strong>, em ciclos separados de monitoramento, antes de reduzir apenas uma faixa. Uma nova publicação oficial relevante reinicia as 2 horas; a simples releitura do mesmo aviso não reinicia o relógio. Após a primeira redução, não há uma nova espera de 2 horas: são exigidas 3 novas verificações válidas para cada faixa seguinte, desde que não ocorra agravamento. Para o risco hidrológico, quando a classificação do CEMADEN ultrapassa sua janela de 24 h sem nova atualização, o <strong>Estação de referência</strong> pode atuar como evidência local de normalização, desde que esteja recente, abaixo dos limites de 20 mm no curto prazo e 50 mm em 24 h, sem outro pluviômetro recente acima desses gatilhos, sem aviso INMET e sem sinal oficial recente de agravamento. Informação geológica antiga não congela indefinidamente o rebaixamento, mas volta a participar imediatamente quando atualizada.</p>
+<p><strong>Subida:</strong> ocorre imediatamente quando surge evidência válida de maior risco. <strong>Descida:</strong> cada redução de uma faixa exige <strong>3 horas contínuas de estabilidade</strong> após surgir condição elegível para rebaixamento. Encerrada essa janela sem novo agravamento, são necessárias <strong>3 verificações válidas consecutivas</strong>, em ciclos separados de monitoramento, antes de reduzir apenas uma faixa. Se o cenário ainda permitir nova redução, inicia-se uma <strong>nova janela de 3 horas</strong> para a faixa seguinte. Nova informação oficial que agrave ou sustente o risco reinicia ou interrompe a normalização conforme aplicável; a simples releitura do mesmo aviso não reinicia o relógio. Para o risco hidrológico, quando a classificação do CEMADEN ultrapassa sua janela de 24 h sem nova atualização, o <strong>Estação de referência</strong> pode atuar como evidência local de normalização, desde que esteja recente, abaixo dos limites de 20 mm no curto prazo e 50 mm em 24 h, sem outro pluviômetro recente acima desses gatilhos, sem aviso INMET e sem sinal oficial recente de agravamento. Informação geológica antiga não congela indefinidamente o rebaixamento, mas volta a participar imediatamente quando atualizada.</p>
 
 <h3>4. Significado operacional dos níveis</h3>
 <div class="table"><table>
@@ -1779,6 +1779,11 @@ function renderNormalizationPanel(data){
   const d=overall.deescalation||{};
   const level=Math.max(1,Math.min(5,Number(overall.level)||1));
   const target=d.target_level!=null?Number(d.target_level):null;
+  const potentialLevel2Decay=level===2
+    && Number(overall.candidate_level||2)===2
+    && !overall.supplemental_observation
+    && typeof d.last_relevant_official_source==='string'
+    && d.last_relevant_official_source.startsWith('cemaden_');
   const required=Math.max(1,Number(d.confirmations_required)||3);
   const count=Math.max(0,Number(d.consecutive_confirmations)||0);
   const interval=Math.max(1,Number(d.confirmation_min_interval_minutes)||15);
@@ -1823,7 +1828,7 @@ function renderNormalizationPanel(data){
     minimumText='Sem rebaixamento pendente';
   }else if(d.blocked_by_source_gap && (stabilityRemaining==null || stabilityRemaining<=0)){
     minimumText='Bloqueado por evidência insuficiente';
-  }else if(target!=null){
+  }else if(target!=null || (potentialLevel2Decay && stabilityRemaining!=null)){
     let minMinutes=0;
     if(stabilityRemaining!=null && stabilityRemaining>0){
       minMinutes=stabilityRemaining+Math.max(0,required-1)*interval;
@@ -1841,7 +1846,7 @@ function renderNormalizationPanel(data){
   let statusText='Sem rebaixamento elegível';
   if(level<=1) statusText='Nível mínimo · Vigilância';
   else if(d.blocked_by_source_gap && (stabilityRemaining==null || stabilityRemaining<=0)) statusText='Rebaixamento bloqueado';
-  else if(stabilityRemaining!=null && stabilityRemaining>0) statusText='Janela de '+holdHours+' h em andamento';
+  else if(stabilityRemaining!=null && stabilityRemaining>0 && (target!=null || potentialLevel2Decay)) statusText='Janela de '+holdHours+' h em andamento';
   else if(d.phase==='confirming') statusText='Normalização em confirmação';
   else if(d.pending) statusText='Normalização em análise';
   badge.textContent=statusText;
@@ -1893,7 +1898,7 @@ function renderNormalizationPanel(data){
   const blockers=Array.isArray(d.blocked_reasons)?d.blocked_reasons:[];
   let message='O rebaixamento só ocorre se a melhora permanecer estável durante toda a janela e as confirmações subsequentes forem válidas.';
   if(level<=1) message='O sistema está em Vigilância. Uma nova informação oficial ou condição meteorológica relevante pode elevar o nível imediatamente.';
-  else if(stabilityRemaining!=null && stabilityRemaining>0) message='A janela mínima ainda está em andamento. Tempo restante da estabilidade: '+normalizationDuration(stabilityRemaining)+'. Depois disso serão exigidas '+required+' verificações válidas.';
+  else if(stabilityRemaining!=null && stabilityRemaining>0 && (target!=null || potentialLevel2Decay)) message='A janela mínima ainda está em andamento. Tempo restante da estabilidade: '+normalizationDuration(stabilityRemaining)+'. Depois disso serão exigidas '+required+' verificações válidas.';
   else if(d.phase==='confirming') message='Janela mínima cumprida. Confirmações válidas: '+count+'/'+required+'.';
   if(blockers.length) message+=' Bloqueios atuais: '+blockers.join('; ')+'.';
   message+=' Fonte indisponível ≠ ausência de risco.';
