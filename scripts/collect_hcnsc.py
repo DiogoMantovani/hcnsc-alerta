@@ -1609,7 +1609,7 @@ OBS_RAIN_24H_MM=50.0
 BINGEN_SAFE_MAX_AGE_HOURS=2.0
 BINGEN_SAFE_SHORT_MM=20.0
 BINGEN_SAFE_24H_MM=50.0
-DEESCALATION_OFFICIAL_HOLD_HOURS=2
+DEESCALATION_OFFICIAL_HOLD_HOURS=3
 DEESCALATION_CONFIRMATIONS=3
 DEESCALATION_CONFIRMATION_MIN_INTERVAL_MINUTES=15
 
@@ -1899,7 +1899,7 @@ def _official_driver_floor(level):
 
 
 def update_official_hold_state(previous, current_level, geo, hydro, inmet, defesa):
-    """Track new official publications and derive the two-hour no-descent window."""
+    """Track new official publications and derive the three-hour no-descent window."""
     now=datetime.now(TZ)
     prev_overall=(previous.get("overall") or {}) if isinstance(previous,dict) else {}
     prev_state=prev_overall.get("deescalation") or {}
@@ -2002,14 +2002,14 @@ def update_official_hold_state(previous, current_level, geo, hydro, inmet, defes
 
 
 def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, defesa, local_hydro, supplemental_observation=False):
-    """Escalate immediately; descend after 2 h quiet + 3 spaced safe checks.
+    """Escalate immediately; descend after 3 h quiet + 3 spaced safe checks.
 
     A CEMADEN level-2 classification (Baixo) is treated as an event that starts
     an observation window. If no new CEMADEN level-2 publication arrives for
     two hours, no other official provider is sustaining level 2, and there is
     no supplemental observation signal, the system may start the three-check
     confirmation cycle back to Vigilância. Re-reading the same CEMADEN event
-    never restarts the two-hour clock.
+    never restarts the three-hour clock.
     """
     now=datetime.now(TZ)
     prev_overall=(previous.get("overall") or {}) if isinstance(previous,dict) else {}
@@ -2041,7 +2041,7 @@ def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, 
 
     # Level 2 must not become a permanent floor merely because the same
     # CEMADEN "Baixo" publication keeps being returned by the source endpoint.
-    # Once its two-hour hold expires, only CEMADEN is sustaining level 2, and
+    # Once its three-hour hold expires, only CEMADEN is sustaining level 2, and
     # no supplemental early-warning signal is active, the effective candidate
     # becomes 1 and the normal three-confirmation descent cycle starts.
     level2_decay_eligible=bool(
@@ -2086,7 +2086,7 @@ def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, 
     target=max(effective_candidate,previous_level-1)
 
     # A new/recent official publication supporting the current elevated level
-    # blocks any descent for two full hours. Re-reading the same publication does
+    # blocks any descent for three full hours. Re-reading the same publication does
     # not restart this timer because its stable signature is preserved above.
     if official.get("official_hold_active"):
         return previous_level,{
@@ -2301,7 +2301,7 @@ def main():
 
     if aged_level2_decay and overall<=1 and not deescalation_held:
         reason_parts.append(
-            "Retorno à Vigilância confirmado após 2 h sem nova publicação CEMADEN de nível 2 "
+            "Retorno à Vigilância confirmado após 3 h sem nova publicação CEMADEN de nível 2 "
             +"e "+str(DEESCALATION_CONFIRMATIONS)+" verificações válidas consecutivas"
         )
 
@@ -2322,7 +2322,7 @@ def main():
           "supplemental_observation":supplemental_observation,
           "supplemental_signals":supplemental_signals,
           "deescalation":deescalation,
-          "rule":"Escalada imediata somente por fonte oficial com status ok. Informação antiga não provoca nova subida. O risco Hidrológico é prioritário para o HCNSC; quando o CEMADEN Hidrológico ultrapassa sua janela de 24 h sem nova atualização, a estação pluviométrica de referência pode atuar como evidência local de normalização, desde que esteja recente e abaixo de 20 mm no curto prazo e 50 mm/24 h, sem outro pluviômetro recente acima desses gatilhos, sem aviso INMET, sem previsão forte e sem sinal operacional recente da Defesa Civil. O risco Geológico antigo não congela indefinidamente o rebaixamento, mas volta a participar imediatamente quando atualizado. Defesa Civil de Três Rios pode elevar por estágio ou sinal operacional oficial recente. CEMADEN-RJ + INMET, ambos atuais e em nível >=3, podem elevar +1. Após uma informação oficial relevante, o nível não pode cair por 2 horas. Encerrada essa janela sem nova informação de mesmo peso ou maior, são exigidas 3 verificações válidas consecutivas, separadas por ciclos reais de monitoramento, para reduzir apenas uma faixa. Novas publicações oficiais relevantes reiniciam as 2 horas; reler o mesmo aviso não reinicia o relógio. Quando o único sustentador do nível 2 for uma classificação CEMADEN Baixo sem nova publicação por 2 horas, inicia-se o ciclo de 3 confirmações para retorno à Vigilância. Depois da primeira queda, não há nova espera de 2 horas: são necessárias 3 novas verificações válidas para cada faixa seguinte, desde que não haja agravamento."
+          "rule":"Escalada imediata somente por fonte oficial com status ok. Informação antiga não provoca nova subida. O risco Hidrológico é prioritário para o HCNSC; quando o CEMADEN Hidrológico ultrapassa sua janela de 24 h sem nova atualização, a estação pluviométrica de referência pode atuar como evidência local de normalização, desde que esteja recente e abaixo de 20 mm no curto prazo e 50 mm/24 h, sem outro pluviômetro recente acima desses gatilhos, sem aviso INMET, sem previsão forte e sem sinal operacional recente da Defesa Civil. O risco Geológico antigo não congela indefinidamente o rebaixamento, mas volta a participar imediatamente quando atualizado. Defesa Civil de Três Rios pode elevar por estágio ou sinal operacional oficial recente. CEMADEN-RJ + INMET, ambos atuais e em nível >=3, podem elevar +1. Após uma informação oficial relevante, o nível não pode cair por 3 horas. Encerrada essa janela sem nova informação de mesmo peso ou maior, são exigidas 3 verificações válidas consecutivas, separadas por ciclos reais de monitoramento, para reduzir apenas uma faixa. Novas publicações oficiais relevantes reiniciam as 3 horas; reler o mesmo aviso não reinicia o relógio. Quando o único sustentador do nível 2 for uma classificação CEMADEN Baixo sem nova publicação por 3 horas, inicia-se o ciclo de 3 confirmações para retorno à Vigilância. Depois da primeira queda, não há nova espera de 2 horas: são necessárias 3 novas verificações válidas para cada faixa seguinte, desde que não haja agravamento."
       },
       "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet,"defesa_civil":defesa},
       "weather":weather,
