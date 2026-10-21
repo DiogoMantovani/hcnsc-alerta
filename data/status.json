@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-10-21T17:26:30.311090-03:00",
+  "generated_at": "2026-10-21T17:41:01.210623-03:00",
   "location": {
     "city": "Três Rios",
     "state": "RJ",
@@ -23,7 +23,7 @@
         "reference_station": "Moura Brasil",
         "reference_distance_km": null,
         "bingen_status": "ok",
-        "bingen_age_hours": -0.1,
+        "bingen_age_hours": 0.2,
         "bingen_short_window": "24 h (substituto conservador)",
         "bingen_short_mm": null,
         "bingen_24h_mm": null,
@@ -112,13 +112,13 @@
       "risk": "Sem atualização oficial recente",
       "level": null,
       "official_updated_at": "2026-10-19T05:34:37-03:00",
-      "age_hours": 59.8,
+      "age_hours": 60.1,
       "last_known_risk": "Muito Baixo",
       "last_known_level": 1,
       "last_known_updated_at": "2026-10-19T05:34:37-03:00",
       "freshness_limit_hours": 24,
       "message": "Sem atualização oficial relevante nas últimas 24 h. Isso não significa ausência de risco.",
-      "collected_at": "2026-10-21T17:25:24.449170-03:00",
+      "collected_at": "2026-10-21T17:40:26.914904-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=1",
       "error": null
     },
@@ -129,13 +129,13 @@
       "risk": "Sem atualização oficial recente",
       "level": null,
       "official_updated_at": "2026-10-19T05:42:08-03:00",
-      "age_hours": 59.7,
+      "age_hours": 60.0,
       "last_known_risk": "Muito Baixo",
       "last_known_level": 1,
       "last_known_updated_at": "2026-10-19T05:42:08-03:00",
       "freshness_limit_hours": 24,
       "message": "Sem atualização oficial relevante nas últimas 24 h. Isso não significa ausência de risco.",
-      "collected_at": "2026-10-21T17:25:25.949811-03:00",
+      "collected_at": "2026-10-21T17:40:27.789716-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=2",
       "error": null
     },
@@ -149,7 +149,7 @@
       "active_count": 0,
       "starts_at": null,
       "ends_at": null,
-      "collected_at": "2026-10-21T17:25:44.284774-03:00",
+      "collected_at": "2026-10-21T17:40:40.615455-03:00",
       "url": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
       "error": null
     },
@@ -178,23 +178,40 @@
       },
       "cache": {
         "provider": "Google News RSS",
-        "status": "not_used",
-        "used": false,
+        "status": "ok",
+        "used": true,
         "can_escalate": false,
-        "routes": {}
+        "routes": {
+          "news_index": {
+            "status": "ok",
+            "url": "https://news.google.com/rss/search?q=site%3Atresrios.rj.gov.br+%22Defesa+Civil%22+%22Tr%C3%AAs+Rios%22&hl=pt-BR&gl=BR&ceid=BR%3Apt-419",
+            "items": 2
+          }
+        },
+        "message": "Índice secundário ativo somente para contexto; não pode elevar o Nível HCNSC."
       },
       "cache_hint": null,
       "freshness": {
         "stage_hours": 24,
         "operational_signal_hours": 24
       },
-      "collected_at": "2026-10-21T17:25:47.085006-03:00",
+      "collected_at": "2026-10-21T17:40:42.375600-03:00",
       "url": "https://tresrios.rj.gov.br/secretaria-de-protecao-e-defesa-civil/",
-      "latest_news": null,
-      "latest_bulletin": null,
-      "status": "source_unconfirmed",
+      "latest_news": {
+        "title": "Defesa Civil de Três Rios reforça orientação para cadastro em alertas meteorológicos pelo celular - Prefeitura Municipal - Três Rios",
+        "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxQakdjdUVUemh4Nk9yZEJkaU96dE94Y3pMVWl2bnc1OGlRSHpOOFFJQTFzYUlrMVpDWGVnUnloS0YyVm5XMFVzZGFhb1otMk45SlBFcWJsZ0hXQzViUlZLaG5nbWxvT0xlZkhPUTB4cXhldWZJZHJqS0pnazRqTXl3aUhWZG42eHJYei1Rek1pS0ZWSlBxcExIbE5KbUUxaUR1d1NrcFVpNlp6ekRjWDRoLTFnbi1jMlJaTlM3YjlmR0hoZjk2Tnh0WDd4azR3ekIwblE?oc=5",
+        "published_at": "2026-08-27T04:00:00-03:00",
+        "verification": "cache_index"
+      },
+      "latest_bulletin": {
+        "title": "Defesa Civil de Três Rios reforça orientação para cadastro em alertas meteorológicos pelo celular - Prefeitura Municipal - Três Rios",
+        "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxQakdjdUVUemh4Nk9yZEJkaU96dE94Y3pMVWl2bnc1OGlRSHpOOFFJQTFzYUlrMVpDWGVnUnloS0YyVm5XMFVzZGFhb1otMk45SlBFcWJsZ0hXQzViUlZLaG5nbWxvT0xlZkhPUTB4cXhldWZJZHJqS0pnazRqTXl3aUhWZG42eHJYei1Rek1pS0ZWSlBxcExIbE5KbUUxaUR1d1NrcFVpNlp6ekRjWDRoLTFnbi1jMlJaTlM3YjlmR0hoZjk2Tnh0WDd4azR3ekIwblE?oc=5",
+        "published_at": "2026-08-27T04:00:00-03:00",
+        "verification": "cache_index"
+      },
+      "status": "cache_only",
       "stage": null,
-      "risk": "Sem informação oficial recente confirmada",
+      "risk": "Fonte direta indisponível · índice secundário ativo",
       "level": null,
       "basis": null,
       "official_updated_at": null,
@@ -203,7 +220,7 @@
       "last_known_stage": null,
       "last_known_level": null,
       "last_known_updated_at": null,
-      "message": "Canal oficial e índice secundário indisponíveis nesta coleta. Fonte indisponível ≠ ausência de risco.",
+      "message": "Fonte direta indisponível; índice secundário disponível apenas para contexto.",
       "error": "403 Client Error: Forbidden for url: https://tresrios.rj.gov.br/secretaria-de-protecao-e-defesa-civil/"
     }
   },
@@ -215,7 +232,7 @@
       "type": "estação automática local"
     },
     "status": "unavailable",
-    "collected_at": "2026-10-21T17:25:27.970045-03:00",
+    "collected_at": "2026-10-21T17:40:28.628339-03:00",
     "url": "https://apitempo.inmet.gov.br/estacao/2026-10-20/2026-10-21/A625",
     "error": "https://apitempo.inmet.gov.br/estacao/2026-10-20/2026-10-21/A625 -> HTTP 204 sem conteúdo | https://apitempo.inmet.gov.br/estacao/dados/2026-10-21 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-21 | https://apitempo.inmet.gov.br/estacao/dados/2026-10-20 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-20"
   },
@@ -223,7 +240,7 @@
     "provider": "Open-Meteo",
     "source_type": "estimativa meteorológica complementar",
     "official": false,
-    "status": "ok",
+    "status": "source_unconfirmed",
     "location": {
       "name": "Hospital de Clínicas Nossa Senhora da Conceição",
       "latitude": -22.1123187,
@@ -240,10 +257,10 @@
     "wind_gust_kmh": 22.0,
     "weather_code": 2,
     "condition": "Parcialmente nublado",
-    "collected_at": "2026-10-21T17:25:30.943952-03:00",
+    "collected_at": "2026-10-21T17:40:30.831066-03:00",
     "url": "https://api.open-meteo.com/v1/forecast?latitude=-22.1123187&longitude=-43.2131388&current=temperature_2m%2Crelative_humidity_2m%2Capparent_temperature%2Cprecipitation%2Crain%2Cweather_code%2Cwind_speed_10m%2Cwind_gusts_10m&timezone=America%2FSao_Paulo",
-    "message": "Referência complementar próxima ao HCNSC. Não substitui INMET, CEMADEN ou Defesa Civil para alertas oficiais.",
-    "error": null
+    "message": "Sem condição meteorológica complementar recente confirmada. Isso não significa ausência de risco.",
+    "error": "503 Server Error: Service Unavailable for url: https://api.open-meteo.com/v1/forecast?latitude=-22.1123187&longitude=-43.2131388&current=temperature_2m%2Crelative_humidity_2m%2Capparent_temperature%2Cprecipitation%2Crain%2Cweather_code%2Cwind_speed_10m%2Cwind_gusts_10m&timezone=America%2FSao_Paulo"
   },
   "weather_map": {
     "status": "ok",
@@ -256,7 +273,7 @@
       "longitude": -43.2131388
     },
     "operational_radius_km": 5,
-    "grid_updated_at": "2026-10-21T17:25:31.682052-03:00",
+    "grid_updated_at": "2026-10-21T17:40:31.024308-03:00",
     "grid": [
       {
         "latitude": -22.179262,
@@ -897,26 +914,26 @@
       }
     ],
     "grid_points": 49,
-    "grid_error": null,
+    "grid_error": "503 Server Error: Service Unavailable for url: https://api.open-meteo.com/v1/forecast?latitude=-22.20232%2C-22.20232%2C-22.20232%2C-22.20232%2C-22.20232%2C-22.20232%2C-22.20232%2C-22.17232%2C-22.17232%2C-22.17232%2C-22.17232%2C-22.17232%2C-22.17232%2C-22.17232%2C-22.14232%2C-22.14232%2C-22.14232%2C-22.14232%2C-22.14232%2C-22.14232%2C-22.14232%2C-22.11232%2C-22.11232%2C-22.11232%2C-22.11232%2C-22.11232%2C-22.11232%2C-22.11232%2C-22.08232%2C-22.08232%2C-22.08232%2C-22.08232%2C-22.08232%2C-22.08232",
     "radar": {
       "status": "ok",
       "provider": "RainViewer",
       "host": "https://tilecache.rainviewer.com",
-      "path": "/v2/radar/6b4d3036437d",
-      "frame_time": "2026-10-21T17:20:00-03:00",
-      "generated_unix": 1792614323,
+      "path": "/v2/radar/6c0191062111",
+      "frame_time": "2026-10-21T17:40:00-03:00",
+      "generated_unix": 1792615222,
       "tile_color_scheme": 2,
       "url": "https://api.rainviewer.com/public/weather-maps.json",
       "error": null
     },
-    "collected_at": "2026-10-21T17:25:31.682052-03:00",
+    "collected_at": "2026-10-21T17:40:31.024308-03:00",
     "message": "Mapa complementar. Alertas e níveis HCNSC permanecem baseados nas fontes oficiais integradas."
   },
   "pluviometers": {
     "provider": "CEMADEN",
     "status": "ok",
     "source_note": "Chuvas do Mapa Interativo do CEMADEN; horários em UTC convertidos para Brasília. Coordenadas vêm do próprio endpoint quando disponíveis, de cadastro GIS público ou do cadastro hidrometeorológico regional da Região Hidrográfica do Médio Paraíba (base Dez/2020), exclusivamente para distância ao HCNSC.",
-    "collected_at": "2026-10-21T17:25:32.899790-03:00",
+    "collected_at": "2026-10-21T17:40:31.463931-03:00",
     "url": "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ",
     "total_stations": 7,
     "recent_stations": 1,
@@ -948,7 +965,7 @@
       "distance_to_hcnsc_km": null,
       "raw_timestamp": "21/10/26 20:30",
       "observed_at": "2026-10-21T17:30:00-03:00",
-      "age_hours": -0.1,
+      "age_hours": 0.2,
       "last_mm": 0.0,
       "acc1h_mm": null,
       "acc3h_mm": null,
@@ -972,7 +989,7 @@
         "distance_to_hcnsc_km": 0.97,
         "raw_timestamp": "22/12/25 20:20",
         "observed_at": "2025-12-22T17:20:00-03:00",
-        "age_hours": 7272.1,
+        "age_hours": 7272.3,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -994,7 +1011,7 @@
         "distance_to_hcnsc_km": null,
         "raw_timestamp": "21/10/26 12:00",
         "observed_at": "2026-10-21T09:00:00-03:00",
-        "age_hours": 8.4,
+        "age_hours": 8.7,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1003,7 +1020,7 @@
         "acc24h_mm": null,
         "acc48h_mm": null,
         "acc72h_mm": null,
-        "acc96h_mm": 2.95,
+        "acc96h_mm": 2.56,
         "station_type": 1
       },
       {
@@ -1016,7 +1033,7 @@
         "distance_to_hcnsc_km": null,
         "raw_timestamp": "21/10/26 20:30",
         "observed_at": "2026-10-21T17:30:00-03:00",
-        "age_hours": -0.1,
+        "age_hours": 0.2,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1038,7 +1055,7 @@
         "distance_to_hcnsc_km": null,
         "raw_timestamp": "09/06/26 14:50",
         "observed_at": "2026-06-09T11:50:00-03:00",
-        "age_hours": 3221.6,
+        "age_hours": 3221.8,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1060,7 +1077,7 @@
         "distance_to_hcnsc_km": null,
         "raw_timestamp": "21/08/26 19:40",
         "observed_at": "2026-08-21T16:40:00-03:00",
-        "age_hours": 1464.8,
+        "age_hours": 1465.0,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1082,7 +1099,7 @@
         "distance_to_hcnsc_km": null,
         "raw_timestamp": "21/10/26 18:20",
         "observed_at": "2026-10-21T15:20:00-03:00",
-        "age_hours": 2.1,
+        "age_hours": 2.3,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1104,7 +1121,7 @@
         "distance_to_hcnsc_km": null,
         "raw_timestamp": "04/02/23 14:40",
         "observed_at": "2023-02-04T11:40:00-03:00",
-        "age_hours": 32525.8,
+        "age_hours": 32526.0,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1124,7 +1141,7 @@
     "status": "ok",
     "municipality_code": "3306008",
     "municipality": "Três Rios/RJ",
-    "collected_at": "2026-10-21T17:25:42.233235-03:00",
+    "collected_at": "2026-10-21T17:40:38.819030-03:00",
     "url": "https://apiprevmet3.inmet.gov.br/previsao/3306008",
     "days": [
       {
@@ -1506,17 +1523,17 @@
       "message": "Canal oficial da Rodovia do Aço consultado. Ausência de publicação identificada não equivale a garantia de tráfego livre.",
       "error": null
     },
-    "collected_at": "2026-10-21T17:25:52.249657-03:00",
+    "collected_at": "2026-10-21T17:40:42.949719-03:00",
     "message": "BR-040 e BR-393 consultadas em canais oficiais independentes. Fonte indisponível ou ausência de aviso não equivale a tráfego livre.",
     "error": null,
     "tresrios_weather": {
-      "source": "Referência meteorológica próxima ao HCNSC",
+      "source": "INMET A625",
       "is_road_official_weather": false,
-      "condition": "Parcialmente nublado",
-      "temperature_c": 23.1,
-      "wind_speed_kmh": 11.7,
+      "condition": null,
+      "temperature_c": null,
+      "wind_speed_kmh": null,
       "wind_direction": null,
-      "updated_at": "2026-10-21T17:15:00-03:00"
+      "updated_at": null
     }
   },
   "utilities": {
@@ -1530,7 +1547,7 @@
       "has_operational_notice": false,
       "phone": "(24) 2251-6950",
       "whatsapp": "(24) 9993-2649",
-      "collected_at": "2026-10-21T17:25:58.124928-03:00",
+      "collected_at": "2026-10-21T17:40:49.699475-03:00",
       "message": "Canal oficial do SAAETRI acessível. Acessibilidade do portal não prova continuidade do abastecimento no hospital.",
       "error": null
     },
@@ -1540,11 +1557,11 @@
       "url": "https://www.enel.com.br/pt/Canais.html",
       "phone": "0800 28 00 120",
       "whatsapp": "(21) 99601-9608",
-      "collected_at": "2026-10-21T17:25:58.124928-03:00",
+      "collected_at": "2026-10-21T17:40:49.699475-03:00",
       "message": "Canal oficial acessível. A situação específica da unidade consumidora deve ser confirmada pelos canais da Enel quando necessário.",
       "error": null
     },
-    "collected_at": "2026-10-21T17:25:58.124928-03:00"
+    "collected_at": "2026-10-21T17:40:49.699475-03:00"
   },
   "notifications": {
     "group_operational_email": {
@@ -1589,11 +1606,11 @@
   },
   "integrations": {
     "cemaden_rj": "active",
-    "defesa_civil_tresrios": "source_unconfirmed",
+    "defesa_civil_tresrios": "cache_only",
     "inmet_alerts": "active",
     "inmet_forecast": "ok",
     "inmet_weather": "unavailable",
-    "weather_reference": "ok",
+    "weather_reference": "source_unconfirmed",
     "weather_map": "ok",
     "radar": "ok",
     "pluviometers": "ok",
