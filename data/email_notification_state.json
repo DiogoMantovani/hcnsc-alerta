@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "last_seen_level": 1,
-  "last_seen_context": "road",
+  "last_seen_context": "geo",
   "groups": {
     "operational": {
       "last_notified_level": null,
@@ -24,5 +24,5 @@
       "last_message_id": null
     }
   },
-  "updated_at": "2026-10-27T16:11:05.692040+00:00"
+  "updated_at": "2026-10-27T16:25:59.413919+00:00"
 }
