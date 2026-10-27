@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "last_seen_level": 2,
+  "last_seen_level": 1,
   "last_seen_context": "road",
   "groups": {
     "operational": {
@@ -24,5 +24,5 @@
       "last_message_id": null
     }
   },
-  "updated_at": "2026-10-27T09:26:01.681418+00:00"
+  "updated_at": "2026-10-27T09:40:59.873020+00:00"
 }
