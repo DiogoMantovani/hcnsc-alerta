@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-11-13T10:41:29.440374-03:00",
+  "generated_at": "2026-11-13T10:57:00.216309-03:00",
   "location": {
     "city": "Três Rios",
     "state": "RJ",
@@ -9,9 +9,9 @@
   "overall": {
     "level": 2,
     "label": "Observação",
-    "reason": "Deslizamento: Baixo, Hidrológico: Baixo.",
+    "reason": "Deslizamento: Baixo, Hidrológico: Baixo. Normalização em confirmação: 1/3 verificações válidas para o próximo nível.",
     "candidate_level": 2,
-    "effective_candidate_level": 2,
+    "effective_candidate_level": 1,
     "official_candidate_level": 2,
     "supplemental_observation": false,
     "supplemental_signals": [],
@@ -42,13 +42,16 @@
       "confirmations_required": 3,
       "confirmation_min_interval_minutes": 15,
       "raw_candidate_level": 2,
-      "effective_candidate_level": 2,
-      "aged_level2_decay": false,
-      "aged_level2_sources": [],
-      "descent_from_level": null,
-      "descent_window_target": null,
-      "descent_window_started_at": null,
-      "minimum_stability_elapsed_minutes": 0.0,
+      "effective_candidate_level": 1,
+      "aged_level2_decay": true,
+      "aged_level2_sources": [
+        "cemaden_geological",
+        "cemaden_hydrological"
+      ],
+      "descent_from_level": 2,
+      "descent_window_target": 1,
+      "descent_window_started_at": "2026-11-13T05:48:07-03:00",
+      "minimum_stability_elapsed_minutes": 308.9,
       "minimum_stability_remaining_minutes": 0.0,
       "minimum_stability_window_hours": 3,
       "official_signals": {
@@ -59,7 +62,7 @@
           "official_at": "2026-11-13T05:48:07-03:00",
           "effective_at": "2026-11-13T05:48:07-03:00",
           "first_seen_at": "2026-11-13T05:56:07.010022-03:00",
-          "last_seen_at": "2026-11-13T10:41:29.440004-03:00",
+          "last_seen_at": "2026-11-13T10:57:00.215111-03:00",
           "historical": false
         },
         "cemaden_geological": {
@@ -69,7 +72,7 @@
           "official_at": "2026-11-12T15:54:14-03:00",
           "effective_at": "2026-11-12T15:54:14-03:00",
           "first_seen_at": "2026-11-12T15:56:19.345219-03:00",
-          "last_seen_at": "2026-11-13T10:41:29.440004-03:00",
+          "last_seen_at": "2026-11-13T10:57:00.215111-03:00",
           "historical": false
         }
       },
@@ -79,14 +82,14 @@
       "official_hold_until": "2026-11-13T08:48:07-03:00",
       "official_hold_active": false,
       "official_hold_remaining_minutes": 0.0,
-      "pending": false,
-      "phase": "stable_or_escalating",
-      "target_level": null,
+      "pending": true,
+      "phase": "confirming",
+      "target_level": 1,
       "blocked_by_source_gap": false,
       "blocked_by_official_hold": false,
       "blocked_reasons": [],
-      "consecutive_confirmations": 0,
-      "last_confirmation_at": null
+      "consecutive_confirmations": 1,
+      "last_confirmation_at": "2026-11-13T10:57:00.215105-03:00"
     },
     "rule": "Escalada imediata somente por fonte oficial com status ok. Informação antiga não provoca nova subida. O risco Hidrológico é prioritário para o HCNSC; quando o CEMADEN Hidrológico ultrapassa sua janela de 24 h sem nova atualização, a estação pluviométrica de referência pode atuar como evidência local de normalização, desde que esteja recente e abaixo de 20 mm no curto prazo e 50 mm/24 h, sem outro pluviômetro recente acima desses gatilhos, sem aviso INMET, sem previsão forte e sem sinal operacional recente da Defesa Civil. O risco Geológico antigo não congela indefinidamente o rebaixamento, mas volta a participar imediatamente quando atualizado. Defesa Civil de Três Rios pode elevar por estágio ou sinal operacional oficial recente. CEMADEN-RJ + INMET, ambos atuais e em nível >=3, podem elevar +1. Após uma informação oficial relevante, o nível não pode cair por 3 horas. Cada rebaixamento de uma faixa exige 3 horas contínuas de estabilidade e, depois dessa janela, 3 verificações válidas consecutivas separadas por ciclos reais de monitoramento. Novas informações oficiais que agravem ou sustentem o risco reiniciam ou interrompem a normalização conforme aplicável; reler o mesmo aviso não reinicia o relógio. Quando o único sustentador do nível 2 for uma classificação CEMADEN Baixo sem nova publicação por 3 horas, inicia-se o ciclo de 3 confirmações para retorno à Vigilância. Após cada queda de faixa, uma nova janela de 3 horas é iniciada antes de qualquer redução adicional."
   },
@@ -98,13 +101,13 @@
       "risk": "Baixo",
       "level": 2,
       "official_updated_at": "2026-11-12T15:54:14-03:00",
-      "age_hours": 18.8,
+      "age_hours": 19.0,
       "last_known_risk": "Baixo",
       "last_known_level": 2,
       "last_known_updated_at": "2026-11-12T15:54:14-03:00",
       "freshness_limit_hours": 24,
       "message": "Informação oficial dentro da janela de 24 h.",
-      "collected_at": "2026-11-13T10:40:27.333987-03:00",
+      "collected_at": "2026-11-13T10:55:23.417511-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=1",
       "error": null
     },
@@ -115,13 +118,13 @@
       "risk": "Baixo",
       "level": 2,
       "official_updated_at": "2026-11-13T05:48:07-03:00",
-      "age_hours": 4.9,
+      "age_hours": 5.1,
       "last_known_risk": "Baixo",
       "last_known_level": 2,
       "last_known_updated_at": "2026-11-13T05:48:07-03:00",
       "freshness_limit_hours": 24,
       "message": "Informação oficial dentro da janela de 24 h.",
-      "collected_at": "2026-11-13T10:40:29.361813-03:00",
+      "collected_at": "2026-11-13T10:55:24.822759-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=2",
       "error": null
     },
@@ -135,7 +138,7 @@
       "active_count": 0,
       "starts_at": null,
       "ends_at": null,
-      "collected_at": "2026-11-13T10:41:07.303897-03:00",
+      "collected_at": "2026-11-13T10:56:46.060116-03:00",
       "url": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
       "error": null
     },
@@ -181,7 +184,7 @@
         "stage_hours": 24,
         "operational_signal_hours": 24
       },
-      "collected_at": "2026-11-13T10:41:09.433104-03:00",
+      "collected_at": "2026-11-13T10:56:48.273243-03:00",
       "url": "https://tresrios.rj.gov.br/secretaria-de-protecao-e-defesa-civil/",
       "latest_news": {
         "title": "Defesa Civil de Três Rios reforça orientação para cadastro em alertas meteorológicos pelo celular - Prefeitura Municipal - Três Rios",
@@ -218,7 +221,7 @@
       "type": "estação automática local"
     },
     "status": "unavailable",
-    "collected_at": "2026-11-13T10:40:31.438063-03:00",
+    "collected_at": "2026-11-13T10:55:26.305061-03:00",
     "url": "https://apitempo.inmet.gov.br/estacao/2026-11-12/2026-11-13/A625",
     "error": "https://apitempo.inmet.gov.br/estacao/2026-11-12/2026-11-13/A625 -> HTTP 204 sem conteúdo | https://apitempo.inmet.gov.br/estacao/dados/2026-11-13 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-11-13 | https://apitempo.inmet.gov.br/estacao/dados/2026-11-12 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-11-12"
   },
@@ -226,7 +229,7 @@
     "provider": "Open-Meteo",
     "source_type": "estimativa meteorológica complementar",
     "official": false,
-    "status": "ok",
+    "status": "source_unconfirmed",
     "location": {
       "name": "Hospital de Clínicas Nossa Senhora da Conceição",
       "latitude": -22.1123187,
@@ -243,10 +246,10 @@
     "wind_gust_kmh": 19.1,
     "weather_code": 3,
     "condition": "Nublado",
-    "collected_at": "2026-11-13T10:40:34.186052-03:00",
+    "collected_at": "2026-11-13T10:55:29.240682-03:00",
     "url": "https://api.open-meteo.com/v1/forecast?latitude=-22.1123187&longitude=-43.2131388&current=temperature_2m%2Crelative_humidity_2m%2Capparent_temperature%2Cprecipitation%2Crain%2Cweather_code%2Cwind_speed_10m%2Cwind_gusts_10m&timezone=America%2FSao_Paulo",
-    "message": "Referência complementar próxima ao HCNSC. Não substitui INMET, CEMADEN ou Defesa Civil para alertas oficiais.",
-    "error": null
+    "message": "Sem condição meteorológica complementar recente confirmada. Isso não significa ausência de risco.",
+    "error": "HTTPSConnectionPool(host='api.open-meteo.com', port=443): Read timed out. (read timeout=18)"
   },
   "weather_map": {
     "status": "ok",
@@ -259,7 +262,7 @@
       "longitude": -43.2131388
     },
     "operational_radius_km": 5,
-    "grid_updated_at": "2026-11-13T10:40:36.322700-03:00",
+    "grid_updated_at": "2026-11-13T10:55:47.282314-03:00",
     "grid": [
       {
         "latitude": -22.179262,
@@ -900,26 +903,26 @@
       }
     ],
     "grid_points": 49,
-    "grid_error": null,
+    "grid_error": "HTTPSConnectionPool(host='api.open-meteo.com', port=443): Read timed out. (read timeout=25)",
     "radar": {
       "status": "ok",
       "provider": "RainViewer",
       "host": "https://tilecache.rainviewer.com",
-      "path": "/v2/radar/0a4edb8d0796",
-      "frame_time": "2026-11-13T10:40:00-03:00",
-      "generated_unix": 1794577224,
+      "path": "/v2/radar/e9bd8de1a47e",
+      "frame_time": "2026-11-13T10:50:00-03:00",
+      "generated_unix": 1794578123,
       "tile_color_scheme": 2,
       "url": "https://api.rainviewer.com/public/weather-maps.json",
       "error": null
     },
-    "collected_at": "2026-11-13T10:40:36.322700-03:00",
+    "collected_at": "2026-11-13T10:55:47.282314-03:00",
     "message": "Mapa complementar. Alertas e níveis HCNSC permanecem baseados nas fontes oficiais integradas."
   },
   "pluviometers": {
     "provider": "CEMADEN",
     "status": "ok",
     "source_note": "Chuvas do Mapa Interativo do CEMADEN; horários em UTC convertidos para Brasília. Coordenadas vêm do próprio endpoint quando disponíveis, de cadastro GIS público ou do cadastro hidrometeorológico regional da Região Hidrográfica do Médio Paraíba (base Dez/2020), exclusivamente para distância ao HCNSC.",
-    "collected_at": "2026-11-13T10:40:36.954357-03:00",
+    "collected_at": "2026-11-13T10:56:12.851940-03:00",
     "url": "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ",
     "total_stations": 7,
     "recent_stations": 3,
@@ -934,11 +937,11 @@
     "coordinate_registry_query": null,
     "coordinate_registry_error": "https://observatorio.infraestrutura.mg.gov.br/server/rest/services/00_PUBLICACOES/cemaden_estacoes_pluviometricas/FeatureServer/1/query: HTTPSConnectionPool(host='observatorio.infraestrutura.mg.gov.br', port=443): Read timed out. (read timeout=10); https://observatorio.infraestrutura.mg.gov.br/server/rest/services/00_PUBLICACOES/cemaden_estacoes_pluviometricas/FeatureServer/1/query: HTTPSConnectionPool(host='observatorio.infraestrutura.mg.gov.br', port=443): Read timed out. (read timeout=10)",
     "highest_1h": {
-      "value": 0.2,
+      "value": 0.4,
       "station": "Mirante Sul"
     },
     "highest_24h": {
-      "value": 0.8,
+      "value": 1.0,
       "station": "Mirante Sul"
     },
     "nearest_to_hcnsc": {
@@ -949,18 +952,18 @@
       "longitude": null,
       "coordinate_method": null,
       "distance_to_hcnsc_km": null,
-      "raw_timestamp": "13/11/26 13:10",
-      "observed_at": "2026-11-13T10:10:00-03:00",
-      "age_hours": 0.5,
+      "raw_timestamp": "13/11/26 13:50",
+      "observed_at": "2026-11-13T10:50:00-03:00",
+      "age_hours": 0.1,
       "last_mm": 0.2,
-      "acc1h_mm": 0.2,
-      "acc3h_mm": 0.8,
-      "acc6h_mm": 0.8,
-      "acc12h_mm": 0.8,
-      "acc24h_mm": 0.8,
-      "acc48h_mm": 0.8,
-      "acc72h_mm": 2.6,
-      "acc96h_mm": 3.8,
+      "acc1h_mm": 0.4,
+      "acc3h_mm": 1.0,
+      "acc6h_mm": 1.0,
+      "acc12h_mm": 1.0,
+      "acc24h_mm": 1.0,
+      "acc48h_mm": 1.0,
+      "acc72h_mm": 2.8,
+      "acc96h_mm": 4.0,
       "station_type": 1
     },
     "nearest_note": "A referência prioriza estação recente e georreferenciada. Se nenhuma estação recente tiver coordenada consolidada, o HCNSC Alerta usa temporariamente a estação recente com melhor conjunto de acumulados, sem inventar distância.",
@@ -975,7 +978,7 @@
         "distance_to_hcnsc_km": 0.97,
         "raw_timestamp": "22/12/25 20:20",
         "observed_at": "2025-12-22T17:20:00-03:00",
-        "age_hours": 7817.3,
+        "age_hours": 7817.6,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -995,18 +998,18 @@
         "longitude": null,
         "coordinate_method": null,
         "distance_to_hcnsc_km": null,
-        "raw_timestamp": "13/11/26 13:10",
-        "observed_at": "2026-11-13T10:10:00-03:00",
-        "age_hours": 0.5,
+        "raw_timestamp": "13/11/26 13:50",
+        "observed_at": "2026-11-13T10:50:00-03:00",
+        "age_hours": 0.1,
         "last_mm": 0.2,
-        "acc1h_mm": 0.2,
-        "acc3h_mm": 0.8,
-        "acc6h_mm": 0.8,
-        "acc12h_mm": 0.8,
-        "acc24h_mm": 0.8,
-        "acc48h_mm": 0.8,
-        "acc72h_mm": 2.6,
-        "acc96h_mm": 3.8,
+        "acc1h_mm": 0.4,
+        "acc3h_mm": 1.0,
+        "acc6h_mm": 1.0,
+        "acc12h_mm": 1.0,
+        "acc24h_mm": 1.0,
+        "acc48h_mm": 1.0,
+        "acc72h_mm": 2.8,
+        "acc96h_mm": 4.0,
         "station_type": 1
       },
       {
@@ -1017,9 +1020,9 @@
         "longitude": null,
         "coordinate_method": null,
         "distance_to_hcnsc_km": null,
-        "raw_timestamp": "13/11/26 12:30",
-        "observed_at": "2026-11-13T09:30:00-03:00",
-        "age_hours": 1.2,
+        "raw_timestamp": "13/11/26 14:10",
+        "observed_at": "2026-11-13T11:10:00-03:00",
+        "age_hours": -0.2,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1041,7 +1044,7 @@
         "distance_to_hcnsc_km": null,
         "raw_timestamp": "09/06/26 14:50",
         "observed_at": "2026-06-09T11:50:00-03:00",
-        "age_hours": 3766.8,
+        "age_hours": 3767.1,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1063,7 +1066,7 @@
         "distance_to_hcnsc_km": null,
         "raw_timestamp": "21/08/26 19:40",
         "observed_at": "2026-08-21T16:40:00-03:00",
-        "age_hours": 2010.0,
+        "age_hours": 2010.3,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1085,7 +1088,7 @@
         "distance_to_hcnsc_km": null,
         "raw_timestamp": "13/11/26 13:20",
         "observed_at": "2026-11-13T10:20:00-03:00",
-        "age_hours": 0.3,
+        "age_hours": 0.6,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": 0.2,
@@ -1107,7 +1110,7 @@
         "distance_to_hcnsc_km": null,
         "raw_timestamp": "04/02/23 14:40",
         "observed_at": "2023-02-04T11:40:00-03:00",
-        "age_hours": 33071.0,
+        "age_hours": 33071.3,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1127,7 +1130,7 @@
     "status": "ok",
     "municipality_code": "3306008",
     "municipality": "Três Rios/RJ",
-    "collected_at": "2026-11-13T10:41:05.045816-03:00",
+    "collected_at": "2026-11-13T10:56:44.128359-03:00",
     "url": "https://apiprevmet3.inmet.gov.br/previsao/3306008",
     "days": [
       {
@@ -1405,18 +1408,18 @@
         "road": "BR-040"
       },
       {
-        "title": "Cronograma de Obras – 09 de Novembro/26",
-        "summary": "Entre os dias 9 e 15 de novembro de 2026, a Elovias dará continuidade à sua agenda de intervenções e melhorias ao longo da BR-040, com frentes de trabalho distribuídas por trechos do Rio de Janeiro (englobando a Região Metropolitana e a Baixada Fluminense), da Serra de Petrópolis e do trecho mineiro. As ações visam assegurar padrões elevados de fluidez, conforto e segurança aos motoristas que trafegam pela rodovia. Ao longo da semana, as equipes executarão serviços de pavimentação...",
-        "published_at": "2026-11-09T00:00:00",
-        "url": "https://elovias.com.br/noticias/cronograma-de-obras-09-de-novembro-26",
+        "title": "Free Flow: Saiba como pagar as suas passagens",
+        "summary": "Reunimos todas as informações necessárias para os usuários da BR-040 que ainda têm dúvidas sobre o pagamento do Free Flow, que iniciou na última segunda-feira, dia 16 de novembro de 2026. Onde fica? O pórtico do Free Flow está no km 831 da BR-040, em Simão Pereira (MG). O pedágio eletrônico substitui a antiga praça de pedágio existente no km 819, que também ficava em Simão Pereira. Como funciona? Ao passar pelo pórtico do Free Flow, o veículo é identificado pela tag ou pela placa.",
+        "published_at": "2026-11-13T00:00:00",
+        "url": "https://elovias.com.br/noticias/free-flow-saiba-como-pagar-as-suas-passagens",
         "provider": "ELOvias",
         "road": "BR-040"
       },
       {
-        "title": "Elovias em Ação: Registro de Obras – 06 de Novembro/26",
-        "summary": "Entre os dias 2 e 6 de novembro, a Elovias manteve seu cronograma de intervenções na BR-040/495, com frentes de trabalho distribuídas entre Minas Gerais e Rio de Janeiro, voltadas à infraestrutura, conservação, pavimentação e segurança viária. Como destaque da semana, seguiram em andamento o avanço das obras de infraestrutura da Ponte do Arranha-Céu e os serviços de acabamento e finalizações das novas Bases de Serviços Operacionais, com frentes em diferentes pontos da rodovia. Na Serra de...",
-        "published_at": "2026-11-06T00:00:00",
-        "url": "https://elovias.com.br/noticias/elovias-em-acao-registro-de-obras-06-de-novembro-26",
+        "title": "Cronograma de Obras – 09 de Novembro/26",
+        "summary": "Entre os dias 9 e 15 de novembro de 2026, a Elovias dará continuidade à sua agenda de intervenções e melhorias ao longo da BR-040, com frentes de trabalho distribuídas por trechos do Rio de Janeiro (englobando a Região Metropolitana e a Baixada Fluminense), da Serra de Petrópolis e do trecho mineiro. As ações visam assegurar padrões elevados de fluidez, conforto e segurança aos motoristas que trafegam pela rodovia. Ao longo da semana, as equipes executarão serviços de pavimentação...",
+        "published_at": "2026-11-09T00:00:00",
+        "url": "https://elovias.com.br/noticias/cronograma-de-obras-09-de-novembro-26",
         "provider": "ELOvias",
         "road": "BR-040"
       }
@@ -1449,18 +1452,18 @@
           "road": "BR-040"
         },
         {
-          "title": "Cronograma de Obras – 09 de Novembro/26",
-          "summary": "Entre os dias 9 e 15 de novembro de 2026, a Elovias dará continuidade à sua agenda de intervenções e melhorias ao longo da BR-040, com frentes de trabalho distribuídas por trechos do Rio de Janeiro (englobando a Região Metropolitana e a Baixada Fluminense), da Serra de Petrópolis e do trecho mineiro. As ações visam assegurar padrões elevados de fluidez, conforto e segurança aos motoristas que trafegam pela rodovia. Ao longo da semana, as equipes executarão serviços de pavimentação...",
-          "published_at": "2026-11-09T00:00:00",
-          "url": "https://elovias.com.br/noticias/cronograma-de-obras-09-de-novembro-26",
+          "title": "Free Flow: Saiba como pagar as suas passagens",
+          "summary": "Reunimos todas as informações necessárias para os usuários da BR-040 que ainda têm dúvidas sobre o pagamento do Free Flow, que iniciou na última segunda-feira, dia 16 de novembro de 2026. Onde fica? O pórtico do Free Flow está no km 831 da BR-040, em Simão Pereira (MG). O pedágio eletrônico substitui a antiga praça de pedágio existente no km 819, que também ficava em Simão Pereira. Como funciona? Ao passar pelo pórtico do Free Flow, o veículo é identificado pela tag ou pela placa.",
+          "published_at": "2026-11-13T00:00:00",
+          "url": "https://elovias.com.br/noticias/free-flow-saiba-como-pagar-as-suas-passagens",
           "provider": "ELOvias",
           "road": "BR-040"
         },
         {
-          "title": "Elovias em Ação: Registro de Obras – 06 de Novembro/26",
-          "summary": "Entre os dias 2 e 6 de novembro, a Elovias manteve seu cronograma de intervenções na BR-040/495, com frentes de trabalho distribuídas entre Minas Gerais e Rio de Janeiro, voltadas à infraestrutura, conservação, pavimentação e segurança viária. Como destaque da semana, seguiram em andamento o avanço das obras de infraestrutura da Ponte do Arranha-Céu e os serviços de acabamento e finalizações das novas Bases de Serviços Operacionais, com frentes em diferentes pontos da rodovia. Na Serra de...",
-          "published_at": "2026-11-06T00:00:00",
-          "url": "https://elovias.com.br/noticias/elovias-em-acao-registro-de-obras-06-de-novembro-26",
+          "title": "Cronograma de Obras – 09 de Novembro/26",
+          "summary": "Entre os dias 9 e 15 de novembro de 2026, a Elovias dará continuidade à sua agenda de intervenções e melhorias ao longo da BR-040, com frentes de trabalho distribuídas por trechos do Rio de Janeiro (englobando a Região Metropolitana e a Baixada Fluminense), da Serra de Petrópolis e do trecho mineiro. As ações visam assegurar padrões elevados de fluidez, conforto e segurança aos motoristas que trafegam pela rodovia. Ao longo da semana, as equipes executarão serviços de pavimentação...",
+          "published_at": "2026-11-09T00:00:00",
+          "url": "https://elovias.com.br/noticias/cronograma-de-obras-09-de-novembro-26",
           "provider": "ELOvias",
           "road": "BR-040"
         }
@@ -1509,17 +1512,17 @@
       "message": "Canal oficial da Rodovia do Aço consultado. Ausência de publicação identificada não equivale a garantia de tráfego livre.",
       "error": null
     },
-    "collected_at": "2026-11-13T10:41:10.660138-03:00",
+    "collected_at": "2026-11-13T10:56:49.557842-03:00",
     "message": "BR-040 e BR-393 consultadas em canais oficiais independentes. Fonte indisponível ou ausência de aviso não equivale a tráfego livre.",
     "error": null,
     "tresrios_weather": {
-      "source": "Referência meteorológica próxima ao HCNSC",
+      "source": "INMET A625",
       "is_road_official_weather": false,
-      "condition": "Nublado",
-      "temperature_c": 27.6,
-      "wind_speed_kmh": 2.8,
+      "condition": null,
+      "temperature_c": null,
+      "wind_speed_kmh": null,
       "wind_direction": null,
-      "updated_at": "2026-11-13T10:30:00-03:00"
+      "updated_at": null
     }
   },
   "utilities": {
@@ -1533,7 +1536,7 @@
       "has_operational_notice": false,
       "phone": "(24) 2251-6950",
       "whatsapp": "(24) 9993-2649",
-      "collected_at": "2026-11-13T10:41:17.400691-03:00",
+      "collected_at": "2026-11-13T10:56:54.846371-03:00",
       "message": "Canal oficial do SAAETRI acessível. Acessibilidade do portal não prova continuidade do abastecimento no hospital.",
       "error": null
     },
@@ -1543,11 +1546,11 @@
       "url": "https://www.enel.com.br/pt/Canais.html",
       "phone": "0800 28 00 120",
       "whatsapp": "(21) 99601-9608",
-      "collected_at": "2026-11-13T10:41:17.400691-03:00",
+      "collected_at": "2026-11-13T10:56:54.846371-03:00",
       "message": "Canal oficial acessível. A situação específica da unidade consumidora deve ser confirmada pelos canais da Enel quando necessário.",
       "error": null
     },
-    "collected_at": "2026-11-13T10:41:17.400691-03:00"
+    "collected_at": "2026-11-13T10:56:54.846371-03:00"
   },
   "notifications": {
     "group_operational_email": {
@@ -1596,7 +1599,7 @@
     "inmet_alerts": "active",
     "inmet_forecast": "ok",
     "inmet_weather": "unavailable",
-    "weather_reference": "ok",
+    "weather_reference": "source_unconfirmed",
     "weather_map": "ok",
     "radar": "ok",
     "pluviometers": "ok",
