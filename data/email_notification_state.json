@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "last_seen_level": 3,
+  "last_seen_level": 4,
   "last_seen_context": "rain",
   "groups": {
     "operational": {
@@ -19,10 +19,10 @@
       "last_sent_at": null,
       "last_attempt_at": null,
       "last_event": "entry",
-      "last_result": "no_event",
+      "last_result": "not_configured",
       "last_error": "Destinatários ou serviço de e-mail não configurados.",
       "last_message_id": null
     }
   },
-  "updated_at": "2026-11-15T19:41:34.626714+00:00"
+  "updated_at": "2026-11-15T19:56:16.847558+00:00"
 }
